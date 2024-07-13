@@ -31,10 +31,9 @@ dependencies:
   flutter:
     sdk: flutter
 
-  slang: ^3.16.0 # add this
-  slang_flutter: ^3.16.0 # add this
-  flutter_localization: ^0.1.9
-  #flutter_localization: ^0.1.8
+  slang: ^3.16.0
+  slang_flutter: ^3.16.0
+  flutter_localization: ^0.1.7
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6

@@ -1,4 +1,9 @@
 {
   "language": "English",
-  "hello": "Hello"
+  "hello": "Hello",
+  "EnterAphoneNumber": "Enter a phone number",
+  "EnterThePassword": "Enter the password",
+  "LogIn": "LogIn",
+  "changeToEnglish":"تغير اللغة الى العربية"
+
 }

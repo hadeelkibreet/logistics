@@ -25,36 +25,28 @@ class _LanguagePageState extends State<LanguagePage> {
     final AppLocale activeLocale = LocaleSettings.currentLocale;
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text(t.hello),
-        ),
-        body: Center(
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      backgroundColor: activeLocale == AppLocale.ar
-                          ? Colors.blue.shade100
-                          : null,
-                    ),
-                    onPressed: () {
-                      activeLocale == AppLocale.en
-                          ? LocaleSettings.setLocale(AppLocale.ar)
-                          : LocaleSettings.setLocale(AppLocale.en);
-                    },
-                    child: Text(
-                      t.hello,
-                      style: TextStyle(fontSize: 24.0),
-                    ),
-                  ),
-                ),
-              ],
+        body: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: OutlinedButton(
+            style: OutlinedButton.styleFrom(
+              backgroundColor:
+                  activeLocale == AppLocale.ar ? Colors.blue.shade100 : null,
             ),
-          ]),
-        ));
+            onPressed: () {
+              activeLocale == AppLocale.en
+                  ? LocaleSettings.setLocale(AppLocale.ar)
+                  : LocaleSettings.setLocale(AppLocale.en);
+            },
+            child: Text(
+              t.hello,
+              style: TextStyle(fontSize: 24.0),
+            ),
+          ),
+        ),
+      ],
+    ));
   }
 }

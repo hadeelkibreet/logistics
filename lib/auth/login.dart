@@ -23,7 +23,6 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
   void dispose() {
     _phoneController.dispose();
     _passwordController.dispose();
-
     super.dispose();
   }
 
@@ -49,17 +48,17 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                     ImageAssets.logo,
                     width: width * 0.5,
                   ),
-                  SizedBox(height: height * 0.06),
+                  SizedBox(height: height * 0.04),
                   DefaultTextStyle(
                     style: TextStyle(
                       color: ColorsApp.white,
                       fontSize: 35.sp,
                       fontWeight: FontWeight.w900,
                     ),
-                    child: Text('تسجيل الدخول'),
+                    child: Text(t.LogIn),
                   ),
                   SizedBox(
-                    height: height * 0.06,
+                    height: height * 0.04,
                   ),
                   Container(
                     padding: EdgeInsetsDirectional.symmetric(horizontal: 15.sp),
@@ -70,14 +69,14 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                           controller: _phoneController,
                           validator: (value) {
                             if (value!.isEmpty || !value.contains("05")) {
-                              return 'الرجاء كتابة الرقم';
+                              return t.EnterAphoneNumber;
                             }
                             // Add additional validation logic here if needed
                             return null; // Return null if the value is valid
                           },
-                          textAlign: TextAlign.right,
+                          //textAlign: TextAlign.right,
                           decoration: InputDecoration(
-                            hintText: 'ادخل رقم الجوال',
+                            hintText: "${t.EnterAphoneNumber}",
                             hintStyle: TextStyle(color: Colors.grey),
                             filled: true,
                             fillColor: ColorsApp.white,
@@ -87,8 +86,8 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                             ),
                             contentPadding: EdgeInsets.symmetric(
                                 vertical: 15.0.sp, horizontal: 20.0.sp),
-                            suffixIcon: Icon(
-                              Icons.phone_enabled,
+                            prefixIcon: Icon(
+                              Icons.phone_android_sharp,
                               color: ColorsApp.primaryColor,
                             ),
                           ),
@@ -105,15 +104,15 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                       controller: _passwordController,
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return 'الرجاءادخال كلمة المرور';
+                          return t.EnterThePassword;
                         }
                         // Add additional validation logic here if needed
                         return null; // Return null if the value is valid
                       },
-                      textAlign: TextAlign.right,
+                      // textAlign: TextAlign.right,
                       obscureText: !_passwordVisible,
                       decoration: InputDecoration(
-                        hintText: 'ادخل كلمة المرور',
+                        hintText: t.EnterThePassword,
                         hintStyle: TextStyle(color: Colors.grey),
                         filled: true,
                         fillColor: ColorsApp.white,
@@ -123,11 +122,7 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                         ),
                         contentPadding: EdgeInsets.symmetric(
                             vertical: 15.0.sp, horizontal: 20.0.sp),
-                        suffixIcon: Icon(
-                          Icons.password,
-                          color: ColorsApp.primaryColor,
-                        ),
-                        prefixIcon: GestureDetector(
+                        suffixIcon: GestureDetector(
                           onTap: () {
                             setState(() {
                               _passwordVisible = !_passwordVisible;
@@ -139,6 +134,10 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                                 : Icons.visibility_off,
                             color: Colors.grey.withOpacity(0.9),
                           ),
+                        ),
+                        prefixIcon: Icon(
+                          Icons.password,
+                          color: ColorsApp.primaryColor,
                         ),
                       ),
                     ),
@@ -156,7 +155,31 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                               ColorsApp.yellow),
                         ),
                         child: Text(
-                          'تسجيل دخول',
+                          t.LogIn,
+                          style: TextStyle(
+                            color: ColorsApp.black,
+                            fontSize: 16.sp,
+                          ),
+                        )),
+                  ),
+                  SizedBox(
+                    height: height * 0.02,
+                  ),
+                  Container(
+                    width: width * 0.5,
+                    height: height * 0.07,
+                    child: ElevatedButton(
+                        onPressed: () async {
+                          activeLocale == AppLocale.en
+                              ? LocaleSettings.setLocale(AppLocale.ar)
+                              : LocaleSettings.setLocale(AppLocale.en);
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              ColorsApp.yellow),
+                        ),
+                        child: Text(
+                          '${t.changeToEnglish}',
                           style: TextStyle(
                             color: ColorsApp.black,
                             fontSize: 16.sp,

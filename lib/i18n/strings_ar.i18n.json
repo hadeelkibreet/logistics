@@ -1,4 +1,10 @@
 {
-  "language": "Arabic",
-  "hello": "مرحبا"
+  "language": "عربي",
+  "hello": "مرحبا",
+  "EnterAphoneNumber": "ادخل رقم الهاتف",
+  "EnterThePassword": "ادخل كلمة المرور",
+  "LogIn": "تسجيل الدخول",
+  "changeToEnglish":"change to English"
+
+
 }
