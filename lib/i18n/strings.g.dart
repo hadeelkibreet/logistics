@@ -4,9 +4,9 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 2
-/// Strings: 12 (6 per locale)
+/// Strings: 44 (22 per locale)
 ///
-/// Built on 2024-07-13 at 13:55 UTC
+/// Built on 2024-07-14 at 13:37 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -154,6 +154,22 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
 	String get EnterThePassword => 'Enter the password';
 	String get LogIn => 'LogIn';
 	String get changeToEnglish => 'تغير اللغة الى العربية';
+	String get ServiceSchedule => 'Service schedule';
+	String get IAmInService => 'I am in service';
+	String get IAmInBreak => 'I am in break';
+	String get IAmOutOfService => 'I am out of Service';
+	String get InService => 'in service';
+	String get InBreak => 'in break';
+	String get OutOfService => 'out of Service';
+	String get order => 'Orders';
+	String get CompletedOrder => 'Completed Orders';
+	String get update => 'Update';
+	String get MyProfile => 'My profile';
+	String get languages => 'languages';
+	String get Setting => 'Setting';
+	String get ShareTheApp => 'Share Application';
+	String get LogOut => 'Logout';
+	String get ReleaseThisApplication => 'Release this application';
 }
 
 // Path: <root>
@@ -186,6 +202,22 @@ class _StringsAr implements Translations {
 	@override String get EnterThePassword => 'ادخل كلمة المرور';
 	@override String get LogIn => 'تسجيل الدخول';
 	@override String get changeToEnglish => 'change to English';
+	@override String get ServiceSchedule => 'جدول الخدمة';
+	@override String get IAmInService => 'أنا في الخدمة';
+	@override String get IAmInBreak => 'أنا في استراحة';
+	@override String get IAmOutOfService => 'أنا خارج الخدمة';
+	@override String get InService => 'في الخدمة';
+	@override String get InBreak => 'في استراحة';
+	@override String get OutOfService => 'خارج الخدمة';
+	@override String get order => 'الطلبات';
+	@override String get CompletedOrder => 'أكتمل';
+	@override String get update => 'تحديث الدفعة';
+	@override String get MyProfile => 'ملفي';
+	@override String get languages => 'اللغات';
+	@override String get Setting => 'الإعدادات';
+	@override String get ShareTheApp => 'شارك هذا التطبيق';
+	@override String get LogOut => 'تسجيل خروج';
+	@override String get ReleaseThisApplication => 'اصدار هذا التطبيق';
 }
 
 /// Flat map(s) containing all translations.
@@ -200,6 +232,22 @@ extension on Translations {
 			case 'EnterThePassword': return 'Enter the password';
 			case 'LogIn': return 'LogIn';
 			case 'changeToEnglish': return 'تغير اللغة الى العربية';
+			case 'ServiceSchedule': return 'Service schedule';
+			case 'IAmInService': return 'I am in service';
+			case 'IAmInBreak': return 'I am in break';
+			case 'IAmOutOfService': return 'I am out of Service';
+			case 'InService': return 'in service';
+			case 'InBreak': return 'in break';
+			case 'OutOfService': return 'out of Service';
+			case 'order': return 'Orders';
+			case 'CompletedOrder': return 'Completed Orders';
+			case 'update': return 'Update';
+			case 'MyProfile': return 'My profile';
+			case 'languages': return 'languages';
+			case 'Setting': return 'Setting';
+			case 'ShareTheApp': return 'Share Application';
+			case 'LogOut': return 'Logout';
+			case 'ReleaseThisApplication': return 'Release this application';
 			default: return null;
 		}
 	}
@@ -214,6 +262,22 @@ extension on _StringsAr {
 			case 'EnterThePassword': return 'ادخل كلمة المرور';
 			case 'LogIn': return 'تسجيل الدخول';
 			case 'changeToEnglish': return 'change to English';
+			case 'ServiceSchedule': return 'جدول الخدمة';
+			case 'IAmInService': return 'أنا في الخدمة';
+			case 'IAmInBreak': return 'أنا في استراحة';
+			case 'IAmOutOfService': return 'أنا خارج الخدمة';
+			case 'InService': return 'في الخدمة';
+			case 'InBreak': return 'في استراحة';
+			case 'OutOfService': return 'خارج الخدمة';
+			case 'order': return 'الطلبات';
+			case 'CompletedOrder': return 'أكتمل';
+			case 'update': return 'تحديث الدفعة';
+			case 'MyProfile': return 'ملفي';
+			case 'languages': return 'اللغات';
+			case 'Setting': return 'الإعدادات';
+			case 'ShareTheApp': return 'شارك هذا التطبيق';
+			case 'LogOut': return 'تسجيل خروج';
+			case 'ReleaseThisApplication': return 'اصدار هذا التطبيق';
 			default: return null;
 		}
 	}

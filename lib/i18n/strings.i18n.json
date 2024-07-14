@@ -4,6 +4,21 @@
   "EnterAphoneNumber": "Enter a phone number",
   "EnterThePassword": "Enter the password",
   "LogIn": "LogIn",
-  "changeToEnglish":"تغير اللغة الى العربية"
-
+  "changeToEnglish":"تغير اللغة الى العربية",
+  "ServiceSchedule": "Service schedule",
+  "IAmInService": "I am in service",
+  "IAmInBreak" : "I am in break",
+  "IAmOutOfService":"I am out of Service",
+  "InService": "in service",
+  "InBreak" : "in break",
+  "OutOfService":"out of Service",
+  "order": "Orders",
+  "CompletedOrder": "Completed Orders",
+  "update": "Update",
+  "MyProfile": "My profile",
+  "languages": "languages",
+  "Setting": "Setting",
+  "ShareTheApp": "Share Application",
+  "LogOut": "Logout",
+  "ReleaseThisApplication": "Release this application"
 }

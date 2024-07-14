@@ -4,7 +4,23 @@
   "EnterAphoneNumber": "ادخل رقم الهاتف",
   "EnterThePassword": "ادخل كلمة المرور",
   "LogIn": "تسجيل الدخول",
-  "changeToEnglish":"change to English"
+  "changeToEnglish":"change to English",
+  "ServiceSchedule": "جدول الخدمة",
+  "IAmInService": "أنا في الخدمة",
+  "IAmInBreak" : "أنا في استراحة",
+  "IAmOutOfService":"أنا خارج الخدمة",
+  "InService": "في الخدمة",
+  "InBreak" : "في استراحة",
+  "OutOfService":"خارج الخدمة",
+  "order": "الطلبات",
+  "CompletedOrder": "أكتمل",
+  "update": "تحديث الدفعة",
+  "MyProfile": "ملفي",
+  "languages": "اللغات",
+  "Setting": "الإعدادات",
+  "ShareTheApp": "شارك هذا التطبيق",
+  "LogOut": "تسجيل خروج",
+  "ReleaseThisApplication": "اصدار هذا التطبيق"
 
 
 }
