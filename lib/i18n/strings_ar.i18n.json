@@ -20,7 +20,20 @@
   "Setting": "الإعدادات",
   "ShareTheApp": "شارك هذا التطبيق",
   "LogOut": "تسجيل خروج",
-  "ReleaseThisApplication": "اصدار هذا التطبيق"
-
-
+  "ReleaseThisApplication": "اصدار هذا التطبيق",
+  "personalInfo": "معلومات شخصية",
+  "dateOfBirth": "تاريخ الميلاد",
+  "gender": "الجنس",
+  "Country": "البلد",
+  "email": "البريد الالكتروني",
+  "passWord": "كلمةالمرور",
+  "changeThePassWord": "تغير كلمة السر",
+  "alertWithSound": "تنبيه جديد عن طريق الاهتزاز",
+  "alertWithVibrate": "تنبيه جديد عن طريق الصوت",
+  "showNotifications": "إخطار الرسائل القصيرة",
+  "Notifications": "الإشعارات",
+  "no": "لا",
+  "yes": "نعم",
+  "AreYouSureToChangeThePassword": "هل انت متاكد من تغير كلمة المرور؟",
+  "DoYouReallyWantToLogOut": "هل فعلا تريد تغير كلمة المرور؟"
 }

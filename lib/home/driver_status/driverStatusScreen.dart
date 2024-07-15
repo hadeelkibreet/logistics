@@ -21,6 +21,7 @@ class _DriverStatusScreenState extends State<DriverStatusScreen> {
     final t = Translations.of(context);
     final AppLocale activeLocale = LocaleSettings.currentLocale;
     return Scaffold(
+      backgroundColor: ColorsApp.backgroundColor,
       drawer: DriverDrawar(),
       appBar: AppBar(
         title: Text(t.ServiceSchedule),
@@ -63,7 +64,7 @@ class _DriverStatusScreenState extends State<DriverStatusScreen> {
                     });
                   },
                 ),
-                SizedBox(height: 8.h),
+                SizedBox(height: 15.h),
                 buildStatusOption(
                   icon: Icons.free_breakfast,
                   iconColor: Colors.orange,
@@ -85,7 +86,7 @@ class _DriverStatusScreenState extends State<DriverStatusScreen> {
                     });
                   },
                 ),
-                SizedBox(height: 8.h),
+                SizedBox(height: 15.h),
                 buildStatusOption(
                   icon: Icons.cancel,
                   iconColor: Colors.red,
@@ -109,6 +110,7 @@ class _DriverStatusScreenState extends State<DriverStatusScreen> {
                     });
                   },
                 ),
+                SizedBox(height: 15.h),
                 Container(
                   width: 10.w,
                   height: 40.h,
@@ -151,7 +153,7 @@ class _DriverStatusScreenState extends State<DriverStatusScreen> {
     Color textColor = Colors.black,
     required VoidCallback onPressed,
   }) {
-    Color optionBgColor = borderColor;
+    Color optionBgColor = Colors.white;
 
     if (NumberOfser == 1 && isServes) {
       optionBgColor = Colors.green;
@@ -166,7 +168,7 @@ class _DriverStatusScreenState extends State<DriverStatusScreen> {
         color: optionBgColor,
         borderRadius: BorderRadius.circular(12.0.sp),
       ),
-      padding: EdgeInsets.all(16.0.sp),
+      padding: EdgeInsets.all(12.0.sp),
       child: GestureDetector(
         onTap: onPressed,
         child: Row(

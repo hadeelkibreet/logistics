@@ -20,5 +20,20 @@
   "Setting": "Setting",
   "ShareTheApp": "Share Application",
   "LogOut": "Logout",
-  "ReleaseThisApplication": "Release this application"
+  "ReleaseThisApplication": "Release this application",
+  "personalInfo": "personal information",
+  "dateOfBirth": "date of birth",
+  "gender": "gender",
+  "Country": "Country",
+  "email": "email",
+  "passWord": "password",
+  "changeThePassWord": "Change the password",
+  "alertWithSound": "New alert With Sound",
+  "alertWithVibrate": "New alert With Vibrate",
+  "showNotifications": "show Notifications",
+  "Notifications": "Notifications",
+  "no": "no",
+  "yes": "yes",
+  "AreYouSureToChangeThePassword": "Are you sure to change the password?",
+  "DoYouReallyWantToLogOut": "Do you really want to log out?"
 }

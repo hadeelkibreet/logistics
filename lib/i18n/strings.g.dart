@@ -4,9 +4,9 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 2
-/// Strings: 44 (22 per locale)
+/// Strings: 74 (37 per locale)
 ///
-/// Built on 2024-07-14 at 13:37 UTC
+/// Built on 2024-07-15 at 16:16 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -170,6 +170,21 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
 	String get ShareTheApp => 'Share Application';
 	String get LogOut => 'Logout';
 	String get ReleaseThisApplication => 'Release this application';
+	String get personalInfo => 'personal information';
+	String get dateOfBirth => 'date of birth';
+	String get gender => 'gender';
+	String get Country => 'Country';
+	String get email => 'email';
+	String get passWord => 'password';
+	String get changeThePassWord => 'Change the password';
+	String get alertWithSound => 'New alert With Sound';
+	String get alertWithVibrate => 'New alert With Vibrate';
+	String get showNotifications => 'show Notifications';
+	String get Notifications => 'Notifications';
+	String get no => 'no';
+	String get yes => 'yes';
+	String get AreYouSureToChangeThePassword => 'Are you sure to change the password?';
+	String get DoYouReallyWantToLogOut => 'Do you really want to log out?';
 }
 
 // Path: <root>
@@ -218,6 +233,21 @@ class _StringsAr implements Translations {
 	@override String get ShareTheApp => 'شارك هذا التطبيق';
 	@override String get LogOut => 'تسجيل خروج';
 	@override String get ReleaseThisApplication => 'اصدار هذا التطبيق';
+	@override String get personalInfo => 'معلومات شخصية';
+	@override String get dateOfBirth => 'تاريخ الميلاد';
+	@override String get gender => 'الجنس';
+	@override String get Country => 'البلد';
+	@override String get email => 'البريد الالكتروني';
+	@override String get passWord => 'كلمةالمرور';
+	@override String get changeThePassWord => 'تغير كلمة السر';
+	@override String get alertWithSound => 'تنبيه جديد عن طريق الاهتزاز';
+	@override String get alertWithVibrate => 'تنبيه جديد عن طريق الصوت';
+	@override String get showNotifications => 'إخطار الرسائل القصيرة';
+	@override String get Notifications => 'الإشعارات';
+	@override String get no => 'لا';
+	@override String get yes => 'نعم';
+	@override String get AreYouSureToChangeThePassword => 'هل انت متاكد من تغير كلمة المرور؟';
+	@override String get DoYouReallyWantToLogOut => 'هل فعلا تريد تغير كلمة المرور؟';
 }
 
 /// Flat map(s) containing all translations.
@@ -248,6 +278,21 @@ extension on Translations {
 			case 'ShareTheApp': return 'Share Application';
 			case 'LogOut': return 'Logout';
 			case 'ReleaseThisApplication': return 'Release this application';
+			case 'personalInfo': return 'personal information';
+			case 'dateOfBirth': return 'date of birth';
+			case 'gender': return 'gender';
+			case 'Country': return 'Country';
+			case 'email': return 'email';
+			case 'passWord': return 'password';
+			case 'changeThePassWord': return 'Change the password';
+			case 'alertWithSound': return 'New alert With Sound';
+			case 'alertWithVibrate': return 'New alert With Vibrate';
+			case 'showNotifications': return 'show Notifications';
+			case 'Notifications': return 'Notifications';
+			case 'no': return 'no';
+			case 'yes': return 'yes';
+			case 'AreYouSureToChangeThePassword': return 'Are you sure to change the password?';
+			case 'DoYouReallyWantToLogOut': return 'Do you really want to log out?';
 			default: return null;
 		}
 	}
@@ -278,6 +323,21 @@ extension on _StringsAr {
 			case 'ShareTheApp': return 'شارك هذا التطبيق';
 			case 'LogOut': return 'تسجيل خروج';
 			case 'ReleaseThisApplication': return 'اصدار هذا التطبيق';
+			case 'personalInfo': return 'معلومات شخصية';
+			case 'dateOfBirth': return 'تاريخ الميلاد';
+			case 'gender': return 'الجنس';
+			case 'Country': return 'البلد';
+			case 'email': return 'البريد الالكتروني';
+			case 'passWord': return 'كلمةالمرور';
+			case 'changeThePassWord': return 'تغير كلمة السر';
+			case 'alertWithSound': return 'تنبيه جديد عن طريق الاهتزاز';
+			case 'alertWithVibrate': return 'تنبيه جديد عن طريق الصوت';
+			case 'showNotifications': return 'إخطار الرسائل القصيرة';
+			case 'Notifications': return 'الإشعارات';
+			case 'no': return 'لا';
+			case 'yes': return 'نعم';
+			case 'AreYouSureToChangeThePassword': return 'هل انت متاكد من تغير كلمة المرور؟';
+			case 'DoYouReallyWantToLogOut': return 'هل فعلا تريد تغير كلمة المرور؟';
 			default: return null;
 		}
 	}

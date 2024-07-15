@@ -18,6 +18,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorsApp.backgroundColor,
       drawer: DriverDrawar(),
       appBar: AppBar(
         title: Text(t.MyProfile),
@@ -88,23 +89,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    buildInfoRow(Icons.info, 'معلومات شخصية', '', true),
+                    buildInfoRow(Icons.info, t.personalInfo, '', true),
                     Divider(thickness: 1),
-                    buildInfoRow(Icons.cake, 'Mar 15, 2021', 'تاريخ الميلاد'),
-                    buildInfoRow(Icons.person, 'ذكر', 'الجنس'),
-                    buildInfoRow(Icons.public, 'Saudi Arabia', 'البلد'),
-                    buildInfoRow(
-                        Icons.email, 'ahmad@gmail.com', 'البريد الإلكتروني'),
-                    // buildInfoRow(Icons.lock, '111', 'كلمة المرور'),
-
+                    buildInfoRow(Icons.cake, 'Mar 15, 2021', t.dateOfBirth),
+                    buildInfoRow(Icons.person, 'ذكر', t.gender),
+                    buildInfoRow(Icons.public, 'Saudi Arabia', t.Country),
+                    buildInfoRow(Icons.email, 'ahmad@gmail.com', t.email),
                     Stack(
                       children: [
                         TextFormField(
                           controller: _passwordController,
                           validator: (value) {
                             if (value!.isEmpty) {
-                              return 't.EnterThePassword';
+                              return t.EnterThePassword;
                             }
                             // Add additional validation logic here if needed
                             return null; // Return null if the value is valid
@@ -139,20 +138,80 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           padding: const EdgeInsets.symmetric(
                               vertical: 4.0, horizontal: 50),
                           child: Text(
-                            'كلمة المرور',
+                            t.passWord,
                             // style: TextStyle(color: Colors.red),
                           ),
                         ),
                       ],
                     ),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          'تغيير كلمة السر',
-                          style: TextStyle(color: ColorsApp.primaryColor),
-                        ),
+                    TextButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              backgroundColor: ColorsApp.white,
+                              title: Column(
+                                children: [
+                                  Icon(
+                                    Icons.question_mark,
+                                    color: ColorsApp.primaryColor,
+                                    size: 45.sp,
+                                  ),
+                                  SizedBox(
+                                    height: 10.h,
+                                  ),
+                                  Text(
+                                    t.DoYouReallyWantToLogOut,
+                                    style: TextStyle(
+                                      color: ColorsApp.primaryColor,
+                                      fontSize: 16.sp,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              actions: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        t.no,
+                                        style: TextStyle(
+                                          color: ColorsApp.primaryColor,
+                                        ),
+                                      ),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        // Navigator.pushAndRemoveUntil(
+                                        //   context,
+                                        //   MaterialPageRoute(
+                                        //       builder: (context) => LogInScreen()),
+                                        //       (route) => false,
+                                        // );
+                                      },
+                                      child: Text(
+                                        t.yes,
+                                        style: TextStyle(
+                                          color: ColorsApp.primaryColor,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      child: Text(
+                        t.changeThePassWord,
+                        style: TextStyle(color: ColorsApp.primaryColor),
                       ),
                     ),
                   ],

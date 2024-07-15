@@ -5,4 +5,5 @@ class ColorsApp {
   static const yellow = Color(0xFFF2CE1E);
   static const white = Color(0xFFFFFFFF);
   static const black = Color(0xFF000000);
+  static const backgroundColor = Color(0xFFE5E5E5);
 }

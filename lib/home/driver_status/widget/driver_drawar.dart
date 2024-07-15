@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/auth/login.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/constants/images.dart';
+import 'package:logistics/home/Settings_screen/SettingsScreen.dart';
+import 'package:logistics/home/driver_status/driverStatusScreen.dart';
 import 'package:logistics/home/driver_status/widget/list_tile_drawar.dart';
 import 'package:logistics/home/profile/profile_screen.dart';
 import 'package:logistics/i18n/strings.g.dart';
@@ -15,7 +17,7 @@ class DriverDrawar extends StatefulWidget {
 }
 
 class _DriverDrawarState extends State<DriverDrawar> {
-  late String selectedLanguage = 'Arabic';
+  late String selectedLanguage = 'English';
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,10 @@ class _DriverDrawarState extends State<DriverDrawar> {
         child: ListView(
           children: [
             DrawerHeader(
-              decoration: BoxDecoration(color: ColorsApp.primaryColor),
+              margin: EdgeInsets.all(0.2.sp),
+              decoration: BoxDecoration(
+                color: ColorsApp.primaryColor,
+              ),
               child: Column(
                 children: [
                   CircleAvatar(
@@ -46,6 +51,18 @@ class _DriverDrawarState extends State<DriverDrawar> {
                   ),
                 ],
               ),
+            ),
+            ListTileDrawar(
+              icon: Icon(
+                Icons.home,
+              ),
+              text: t.ServiceSchedule,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DriverStatusScreen()),
+                );
+              },
             ),
             ListTileDrawar(
               icon: Icon(Icons.assignment_outlined),
@@ -146,7 +163,10 @@ class _DriverDrawarState extends State<DriverDrawar> {
                 Icons.settings,
               ),
               text: t.Setting,
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SettingsScreen()));
+              },
             ),
             ListTileDrawar(
               icon: Icon(
@@ -179,10 +199,10 @@ class _DriverDrawarState extends State<DriverDrawar> {
                             height: 10.h,
                           ),
                           Text(
-                            'هل فعلا تريد تسجيل الخروج؟',
+                            t.AreYouSureToChangeThePassword,
                             style: TextStyle(
                               color: Colors.red,
-                              fontSize: 18.sp,
+                              fontSize: 13.sp,
                             ),
                           ),
                         ],
@@ -196,7 +216,7 @@ class _DriverDrawarState extends State<DriverDrawar> {
                                 Navigator.pop(context);
                               },
                               child: Text(
-                                'لا',
+                                t.no,
                                 style: TextStyle(
                                   color: ColorsApp.primaryColor,
                                 ),
@@ -212,7 +232,7 @@ class _DriverDrawarState extends State<DriverDrawar> {
                                 );
                               },
                               child: Text(
-                                'نعم',
+                                t.yes,
                                 style: TextStyle(
                                   color: ColorsApp.primaryColor,
                                 ),
