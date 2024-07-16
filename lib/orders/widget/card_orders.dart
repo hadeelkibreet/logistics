@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/constants/colors.dart';
+import 'package:logistics/i18n/strings.g.dart';
 
 class buildOrderCard extends StatefulWidget {
   final String name;
@@ -27,14 +28,14 @@ class _buildOrderCardState extends State<buildOrderCard> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 12.0),
+      padding: EdgeInsets.symmetric(horizontal: 12.0.sp),
       child: Card(
         color: ColorsApp.white,
-        margin: EdgeInsets.symmetric(vertical: 8.0),
+        margin: EdgeInsets.symmetric(vertical: 8.0.sp),
         child: Column(
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              padding: EdgeInsets.symmetric(horizontal: 10.sp, vertical: 4.sp),
               child: Row(
                 children: [
                   CircleAvatar(
@@ -44,14 +45,14 @@ class _buildOrderCardState extends State<buildOrderCard> {
                       style: TextStyle(color: Colors.black),
                     ),
                   ),
-                  SizedBox(width: 8),
+                  SizedBox(width: 8.w),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
                           Text(
-                            'المقيم ',
+                            t.resident,
                             style: TextStyle(color: Colors.green),
                           ),
                           Text(
@@ -59,7 +60,7 @@ class _buildOrderCardState extends State<buildOrderCard> {
                             style: TextStyle(color: Colors.grey[300]),
                           ),
                           Text(
-                            widget.isdone ? 'توصيل' : ' تحميل الشحنة',
+                            widget.isdone ? t.delivery : t.LoadingTheShipment,
                             style: TextStyle(
                                 color: widget.isdone
                                     ? Colors.amber
@@ -70,7 +71,7 @@ class _buildOrderCardState extends State<buildOrderCard> {
                       Container(
                         constraints: BoxConstraints(maxWidth: 260.w),
                         child: Text(widget.name,
-                            style: TextStyle(fontSize: 14),
+                            style: TextStyle(fontSize: 14.sp),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis),
                       ),
@@ -79,20 +80,20 @@ class _buildOrderCardState extends State<buildOrderCard> {
                 ],
               ),
             ),
-            SizedBox(height: 8),
+            SizedBox(height: 8.h),
             Divider(
               thickness: 1,
               color: Colors.grey,
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: EdgeInsets.symmetric(horizontal: 10.sp),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.all(4.0),
+                        padding: EdgeInsets.all(4.0.sp),
                         child: Icon(
                           Icons.assignment_outlined,
                           color: Colors.grey,
@@ -102,7 +103,7 @@ class _buildOrderCardState extends State<buildOrderCard> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'طلب #: ',
+                            '${t.order} #: ',
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
@@ -113,7 +114,7 @@ class _buildOrderCardState extends State<buildOrderCard> {
                             constraints: BoxConstraints(maxWidth: 210.w),
                             child: Text(
                               widget.orderNumber,
-                              style: TextStyle(fontSize: 14),
+                              style: TextStyle(fontSize: 14.sp),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -124,14 +125,14 @@ class _buildOrderCardState extends State<buildOrderCard> {
                   ),
                   widget.isdone
                       ? Text(
-                          'تم توصيل ',
+                          t.done,
                           style: TextStyle(color: Colors.amber),
                         )
                       : Text('')
                 ],
               ),
             ),
-            SizedBox(height: 8),
+            SizedBox(height: 8.sp),
             widget.isdone
                 ? SizedBox()
                 : Row(
@@ -141,13 +142,13 @@ class _buildOrderCardState extends State<buildOrderCard> {
                           decoration: BoxDecoration(
                               color: Colors.blue,
                               borderRadius: BorderRadiusDirectional.only(
-                                bottomStart: Radius.circular(12),
+                                bottomStart: Radius.circular(12.sp),
                               )),
                           height: 50.h,
                           child: Align(
                               alignment: Alignment.center,
                               child: Text(
-                                'إستخدم الخريطة',
+                                t.usingTheMap,
                                 style: TextStyle(color: ColorsApp.white),
                               )),
                         ),
@@ -157,13 +158,13 @@ class _buildOrderCardState extends State<buildOrderCard> {
                           decoration: BoxDecoration(
                               color: Colors.green,
                               borderRadius: BorderRadiusDirectional.only(
-                                bottomEnd: Radius.circular(12),
+                                bottomEnd: Radius.circular(12.sp),
                               )),
                           height: 50.h,
                           child: Align(
                             alignment: Alignment.center,
                             child: Text(
-                              'إبدأ',
+                              t.Start,
                               style: TextStyle(color: ColorsApp.white),
                             ),
                           ),

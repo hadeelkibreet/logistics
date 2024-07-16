@@ -12,7 +12,8 @@
   "InService": "in service",
   "InBreak" : "in break",
   "OutOfService":"out of Service",
-  "order": "Orders",
+  "orders": "Orders",
+  "order": "order",
   "CompletedOrder": "Completed Orders",
   "update": "Update",
   "MyProfile": "My profile",
@@ -35,5 +36,16 @@
   "no": "no",
   "yes": "yes",
   "AreYouSureToChangeThePassword": "Are you sure to change the password?",
-  "DoYouReallyWantToLogOut": "Do you really want to log out?"
+  "DoYouReallyWantToLogOut": "Do you really want to log out?",
+  "resident": "resident",
+  "LoadingTheShipment": "Loading the shipment",
+  "Start": "start",
+  "usingTheMap":"Using the map",
+  "done": "Done",
+  "delivery": "delivery",
+  "tryy": "try",
+  "notTry": "Not try",
+  "allOrders": "All orders"
+
+
 }

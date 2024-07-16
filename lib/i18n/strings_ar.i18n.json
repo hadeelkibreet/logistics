@@ -12,7 +12,8 @@
   "InService": "في الخدمة",
   "InBreak" : "في استراحة",
   "OutOfService":"خارج الخدمة",
-  "order": "الطلبات",
+  "order": "الطلب",
+  "orders": "الطلبات",
   "CompletedOrder": "أكتمل",
   "update": "تحديث الدفعة",
   "MyProfile": "ملفي",
@@ -35,5 +36,14 @@
   "no": "لا",
   "yes": "نعم",
   "AreYouSureToChangeThePassword": "هل انت متاكد من تغير كلمة المرور؟",
-  "DoYouReallyWantToLogOut": "هل فعلا تريد تغير كلمة المرور؟"
+  "DoYouReallyWantToLogOut": "هل فعلا تريد تغير كلمة المرور؟",
+  "resident": "مقيم",
+  "LoadingTheShipment": "تحميل الشحنة",
+  "Start": "ابدأ",
+  "usingTheMap":"إستخدم الخريطة",
+  "done": "تم التوصيل",
+  "delivery": "توصيل",
+  "tryy": "حاول",
+  "notTry": "غير محاول",
+  "allOrders": "جميع الطلبات"
 }

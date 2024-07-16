@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/drawar/driver_drawar.dart';
+import 'package:logistics/i18n/strings.g.dart';
 import 'package:logistics/orders/widget/card_orders.dart';
 
 class ActiveOrders extends ConsumerStatefulWidget {
@@ -15,7 +17,7 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
   var getResult = 'QR Code Result';
   final ScrollController controller = ScrollController();
   String _selectedOption = 'جميع الطلبات';
-  final bool isdone = true;
+  late bool isdone = false;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,7 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
       backgroundColor: ColorsApp.backgroundColor,
       drawer: DriverDrawar(),
       appBar: AppBar(
-        title: Text('الطلبات'),
+        title: Text(t.orders),
         actions: [
           IconButton(
             icon: Icon(Icons.search),
@@ -37,6 +39,7 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
             icon: Icon(Icons.qr_code_scanner),
             onPressed: () {
               scanQRCode();
+              //  QRCode();
             },
           ),
           IconButton(
@@ -52,18 +55,18 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
           Container(
             width: double.infinity,
             color: Colors.green,
-            padding: EdgeInsets.all(5.0),
+            padding: EdgeInsets.all(5.0.sp),
             child: Text(
-              'في الخدمة',
+              t.InService,
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white, fontSize: 18),
+              style: TextStyle(color: Colors.white, fontSize: 18.sp),
             ),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Text(
-                ' الطلبات  ',
+                t.order,
               ),
               Text(
                 '${1}   ',
@@ -95,8 +98,8 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
   }
 
   void _showTopModalSheet(BuildContext context) {
-    final double leftshowTopModalSheet = isdone ? 0 : 150;
-    final double rightshowTopModalSheet = isdone ? 150 : 0;
+    final double leftshowTopModalSheet = isdone ? 0 : 150.sp;
+    final double rightshowTopModalSheet = isdone ? 150.sp : 0;
 
     showDialog(
       context: context,
@@ -104,21 +107,21 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
         return Stack(
           children: [
             Positioned(
-              top: 3,
+              top: 3.sp,
               left: leftshowTopModalSheet,
               right: rightshowTopModalSheet,
               child: Container(
-                width: 10,
+                width: 10.w,
                 child: Material(
                   borderRadius: BorderRadius.circular(8.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
-                      _buildRadioOption('جميع الطلبات'),
-                      _buildRadioOption('توصيل'),
-                      _buildRadioOption('تحميل الشحنات'),
-                      _buildRadioOption('حاول'),
-                      _buildRadioOption('غير محاول'),
+                      _buildRadioOption(t.allOrders),
+                      _buildRadioOption(t.delivery),
+                      _buildRadioOption(t.LoadingTheShipment),
+                      _buildRadioOption(t.tryy),
+                      _buildRadioOption(t.notTry),
                     ],
                   ),
                 ),
@@ -138,6 +141,7 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
       onChanged: (value) {
         setState(() {
           _selectedOption = value!;
+          value == t.delivery ? isdone = true : isdone = false;
         });
         Navigator.pop(context);
       },

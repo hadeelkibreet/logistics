@@ -40,6 +40,8 @@ dependencies:
   flutter_riverpod: ^2.5.1
   firebase_messaging: ^14.7.21
   flutter_barcode_scanner: ^2.0.0
+  #qr_bar_code_scanner_dialog: ^0.0.5
+ # qr_code_scanner: ^1.0.1
 dev_dependencies:
   flutter_screenutil: ^5.0.0
 
