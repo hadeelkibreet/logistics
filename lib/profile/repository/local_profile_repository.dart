@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:logistics/home/profile/entity/profile_entity.dart';
-import 'package:logistics/home/profile/repository/profile_repository.dart';
+import 'package:logistics/profile/entity/profile_entity.dart';
+import 'package:logistics/profile/repository/profile_repository.dart';
 
 final localProfileRepository = StateProvider((ref) => LocalProfileRepository());
 
@@ -13,6 +13,8 @@ class LocalProfileRepository implements ProfileRepository {
       password: "12345",
       gender: "Female",
       birthDate: "01/01/1997",
+      email: 'amail@gmail.com',
+      country: 'Saudi Arabia',
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:logistics/home/driver_status/driverStatusScreen.dart';
+import 'package:logistics/driver_status/driverStatusScreen.dart';
 
 import 'i18n/strings.g.dart'
     show AppLocaleUtils, LocaleSettings, TranslationProvider;

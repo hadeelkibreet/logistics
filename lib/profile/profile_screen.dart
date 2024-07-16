@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/constants/colors.dart';
-import 'package:logistics/home/profile/entity/profile_entity.dart';
-import 'package:logistics/home/profile/providers/profile_provider.dart';
 import 'package:logistics/i18n/strings.g.dart';
+import 'package:logistics/profile/entity/profile_entity.dart';
+import 'package:logistics/profile/providers/profile_provider.dart';
 
-import '../driver_status/widget/driver_drawar.dart';
+import '../drawar/driver_drawar.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   @override
@@ -15,13 +15,13 @@ class ProfileScreen extends ConsumerStatefulWidget {
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final GlobalKey _formkey = GlobalKey<FormState>();
-  final TextEditingController _passwordController =
-      TextEditingController(text: 'pass1234');
+
   bool _passwordVisible = false;
   @override
   Widget build(BuildContext context) {
     final profileData = ref.watch(profileProvider);
-
+    final TextEditingController _passwordController =
+        TextEditingController(text: profileData.value!.password ?? "");
     return Scaffold(
         backgroundColor: ColorsApp.backgroundColor,
         drawer: DriverDrawar(),
@@ -102,8 +102,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         buildInfoRow(
                             Icons.cake, profile.birthDate, t.dateOfBirth),
                         buildInfoRow(Icons.person, profile.gender, t.gender),
-                        buildInfoRow(Icons.public, 'Saudi Arabia', t.Country),
-                        buildInfoRow(Icons.email, 'ahmad@gmail.com', t.email),
+                        buildInfoRow(Icons.public, profile.country, t.Country),
+                        buildInfoRow(Icons.email, profile.email, t.email),
                         Stack(
                           children: [
                             TextFormField(

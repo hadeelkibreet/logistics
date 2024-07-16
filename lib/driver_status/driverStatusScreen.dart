@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/constants/colors.dart';
-import 'package:logistics/home/driver_status/widget/driver_drawar.dart';
+import 'package:logistics/drawar/driver_drawar.dart';
 import 'package:logistics/i18n/strings.g.dart';
 
 class DriverStatusScreen extends StatefulWidget {

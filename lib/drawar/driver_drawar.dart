@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:logistics/Settings_screen/SettingsScreen.dart';
 import 'package:logistics/auth/login.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/constants/images.dart';
-import 'package:logistics/home/Settings_screen/SettingsScreen.dart';
-import 'package:logistics/home/driver_status/driverStatusScreen.dart';
-import 'package:logistics/home/driver_status/widget/list_tile_drawar.dart';
-import 'package:logistics/home/profile/profile_screen.dart';
+import 'package:logistics/drawar/list_tile_drawar.dart';
+import 'package:logistics/driver_status/driverStatusScreen.dart';
 import 'package:logistics/i18n/strings.g.dart';
+import 'package:logistics/orders/active_orders/active_orders.dart';
+import 'package:logistics/orders/orders_done/orders_done.dart';
+import 'package:logistics/profile/profile_screen.dart';
 
 class DriverDrawar extends StatefulWidget {
   const DriverDrawar({Key? key}) : super(key: key);
@@ -67,14 +69,20 @@ class _DriverDrawarState extends State<DriverDrawar> {
             ListTileDrawar(
               icon: Icon(Icons.assignment_outlined),
               text: t.order,
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ActiveOrders()));
+              },
             ),
             ListTileDrawar(
               icon: Icon(
                 Icons.assignment_turned_in_outlined,
               ),
               text: t.CompletedOrder,
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => OrdersDone()));
+              },
             ),
             ListTileDrawar(
               icon: Icon(

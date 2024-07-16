@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/i18n/strings.g.dart';
 
-import '../driver_status/widget/driver_drawar.dart';
+import '../drawar/driver_drawar.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
