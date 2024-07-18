@@ -54,9 +54,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           child: Column(
                             children: [
                               CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpd4mJRIUwqgE8D_Z2znANEbtiz4GhI4M8NQ&s',
-                                ),
+                                backgroundImage:
+                                    AssetImage(profile.imageProfile),
                                 radius: 50.sp,
                               ),
                               SizedBox(height: 10),

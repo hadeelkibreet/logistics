@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logistics/constants/images.dart';
 import 'package:logistics/profile/entity/profile_entity.dart';
 import 'package:logistics/profile/repository/profile_repository.dart';
 
@@ -15,6 +16,7 @@ class LocalProfileRepository implements ProfileRepository {
       birthDate: "01/01/1997",
       email: 'amail@gmail.com',
       country: 'Saudi Arabia',
+      imageProfile: ImageAssets.profile,
     );
   }
 }

@@ -6,6 +6,7 @@ class ProfileEntity {
   final String birthDate;
   final String email;
   final String country;
+  final String imageProfile;
   ProfileEntity({
     required this.name,
     required this.phone,
@@ -14,5 +15,6 @@ class ProfileEntity {
     required this.birthDate,
     required this.email,
     required this.country,
+    required this.imageProfile,
   });
 }
