@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:logistics/auth/providers/login_provider.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/constants/images.dart';
 
@@ -19,17 +21,18 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
   final TextEditingController _passwordController = TextEditingController();
   bool _passwordVisible = false;
 
-  @override
-  void dispose() {
-    _phoneController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _phoneController.dispose();
+  //   _passwordController.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
     final t = Translations.of(context);
     final AppLocale activeLocale = LocaleSettings.currentLocale;
+    final loginApi = ref.watch(LoginProvider);
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -67,12 +70,15 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                       children: [
                         TextFormField(
                           controller: _phoneController,
+                          keyboardType: TextInputType.phone,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
                           validator: (value) {
-                            if (value!.isEmpty || !value.contains("05")) {
+                            if (value!.isEmpty) {
                               return t.EnterAphoneNumber;
                             }
-                            // Add additional validation logic here if needed
-                            return null; // Return null if the value is valid
+                            return null;
                           },
                           //textAlign: TextAlign.right,
                           decoration: InputDecoration(
@@ -109,6 +115,7 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                         // Add additional validation logic here if needed
                         return null; // Return null if the value is valid
                       },
+
                       // textAlign: TextAlign.right,
                       obscureText: !_passwordVisible,
                       decoration: InputDecoration(
@@ -149,7 +156,16 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                     width: width * 0.5,
                     height: height * 0.07,
                     child: ElevatedButton(
-                        onPressed: () async {},
+                        onPressed: () {
+                          _passwordController.text.toString() ==
+                                  loginApi.value!.passWord.toString()
+                              ? print('yeessss1')
+                              : print('noooooo1');
+                          _phoneController.text.toString() ==
+                                  loginApi.value!.phoneNumber.toString()
+                              ? print('yeessss')
+                              : print(loginApi.value!.phoneNumber.toString());
+                        },
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
                               ColorsApp.yellow),
