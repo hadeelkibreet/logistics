@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/drawar/driver_drawar.dart';
 import 'package:logistics/i18n/strings.g.dart';
+import 'package:logistics/orders/providers/orders_provider.dart';
 import 'package:logistics/orders/widget/card_orders.dart';
 
 class ActiveOrders extends ConsumerStatefulWidget {
@@ -21,6 +22,7 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
 
   @override
   Widget build(BuildContext context) {
+    final OrderData = ref.watch(OrdersProvider.notifier);
     return Scaffold(
       backgroundColor: ColorsApp.backgroundColor,
       drawer: DriverDrawar(),
@@ -80,14 +82,12 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
               itemCount: 3,
               itemBuilder: (context, index) {
                 return buildOrderCard(
-                  name:
-                      'hhhhhhhhhhaddddddddddddddddddddeelkkkkkiiiibreeeeeeeeeeeeeeeeeeeetttttttttttttttttt',
+                  name: OrderData.state.name,
                   numberOfLength: 2,
-                  orderNumber:
-                      '99997889999999999999999999999999999999999999999999999',
-                  lat: 9999999999,
-                  long: 9999999,
-                  isdone: isdone,
+                  orderNumber: OrderData.state.orderNumber,
+                  lat: OrderData.state.Orderlat,
+                  long: OrderData.state.Orderlong,
+                  statusCard: OrderData.state.statusOrder,
                 );
               },
             ),
@@ -117,11 +117,11 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
-                      _buildRadioOption(t.allOrders),
-                      _buildRadioOption(t.delivery),
-                      _buildRadioOption(t.LoadingTheShipment),
-                      _buildRadioOption(t.tryy),
-                      _buildRadioOption(t.notTry),
+                      _buildRadioOption(t.allOrders, 0),
+                      _buildRadioOption(t.delivery, 1),
+                      _buildRadioOption(t.LoadingTheShipment, 2),
+                      _buildRadioOption(t.tryy, 3),
+                      _buildRadioOption(t.notTry, 4),
                     ],
                   ),
                 ),
@@ -133,7 +133,9 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
     );
   }
 
-  Widget _buildRadioOption(String title) {
+  Widget _buildRadioOption(String title, int numberOfStatus) {
+    final OrderDataR = ref.watch(OrdersProvider.notifier);
+
     return RadioListTile<String>(
       title: Text(title),
       value: title,
@@ -141,7 +143,7 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
       onChanged: (value) {
         setState(() {
           _selectedOption = value!;
-          value == t.delivery ? isdone = true : isdone = false;
+          OrderDataR.state.statusOrder = numberOfStatus;
         });
         Navigator.pop(context);
       },

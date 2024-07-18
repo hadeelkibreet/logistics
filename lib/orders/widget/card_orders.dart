@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/i18n/strings.g.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class buildOrderCard extends StatefulWidget {
   final String name;
@@ -9,7 +10,7 @@ class buildOrderCard extends StatefulWidget {
   final String orderNumber;
   final double lat;
   final double long;
-  final bool isdone;
+  final int statusCard;
   buildOrderCard(
       {Key? key,
       required this.name,
@@ -17,7 +18,7 @@ class buildOrderCard extends StatefulWidget {
       required this.orderNumber,
       required this.lat,
       required this.long,
-      required this.isdone})
+      required this.statusCard})
       : super(key: key);
 
   @override
@@ -60,9 +61,11 @@ class _buildOrderCardState extends State<buildOrderCard> {
                             style: TextStyle(color: Colors.grey[300]),
                           ),
                           Text(
-                            widget.isdone ? t.delivery : t.LoadingTheShipment,
+                            widget.statusCard == 1
+                                ? t.delivery
+                                : t.LoadingTheShipment,
                             style: TextStyle(
-                                color: widget.isdone
+                                color: widget.statusCard == 1
                                     ? Colors.amber
                                     : Colors.green),
                           ),
@@ -123,7 +126,7 @@ class _buildOrderCardState extends State<buildOrderCard> {
                       ),
                     ],
                   ),
-                  widget.isdone
+                  widget.statusCard == 1
                       ? Text(
                           t.done,
                           style: TextStyle(color: Colors.amber),
@@ -133,24 +136,29 @@ class _buildOrderCardState extends State<buildOrderCard> {
               ),
             ),
             SizedBox(height: 8.sp),
-            widget.isdone
+            widget.statusCard == 1
                 ? SizedBox()
                 : Row(
                     children: [
                       Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius: BorderRadiusDirectional.only(
-                                bottomStart: Radius.circular(12.sp),
-                              )),
-                          height: 50.h,
-                          child: Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                t.usingTheMap,
-                                style: TextStyle(color: ColorsApp.white),
-                              )),
+                        child: GestureDetector(
+                          onTap: () {
+                            _launchMapsUrl();
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.blue,
+                                borderRadius: BorderRadiusDirectional.only(
+                                  bottomStart: Radius.circular(12.sp),
+                                )),
+                            height: 50.h,
+                            child: Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  t.usingTheMap,
+                                  style: TextStyle(color: ColorsApp.white),
+                                )),
+                          ),
                         ),
                       ),
                       Expanded(
@@ -176,5 +184,16 @@ class _buildOrderCardState extends State<buildOrderCard> {
         ),
       ),
     );
+  }
+
+  Future<void> _launchMapsUrl() async {
+    final url =
+        'https://www.google.com/maps/search/?api=1&query=${widget.lat},${widget.long}';
+
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }
