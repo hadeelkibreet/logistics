@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/drawar/driver_drawar.dart';
+import 'package:logistics/driver_status/providers/drive_status_provider.dart';
 import 'package:logistics/i18n/strings.g.dart';
 
-class DriverStatusScreen extends StatefulWidget {
+class DriverStatusScreen extends ConsumerStatefulWidget {
+  const DriverStatusScreen({Key? key}) : super(key: key);
+
   @override
   _DriverStatusScreenState createState() => _DriverStatusScreenState();
 }
 
-class _DriverStatusScreenState extends State<DriverStatusScreen> {
+class _DriverStatusScreenState extends ConsumerState<DriverStatusScreen> {
   bool isServes = false;
   bool inBrack = false;
   bool inOut = false;
@@ -20,6 +24,7 @@ class _DriverStatusScreenState extends State<DriverStatusScreen> {
   Widget build(BuildContext context) {
     final t = Translations.of(context);
     final AppLocale activeLocale = LocaleSettings.currentLocale;
+    final DriverStatus = ref.watch(DriverStatusProvider);
     return Scaffold(
       backgroundColor: ColorsApp.backgroundColor,
       drawer: DriverDrawar(),
@@ -31,10 +36,22 @@ class _DriverStatusScreenState extends State<DriverStatusScreen> {
         children: [
           Container(
             width: double.infinity,
-            color: Colors.red,
+            color: DriverStatus.status == 1
+                ? Colors.green
+                : DriverStatus.status == 2
+                    ? Colors.amber
+                    : DriverStatus.status == 3
+                        ? Colors.red
+                        : Colors.grey,
             padding: EdgeInsets.all(10.0.sp),
             child: Text(
-              t.OutOfService,
+              DriverStatus.status == 1
+                  ? t.InService
+                  : DriverStatus.status == 2
+                      ? t.InBreak
+                      : DriverStatus.status == 3
+                          ? t.OutOfService
+                          : '',
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white, fontSize: 18.sp),
             ),
