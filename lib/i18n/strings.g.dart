@@ -4,9 +4,9 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 2
-/// Strings: 94 (47 per locale)
+/// Strings: 98 (49 per locale)
 ///
-/// Built on 2024-07-16 at 22:21 UTC
+/// Built on 2024-07-19 at 21:28 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -195,6 +195,8 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
 	String get tryy => 'try';
 	String get notTry => 'Not try';
 	String get allOrders => 'All orders';
+	String get Reloading => 'Reloading';
+	String get Search => 'Search';
 }
 
 // Path: <root>
@@ -268,6 +270,8 @@ class _StringsAr implements Translations {
 	@override String get tryy => 'حاول';
 	@override String get notTry => 'غير محاول';
 	@override String get allOrders => 'جميع الطلبات';
+	@override String get Reloading => 'إعادة التحميل';
+	@override String get Search => 'بحث';
 }
 
 /// Flat map(s) containing all translations.
@@ -323,6 +327,8 @@ extension on Translations {
 			case 'tryy': return 'try';
 			case 'notTry': return 'Not try';
 			case 'allOrders': return 'All orders';
+			case 'Reloading': return 'Reloading';
+			case 'Search': return 'Search';
 			default: return null;
 		}
 	}
@@ -378,6 +384,8 @@ extension on _StringsAr {
 			case 'tryy': return 'حاول';
 			case 'notTry': return 'غير محاول';
 			case 'allOrders': return 'جميع الطلبات';
+			case 'Reloading': return 'إعادة التحميل';
+			case 'Search': return 'بحث';
 			default: return null;
 		}
 	}

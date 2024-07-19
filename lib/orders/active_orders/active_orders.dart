@@ -4,6 +4,7 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/constants/colors.dart';
+import 'package:logistics/constants/images.dart';
 import 'package:logistics/drawar/driver_drawar.dart';
 import 'package:logistics/i18n/strings.g.dart';
 import 'package:logistics/orders/enum/order_status_enum.dart';
@@ -20,6 +21,8 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
   final ScrollController controller = ScrollController();
   String _selectedOption = 'جميع الطلبات';
   late bool isdone = false;
+  bool isSearch = false;
+  final TextEditingController _SearchController = TextEditingController();
 
   @override
   void initState() {
@@ -32,9 +35,10 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
   Widget build(BuildContext context) {
     final orderListProvider = ref.watch(ordersProvider);
 
-    // final OrderData = ref.watch(OrdersProvider.notifier);
     return Scaffold(
-      backgroundColor: ColorsApp.backgroundColor,
+      resizeToAvoidBottomInset: false,
+      backgroundColor:
+          orderListProvider.isEmpty ? Colors.white : ColorsApp.backgroundColor,
       drawer: DriverDrawar(),
       appBar: myAppBar(context),
       body: Column(
@@ -49,6 +53,37 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
               style: TextStyle(color: Colors.white, fontSize: 18.sp),
             ),
           ),
+          isSearch == true
+              ? Container(
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                  child: TextFormField(
+                    controller: _SearchController,
+                    onChanged: (value) {
+                      setState(() {
+                        ref.read(orderSearchProvider.notifier).state = value;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText: "${t.Search}",
+                      hintStyle: TextStyle(color: Colors.grey),
+                      filled: true,
+                      fillColor: ColorsApp.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0.sp),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 15.0.sp, horizontal: 20.0.sp),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: ColorsApp.primaryColor,
+                      ),
+                    ),
+                  ),
+                )
+              : SizedBox(
+                  height: 0,
+                ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -56,13 +91,49 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
                 t.order,
               ),
               Text(
-                '${1}   ',
+                ' ${orderListProvider.length} ',
               ),
               Icon(Icons.arrow_drop_down_outlined),
             ],
           ),
           orderListProvider.isEmpty
-              ? Text('empty')
+              ? Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 50.0.sp),
+                      child: Image.asset(
+                        ImageAssets.nullPackage,
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                    Container(
+                      width: 160.w,
+                      child: ElevatedButton(
+                          onPressed: () {
+                            initState();
+                          },
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                ColorsApp.backgroundColor),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.refresh,
+                                color: Colors.black,
+                              ),
+                              Text(
+                                '${t.Reloading}',
+                                style: TextStyle(
+                                  color: ColorsApp.black,
+                                  fontSize: 16.sp,
+                                ),
+                              ),
+                            ],
+                          )),
+                    ),
+                  ],
+                )
               : Expanded(
                   child: ListView.builder(
                     controller: controller,
@@ -90,17 +161,22 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
       actions: [
         IconButton(
           icon: Icon(Icons.search),
-          onPressed: () {},
+          onPressed: () {
+            setState(() {
+              isSearch = !isSearch;
+            });
+          },
         ),
         IconButton(
           icon: Icon(Icons.autorenew_rounded),
-          onPressed: () {},
+          onPressed: () {
+            initState();
+          },
         ),
         IconButton(
           icon: Icon(Icons.qr_code_scanner),
           onPressed: () {
             scanQRCode();
-            //  QRCode();
           },
         ),
         IconButton(
@@ -173,6 +249,9 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
 
       setState(() {
         getResult = qrCode;
+        if (getResult.toString() != '-1') {
+          ref.read(orderSearchProvider.notifier).state = getResult.toString();
+        }
       });
 
       print("QRCode_Result:--");

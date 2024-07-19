@@ -45,7 +45,9 @@
   "delivery": "delivery",
   "tryy": "try",
   "notTry": "Not try",
-  "allOrders": "All orders"
+  "allOrders": "All orders",
+  "Reloading": "Reloading",
+  "Search": "Search"
 
 
 }

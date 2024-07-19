@@ -14,7 +14,7 @@ class LocalOrdersRepository implements OrdersRepository {
     //random.nextInt(4);
 
     return List.generate(
-      20,
+      5,
       (index) {
         return OrdersEntity(
           name: 'Order #${index}',
@@ -24,6 +24,12 @@ class LocalOrdersRepository implements OrdersRepository {
           statusOrder: OrderStatus.values[random.nextInt(4) + 1],
         );
       },
-    );
+    )..add(OrdersEntity(
+        name: 'hadeel',
+        orderNumber: '6281072142971',
+        Orderlat: 33.509883,
+        Orderlong: 36.305231,
+        statusOrder: OrderStatus.values[random.nextInt(4) + 1],
+      ));
   }
 }
