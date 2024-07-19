@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/drawar/driver_drawar.dart';
 import 'package:logistics/i18n/strings.g.dart';
+import 'package:logistics/orders/enum/order_status_enum.dart';
 import 'package:logistics/orders/providers/orders_provider.dart';
 import 'package:logistics/orders/widget/card_orders.dart';
 
@@ -21,37 +22,21 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
   late bool isdone = false;
 
   @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      ref.read(ordersProvider.notifier).getOrders();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final OrderData = ref.watch(OrdersProvider.notifier);
+    final orderListProvider = ref.watch(ordersProvider);
+
+    // final OrderData = ref.watch(OrdersProvider.notifier);
     return Scaffold(
       backgroundColor: ColorsApp.backgroundColor,
       drawer: DriverDrawar(),
-      appBar: AppBar(
-        title: Text(t.orders),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: Icon(Icons.autorenew_rounded),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: Icon(Icons.qr_code_scanner),
-            onPressed: () {
-              scanQRCode();
-              //  QRCode();
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.more_vert),
-            onPressed: () {
-              _showTopModalSheet(context);
-            },
-          ),
-        ],
-      ),
+      appBar: myAppBar(context),
       body: Column(
         children: [
           Container(
@@ -76,24 +61,55 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
               Icon(Icons.arrow_drop_down_outlined),
             ],
           ),
-          Expanded(
-            child: ListView.builder(
-              controller: controller,
-              itemCount: 3,
-              itemBuilder: (context, index) {
-                return buildOrderCard(
-                  name: OrderData.state.name,
-                  numberOfLength: 2,
-                  orderNumber: OrderData.state.orderNumber,
-                  lat: OrderData.state.Orderlat,
-                  long: OrderData.state.Orderlong,
-                  statusCard: OrderData.state.statusOrder,
-                );
-              },
-            ),
-          ),
+          orderListProvider.isEmpty
+              ? Text('empty')
+              : Expanded(
+                  child: ListView.builder(
+                    controller: controller,
+                    itemCount: orderListProvider.length,
+                    itemBuilder: (context, index) {
+                      return buildOrderCard(
+                        name: orderListProvider[index].name,
+                        numberOfLength: 2,
+                        orderNumber: orderListProvider[index].orderNumber,
+                        lat: orderListProvider[index].Orderlat,
+                        long: orderListProvider[index].Orderlong,
+                        statusCard: orderListProvider[index].statusOrder,
+                      );
+                    },
+                  ),
+                ),
         ],
       ),
+    );
+  }
+
+  AppBar myAppBar(BuildContext context) {
+    return AppBar(
+      title: Text(t.orders),
+      actions: [
+        IconButton(
+          icon: Icon(Icons.search),
+          onPressed: () {},
+        ),
+        IconButton(
+          icon: Icon(Icons.autorenew_rounded),
+          onPressed: () {},
+        ),
+        IconButton(
+          icon: Icon(Icons.qr_code_scanner),
+          onPressed: () {
+            scanQRCode();
+            //  QRCode();
+          },
+        ),
+        IconButton(
+          icon: Icon(Icons.more_vert),
+          onPressed: () {
+            _showTopModalSheet(context);
+          },
+        ),
+      ],
     );
   }
 
@@ -116,13 +132,9 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
                   borderRadius: BorderRadius.circular(8.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      _buildRadioOption(t.allOrders, 0),
-                      _buildRadioOption(t.delivery, 1),
-                      _buildRadioOption(t.LoadingTheShipment, 2),
-                      _buildRadioOption(t.tryy, 3),
-                      _buildRadioOption(t.notTry, 4),
-                    ],
+                    children: OrderStatus.values
+                        .map((e) => _buildRadioOption(e.title, e.index))
+                        .toList(),
                   ),
                 ),
               ),
@@ -134,16 +146,18 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
   }
 
   Widget _buildRadioOption(String title, int numberOfStatus) {
-    final OrderDataR = ref.watch(OrdersProvider.notifier);
+    //final OrderDataR = ref.watch(OrdersProvider.notifier);
 
     return RadioListTile<String>(
       title: Text(title),
       value: title,
-      groupValue: _selectedOption,
+      groupValue: ref.watch(orderFilterProvider.notifier).state.title,
       onChanged: (value) {
         setState(() {
           _selectedOption = value!;
-          OrderDataR.state.statusOrder = numberOfStatus;
+          ref.read(orderFilterProvider.notifier).state = OrderStatus.values
+              .firstWhere((element) => element.title == value);
+          //OrderDataR.state[index].statusOrder = numberOfStatus;
         });
         Navigator.pop(context);
       },

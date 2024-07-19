@@ -1,9 +1,11 @@
+import 'package:logistics/orders/enum/order_status_enum.dart';
+
 class OrdersEntity {
   final String name;
   final String orderNumber;
   final double Orderlat;
   final double Orderlong;
-  int statusOrder;
+  final OrderStatus statusOrder;
 
   OrdersEntity(
       {required this.name,

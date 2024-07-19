@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/i18n/strings.g.dart';
+import 'package:logistics/orders/enum/order_status_enum.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class buildOrderCard extends StatefulWidget {
@@ -10,7 +11,7 @@ class buildOrderCard extends StatefulWidget {
   final String orderNumber;
   final double lat;
   final double long;
-  final int statusCard;
+  final OrderStatus statusCard;
   buildOrderCard(
       {Key? key,
       required this.name,
@@ -61,13 +62,8 @@ class _buildOrderCardState extends State<buildOrderCard> {
                             style: TextStyle(color: Colors.grey[300]),
                           ),
                           Text(
-                            widget.statusCard == 1
-                                ? t.delivery
-                                : t.LoadingTheShipment,
-                            style: TextStyle(
-                                color: widget.statusCard == 1
-                                    ? Colors.amber
-                                    : Colors.green),
+                            widget.statusCard.title,
+                            style: TextStyle(color: widget.statusCard.color),
                           ),
                         ],
                       ),
@@ -136,50 +132,49 @@ class _buildOrderCardState extends State<buildOrderCard> {
               ),
             ),
             SizedBox(height: 8.sp),
-            widget.statusCard == 1
-                ? SizedBox()
-                : Row(
-                    children: [
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            _launchMapsUrl();
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius: BorderRadiusDirectional.only(
-                                  bottomStart: Radius.circular(12.sp),
-                                )),
-                            height: 50.h,
-                            child: Align(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  t.usingTheMap,
-                                  style: TextStyle(color: ColorsApp.white),
-                                )),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.green,
-                              borderRadius: BorderRadiusDirectional.only(
-                                bottomEnd: Radius.circular(12.sp),
-                              )),
-                          height: 50.h,
-                          child: Align(
+            if (widget.statusCard != OrderStatus.delivered)
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        _launchMapsUrl();
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadiusDirectional.only(
+                              bottomStart: Radius.circular(12.sp),
+                            )),
+                        height: 50.h,
+                        child: Align(
                             alignment: Alignment.center,
                             child: Text(
-                              t.Start,
+                              t.usingTheMap,
                               style: TextStyle(color: ColorsApp.white),
-                            ),
-                          ),
+                            )),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadiusDirectional.only(
+                            bottomEnd: Radius.circular(12.sp),
+                          )),
+                      height: 50.h,
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          t.Start,
+                          style: TextStyle(color: ColorsApp.white),
                         ),
                       ),
-                    ],
+                    ),
                   ),
+                ],
+              ),
           ],
         ),
       ),

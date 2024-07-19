@@ -18,7 +18,7 @@ class _OrdersDonState extends ConsumerState<OrdersDon> {
 
   @override
   Widget build(BuildContext context) {
-    final OrderData = ref.watch(OrdersProvider.notifier);
+    final orderListProvider = ref.watch(ordersProvider.notifier).state;
     return Scaffold(
       backgroundColor: ColorsApp.backgroundColor,
       drawer: DriverDrawar(),
@@ -30,15 +30,15 @@ class _OrdersDonState extends ConsumerState<OrdersDon> {
           Expanded(
             child: ListView.builder(
               controller: controller,
-              itemCount: 3,
+              itemCount: orderListProvider.length,
               itemBuilder: (context, index) {
                 return buildOrderCard(
-                  name: OrderData.state.name,
+                  name: orderListProvider[index].name,
                   numberOfLength: 2,
-                  orderNumber: OrderData.state.orderNumber,
-                  lat: OrderData.state.Orderlat,
-                  long: OrderData.state.Orderlong,
-                  statusCard: 1,
+                  orderNumber: orderListProvider[index].orderNumber,
+                  lat: orderListProvider[index].Orderlat,
+                  long: orderListProvider[index].Orderlong,
+                  statusCard: orderListProvider[index].statusOrder,
                 );
               },
             ),

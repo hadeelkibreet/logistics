@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/Settings_screen/SettingsScreen.dart';
 import 'package:logistics/auth/login.dart';
@@ -10,19 +11,21 @@ import 'package:logistics/i18n/strings.g.dart';
 import 'package:logistics/orders/active_orders/active_orders.dart';
 import 'package:logistics/orders/orders_done/orders_done.dart';
 import 'package:logistics/profile/profile_screen.dart';
+import 'package:logistics/profile/providers/profile_provider.dart';
 
-class DriverDrawar extends StatefulWidget {
+class DriverDrawar extends ConsumerStatefulWidget {
   const DriverDrawar({Key? key}) : super(key: key);
 
   @override
-  State<DriverDrawar> createState() => _DriverDrawarState();
+  _DriverDrawarState createState() => _DriverDrawarState();
 }
 
-class _DriverDrawarState extends State<DriverDrawar> {
+class _DriverDrawarState extends ConsumerState<DriverDrawar> {
   late String selectedLanguage = 'English';
 
   @override
   Widget build(BuildContext context) {
+    final ProfileProvider = ref.watch(profileProvider);
     return SafeArea(
       child: Drawer(
         child: ListView(
@@ -35,15 +38,14 @@ class _DriverDrawarState extends State<DriverDrawar> {
               child: Column(
                 children: [
                   CircleAvatar(
-                    backgroundImage: NetworkImage(
-                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpd4mJRIUwqgE8D_Z2znANEbtiz4GhI4M8NQ&s',
-                    ),
+                    backgroundImage:
+                        AssetImage(ProfileProvider.value!.imageProfile),
                     radius: 50.sp,
                   ),
                   Padding(
                     padding: EdgeInsets.only(right: 8.0.sp),
                     child: Text(
-                      "name",
+                      ProfileProvider.value!.name,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: ColorsApp.white,
@@ -68,7 +70,7 @@ class _DriverDrawarState extends State<DriverDrawar> {
             ),
             ListTileDrawar(
               icon: Icon(Icons.assignment_outlined),
-              text: t.order,
+              text: t.orders,
               onPressed: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => ActiveOrders()));
@@ -81,7 +83,7 @@ class _DriverDrawarState extends State<DriverDrawar> {
               text: t.CompletedOrder,
               onPressed: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => OrdersDone()));
+                    MaterialPageRoute(builder: (context) => OrdersDon()));
               },
             ),
             ListTileDrawar(
