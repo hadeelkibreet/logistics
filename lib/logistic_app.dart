@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:logistics/orders/detils_order/detilsOrderScreen.dart';
+import 'package:logistics/orders/detils_order/signsur.dart';
 
 import 'i18n/strings.g.dart'
     show AppLocaleUtils, LocaleSettings, TranslationProvider;
@@ -21,7 +21,7 @@ class LogisticsApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
         ),
-        home: DetailsOrderScreen(),
+        home: SignatureScreen(),
       ),
     );
   }
