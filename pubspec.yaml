@@ -41,6 +41,10 @@ dependencies:
   firebase_messaging: ^14.7.21
   flutter_barcode_scanner: ^2.0.0
   url_launcher: ^6.0.6
+  flutter_map: ^4.0.0
+  #pdf: ^3.6.0
+  #flutter_downloader: ^1.11.7
+
 
   #qr_bar_code_scanner_dialog: ^0.0.5
  # qr_code_scanner: ^1.0.1
@@ -74,6 +78,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/images/
+    - assets/images/profile.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

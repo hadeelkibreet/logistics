@@ -10,6 +10,7 @@ import 'package:logistics/driver_status/driverStatusScreen.dart';
 import 'package:logistics/i18n/strings.g.dart';
 import 'package:logistics/orders/active_orders/active_orders.dart';
 import 'package:logistics/orders/orders_done/orders_done.dart';
+import 'package:logistics/orders/providers/orders_provider.dart';
 import 'package:logistics/profile/profile_screen.dart';
 import 'package:logistics/profile/providers/profile_provider.dart';
 
@@ -91,7 +92,11 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
                 Icons.update,
               ),
               text: t.update,
-              onPressed: () {},
+              onPressed: () {
+                WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                  ref.read(ordersProvider.notifier).getOrders();
+                });
+              },
             ),
             Divider(color: ColorsApp.primaryColor),
             ListTileDrawar(
