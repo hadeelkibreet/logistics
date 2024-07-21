@@ -126,9 +126,9 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                     height: 80.h,
                                   ),
                                   Text(
-                                    'رقم الطلب: 9937664235780',
+                                    '${t.orderNumber} 9937664235780',
                                     style: TextStyle(
-                                        fontSize: 25.sp,
+                                        fontSize: 23.sp,
                                         color: ColorsApp.white,
                                         fontWeight: FontWeight.bold),
                                   ),
@@ -139,7 +139,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                       width: double.infinity,
                                       padding: EdgeInsets.all(8.0.sp),
                                       child: Text(
-                                        'تم القبول',
+                                        t.accept,
                                         textAlign: TextAlign.start,
                                         style: TextStyle(
                                             color: Colors.white,
@@ -225,7 +225,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                     child: TextButton(
                       onPressed: () {},
                       child: Text(
-                        'طلب تحديث الموقع',
+                        t.locationUpdateRequest,
                         style:
                             TextStyle(color: ColorsApp.white, fontSize: 18.sp),
                       ),
@@ -241,8 +241,8 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                     child: Column(
                       children: [
                         Text(
-                          'المبلغ المطلوب استلامه',
-                          style: TextStyle(fontSize: 16.sp, color: Colors.grey),
+                          t.theAmountToBeReceived,
+                          style: TextStyle(fontSize: 10.sp, color: Colors.grey),
                         ),
                         SizedBox(height: 3.h),
                         Text(
@@ -264,7 +264,10 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                     },
                     child: Row(
                       children: [
-                        Text('  تفاصيل إضافية '),
+                        Text(
+                          t.additionalDetails,
+                          style: TextStyle(fontSize: 11.sp),
+                        ),
                         Container(
                           width: 228.w,
                           child: Divider(
@@ -285,7 +288,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 25.w),
                             child: Text(
-                              '  معلومات الرحلة ',
+                              t.tripInformation,
                               textAlign: TextAlign.end,
                               style: TextStyle(color: Colors.grey[600]),
                             ),
@@ -303,21 +306,21 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                   _buildRowItem(
                                       context,
                                       'KSA-riyadh, KSA-riyadh, 123, UNKNOWN',
-                                      'test الى',
+                                      '${t.to}test ',
                                       Icon(Icons.phone),
                                       Colors.blue,
                                       '0503792580'),
                                   _buildRowItem(
                                       context,
                                       'KSA-riyadh, 31758, UNKNOWN',
-                                      'test من',
+                                      '${t.from}test',
                                       Icon(Icons.phone),
                                       Colors.green,
                                       '0503792580'),
                                   // Divider(height: 32),
                                   _buildInfoItem(
                                       context,
-                                      'نوع الخدمة',
+                                      t.serviceType,
                                       'Express ',
                                       Icons.local_shipping,
                                       Colors.yellow,
@@ -330,7 +333,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                       )),
                                   _buildInfoItem(
                                       context,
-                                      'تاريخ الإنشاء',
+                                      t.dateCreated,
                                       'Apr ',
                                       Icons.calendar_month_sharp,
                                       Colors.purple,
@@ -343,7 +346,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                       )),
                                   _buildInfoItem(
                                       context,
-                                      'فترة الوقت لحمل الشحنة',
+                                      t.thePeriodOfTimeToCarryTheShipment,
                                       ' ممكن',
                                       Icons.access_time,
                                       Colors.orange,
@@ -363,7 +366,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 30.w),
                             child: Text(
-                              '  معلومات الطرد ',
+                              t.packageInformation,
                               textAlign: TextAlign.end,
                               style: TextStyle(color: Colors.grey[600]),
                             ),
@@ -378,7 +381,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                 children: [
                                   _buildInfoItem(
                                       context,
-                                      'نوع الطرد',
+                                      t.packageType,
                                       'Exdium ',
                                       Icons.assignment,
                                       Colors.yellow,
@@ -391,7 +394,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                       )),
                                   _buildInfoItem(
                                       context,
-                                      'الوصف',
+                                      t.description,
                                       'test ',
                                       Icons.edit,
                                       Colors.green,
@@ -404,7 +407,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                       )),
                                   _buildInfoItem(
                                       context,
-                                      'صورة الطرد',
+                                      t.PackagePhoto,
                                       ' لايوجد',
                                       Icons.image,
                                       Colors.purple,
@@ -425,7 +428,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 30.w),
                             child: Text(
-                              '  إثبات التوصيل ',
+                              t.proofOfDelivery,
                               textAlign: TextAlign.end,
                               style: TextStyle(color: Colors.grey[600]),
                             ),
@@ -440,7 +443,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                 children: [
                                   _buildInfoItem(
                                       context,
-                                      'إسم المرسل إليه / المستلم',
+                                      t.NameOfAddresseerecipient,
                                       'test ',
                                       Icons.person,
                                       Colors.grey,
@@ -453,7 +456,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                       )),
                                   _buildInfoItem(
                                     context,
-                                    'إثبات هوية المستلم',
+                                    t.ProofOfTheRecipientsIdentity,
                                     'test ',
                                     Icons.badge_sharp,
                                     Colors.blueAccent,
@@ -482,7 +485,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                           onPressed: () =>
                                               _pickImage(ImageSource.gallery),
                                           child: Text(
-                                            'Open Gallery',
+                                            t.openGallery,
                                             style: TextStyle(
                                                 color: ColorsApp.black),
                                           ),
@@ -492,7 +495,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                   ),
                                   _buildInfoItem(
                                       context,
-                                      'توقيع المستلم',
+                                      t.TheRecipientsSignature,
                                       ' لايوجد',
                                       Icons.edit,
                                       Colors.red,
@@ -525,7 +528,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                               });
                                             },
                                             child: Text(
-                                              'Clear',
+                                              t.clear,
                                               style: TextStyle(
                                                   color: ColorsApp.black),
                                             ),
@@ -534,7 +537,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                       )),
                                   _buildInfoItem(
                                       context,
-                                      'حالة التوصيل',
+                                      t.ConnectionStatus,
                                       ' ',
                                       Icons.assignment_turned_in_rounded,
                                       Colors.green,
@@ -555,7 +558,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 30.w),
                             child: Text(
-                              '  معلومات الدفع ',
+                              t.paymentInformation,
                               textAlign: TextAlign.end,
                               style: TextStyle(color: Colors.grey[600]),
                             ),
@@ -570,8 +573,8 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                 children: [
                                   _buildInfoItem(
                                       context,
-                                      'نوع الدفع',
-                                      'نقدي ',
+                                      t.PaymentType,
+                                      t.monetary,
                                       Icons.attach_money,
                                       Colors.green,
                                       '',
@@ -583,7 +586,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                       )),
                                   _buildInfoItem(
                                       context,
-                                      'تم الدفع عن طريق',
+                                      t.PaymentWasMadeVia,
                                       'test ',
                                       Icons.person,
                                       Colors.grey,
@@ -596,11 +599,11 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                       )),
                                   _buildInfoItem(
                                       context,
-                                      'تكلفة الخدمة',
+                                      t.ServiceCost,
                                       ' لايوجد',
                                       Icons.money_rounded,
                                       Colors.lightGreen,
-                                      'مدفوع',
+                                      t.paid,
                                       true,
                                       1,
                                       true,
@@ -637,7 +640,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                           child: Align(
                             alignment: Alignment.center,
                             child: Text(
-                              'رفض',
+                              t.cancel,
                               style: TextStyle(color: ColorsApp.white),
                             ),
                           ),
@@ -652,7 +655,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                             child: Align(
                               alignment: Alignment.center,
                               child: Text(
-                                'في مرحلة الشحن',
+                                t.InTheShippingStage,
                                 style: TextStyle(color: ColorsApp.white),
                               ),
                             ),
@@ -680,7 +683,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                 child: Align(
                                   alignment: Alignment.center,
                                   child: Text(
-                                    'طلب موقع التسليم',
+                                    t.RequestADeliveryLocation,
                                     style: TextStyle(
                                         color: Colors.indigo, fontSize: 15.sp),
                                   ),
@@ -806,8 +809,8 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 65.0.w),
                         child: Text(title,
-                            style:
-                                TextStyle(fontSize: 14.sp, color: Colors.grey)),
+                            style: TextStyle(
+                                fontSize: 11.2.sp, color: Colors.grey)),
                       ),
                       SizedBox(width: 8.w),
                     ],
