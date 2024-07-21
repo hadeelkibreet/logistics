@@ -631,6 +631,19 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                   child: Row(
                     children: [
                       Expanded(
+                        child: Container(
+                          height: 50.h,
+                          color: Colors.red,
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'رفض',
+                              style: TextStyle(color: ColorsApp.white),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
                         child: InkWell(
                           onTap: _saveSignature,
                           child: Container(
@@ -642,19 +655,6 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                 'في مرحلة الشحن',
                                 style: TextStyle(color: ColorsApp.white),
                               ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          height: 50.h,
-                          color: Colors.red,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              'رفض',
-                              style: TextStyle(color: ColorsApp.white),
                             ),
                           ),
                         ),
@@ -698,9 +698,8 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                         height: 40.h,
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 20.0.w, vertical: 12.h),
+                    PositionedDirectional(
+                      start: 280,
                       child: Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
@@ -788,7 +787,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
       bool isValue,
       Widget widgetValue) {
     return Padding(
-      padding: EdgeInsets.all(3.0.sp),
+      padding: EdgeInsets.symmetric(horizontal: 3.0.w, vertical: 8.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
