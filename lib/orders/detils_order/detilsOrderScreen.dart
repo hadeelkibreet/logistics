@@ -1,12 +1,19 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-//import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/plugin_api.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/constants/images.dart';
+import 'package:logistics/i18n/strings.g.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:signature/signature.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DetailsOrderScreen extends ConsumerStatefulWidget {
@@ -17,571 +24,753 @@ class DetailsOrderScreen extends ConsumerStatefulWidget {
 }
 
 class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
+  late SignatureController _controllerSignature;
+  File? _image;
+  late bool isShow = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _controllerSignature = SignatureController(
+      penStrokeWidth: 5,
+      penColor: Colors.black,
+      exportBackgroundColor: Colors.white,
+    );
+  }
+
+  @override
+  void dispose() {
+    _controllerSignature.dispose();
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorsApp.backgroundColor,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Container(
-              color: Colors.grey[300],
-              child: Column(
-                children: [
-                  Stack(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              // crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Container(
+                  color: Colors.grey[300],
+                  child: Column(
                     children: [
-                      Container(
-                        height: 300.h,
-                        child: FlutterMap(
-                          options: MapOptions(
-                            center:
-                                LatLng(24.778810, 46.730354), // إحداثيات الموقع
-                            zoom: 14.0.sp,
-                          ),
-                          children: [
-                            TileLayer(
-                              urlTemplate:
-                                  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                              subdomains: ['a', 'b', 'c'],
-                            ),
-                            MarkerLayer(
-                              markers: [
-                                Marker(
-                                  width: 80.0.w,
-                                  height: 80.0.h,
-                                  point: LatLng(
-                                      24.778810, 46.730354), // إحداثيات الموقع
-                                  builder: (ctx) => Icon(
-                                    Icons.location_on,
-                                    color: Colors.red,
-                                    size: 40.sp,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Positioned.fill(
-                        child: Material(
-                          color: Color(0x629D9D9D),
-                          child: InkWell(
-                            onTap: _launchMapsUrl,
-                          ),
-                        ),
-                      ),
-                      Center(
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 60.sp),
-                          child: Column(
-                            children: [
-                              CircleAvatar(
-                                backgroundColor: Colors.red,
-                                child: Text(
-                                  'T',
-                                  style: TextStyle(color: ColorsApp.white),
-                                ),
+                      Stack(
+                        children: [
+                          Container(
+                            height: 300.h,
+                            child: FlutterMap(
+                              options: MapOptions(
+                                center: LatLng(
+                                    24.778810, 46.730354), // إحداثيات الموقع
+                                zoom: 14.0.sp,
                               ),
-                              Text(
-                                'test',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              Text(
-                                'KSA-riyadh, KSA-riyadh, 123, UNKNOWN',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              SizedBox(
-                                height: 80.h,
-                              ),
-                              Text(
-                                'رقم الطلب: 9937664235780',
-                                style: TextStyle(
-                                    fontSize: 25.sp,
-                                    color: ColorsApp.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(top: 28.sp),
-                                child: Container(
-                                  color: Colors.orange,
-                                  width: double.infinity,
-                                  padding: EdgeInsets.all(8.0.sp),
-                                  child: Text(
-                                    'تم القبول',
-                                    textAlign: TextAlign.end,
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 18.sp),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 250.sp),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Row(
                               children: [
-                                Padding(
-                                  padding: EdgeInsets.all(10.0.sp),
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.green,
-                                    child: IconButton(
-                                      icon: Icon(Icons.phone,
-                                          color: ColorsApp.white),
-                                      onPressed: () {
-                                        callNumber('0503792580');
-                                      },
-                                    ),
-                                    maxRadius: 25.sp,
-                                    minRadius: 25.sp,
-                                  ),
+                                TileLayer(
+                                  urlTemplate:
+                                      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                  subdomains: ['a', 'b', 'c'],
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.all(8.0.sp),
-                                  child: InkWell(
-                                    onTap: () => openWhatsApp('0503792580'),
-                                    child: CircleAvatar(
-                                      backgroundColor: Colors.white,
-                                      child: Image.asset(
-                                        ImageAssets.whatsapp,
-                                        height: 25.h,
-                                        width: 25.w,
+                                MarkerLayer(
+                                  markers: [
+                                    Marker(
+                                      width: 80.0.w,
+                                      height: 80.0.h,
+                                      point: LatLng(24.778810,
+                                          46.730354), // إحداثيات الموقع
+                                      builder: (ctx) => Icon(
+                                        Icons.location_on,
+                                        color: Colors.red,
+                                        size: 40.sp,
                                       ),
-                                      maxRadius: 25.sp,
-                                      minRadius: 25.sp,
                                     ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(8.0.sp),
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.white,
-                                    child: IconButton(
-                                      icon: Icon(Icons.cloud_download,
-                                          color: Colors.grey),
-                                      onPressed: () {
-                                        //   downloadAndConvertImageToPDF();
-                                      },
-                                    ),
-                                    maxRadius: 25.sp,
-                                    minRadius: 25.sp,
-                                  ),
+                                  ],
                                 ),
                               ],
                             ),
-                          ],
+                          ),
+                          Positioned.fill(
+                            child: Material(
+                              color: Color(0x629D9D9D),
+                              child: InkWell(
+                                onTap: _launchMapsUrl,
+                              ),
+                            ),
+                          ),
+                          Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 60.sp),
+                              child: Column(
+                                children: [
+                                  CircleAvatar(
+                                    backgroundColor: Colors.red,
+                                    child: Text(
+                                      'T',
+                                      style: TextStyle(color: ColorsApp.white),
+                                    ),
+                                  ),
+                                  Text(
+                                    'test',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  Text(
+                                    'KSA-riyadh, KSA-riyadh, 123, UNKNOWN',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  SizedBox(
+                                    height: 80.h,
+                                  ),
+                                  Text(
+                                    'رقم الطلب: 9937664235780',
+                                    style: TextStyle(
+                                        fontSize: 25.sp,
+                                        color: ColorsApp.white,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 28.sp),
+                                    child: Container(
+                                      color: Colors.orange,
+                                      width: double.infinity,
+                                      padding: EdgeInsets.all(8.0.sp),
+                                      child: Text(
+                                        'تم القبول',
+                                        textAlign: TextAlign.start,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18.sp),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 250.sp),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Row(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.all(10.0.sp),
+                                      child: CircleAvatar(
+                                        backgroundColor: Colors.green,
+                                        child: IconButton(
+                                          icon: Icon(Icons.phone,
+                                              color: ColorsApp.white),
+                                          onPressed: () {
+                                            callNumber('0503792580');
+                                          },
+                                        ),
+                                        maxRadius: 25.sp,
+                                        minRadius: 25.sp,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.all(8.0.sp),
+                                      child: InkWell(
+                                        onTap: () => openWhatsApp('0503792580'),
+                                        child: CircleAvatar(
+                                          backgroundColor: Colors.white,
+                                          child: Image.asset(
+                                            ImageAssets.whatsapp,
+                                            height: 25.h,
+                                            width: 25.w,
+                                          ),
+                                          maxRadius: 25.sp,
+                                          minRadius: 25.sp,
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.all(8.0.sp),
+                                      child: CircleAvatar(
+                                        backgroundColor: Colors.white,
+                                        child: IconButton(
+                                          icon: Icon(Icons.cloud_download,
+                                              color: Colors.grey),
+                                          onPressed: () {
+                                            //   downloadAndConvertImageToPDF();
+                                          },
+                                        ),
+                                        maxRadius: 25.sp,
+                                        minRadius: 25.sp,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(5.0.sp),
+                  child: Container(
+                    width: 350.w,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.sp),
+                      color: Colors.blue,
+                    ),
+                    child: TextButton(
+                      onPressed: () {},
+                      child: Text(
+                        'طلب تحديث الموقع',
+                        style:
+                            TextStyle(color: ColorsApp.white, fontSize: 18.sp),
+                      ),
+                    ),
+                  ),
+                ),
+                Divider(color: Colors.grey),
+                Card(
+                  margin: EdgeInsets.all(7.0.sp),
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 105.w, vertical: 10.h),
+                    child: Column(
+                      children: [
+                        Text(
+                          'المبلغ المطلوب استلامه',
+                          style: TextStyle(fontSize: 16.sp, color: Colors.grey),
+                        ),
+                        SizedBox(height: 3.h),
+                        Text(
+                          '0.00 SAR',
+                          style: TextStyle(
+                              fontSize: 24.sp, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(8.0.sp),
+                  child: InkWell(
+                    onTap: () {
+                      setState(() {
+                        isShow = !isShow;
+                      });
+                    },
+                    child: Row(
+                      children: [
+                        Text('  تفاصيل إضافية '),
+                        Container(
+                          width: 228.w,
+                          child: Divider(
+                            color: Colors.grey,
+                          ),
+                        ),
+                        Icon(isShow
+                            ? Icons.arrow_drop_down_outlined
+                            : Icons.arrow_drop_up_outlined),
+                      ],
+                    ),
+                  ),
+                ),
+                isShow
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 25.w),
+                            child: Text(
+                              '  معلومات الرحلة ',
+                              textAlign: TextAlign.end,
+                              style: TextStyle(color: Colors.grey[600]),
+                            ),
+                          ),
+
+                          // Additional Details Card
+                          Card(
+                            color: ColorsApp.white,
+                            margin: EdgeInsets.all(16.0.sp),
+                            child: Padding(
+                              padding: EdgeInsets.all(16.0.sp),
+                              child: Column(
+                                // crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  _buildRowItem(
+                                      context,
+                                      'KSA-riyadh, KSA-riyadh, 123, UNKNOWN',
+                                      'test الى',
+                                      Icon(Icons.phone),
+                                      Colors.blue,
+                                      '0503792580'),
+                                  _buildRowItem(
+                                      context,
+                                      'KSA-riyadh, 31758, UNKNOWN',
+                                      'test من',
+                                      Icon(Icons.phone),
+                                      Colors.green,
+                                      '0503792580'),
+                                  // Divider(height: 32),
+                                  _buildInfoItem(
+                                      context,
+                                      'نوع الخدمة',
+                                      'Express ',
+                                      Icons.local_shipping,
+                                      Colors.yellow,
+                                      '0.00 SAR',
+                                      true,
+                                      0,
+                                      true,
+                                      SizedBox(
+                                        height: 0,
+                                      )),
+                                  _buildInfoItem(
+                                      context,
+                                      'تاريخ الإنشاء',
+                                      'Apr ',
+                                      Icons.calendar_month_sharp,
+                                      Colors.purple,
+                                      '',
+                                      false,
+                                      0,
+                                      true,
+                                      SizedBox(
+                                        height: 0,
+                                      )),
+                                  _buildInfoItem(
+                                      context,
+                                      'فترة الوقت لحمل الشحنة',
+                                      ' ممكن',
+                                      Icons.access_time,
+                                      Colors.orange,
+                                      '',
+                                      false,
+                                      0,
+                                      true,
+                                      SizedBox(
+                                        height: 0,
+                                      )),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10.h),
+
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 30.w),
+                            child: Text(
+                              '  معلومات الطرد ',
+                              textAlign: TextAlign.end,
+                              style: TextStyle(color: Colors.grey[600]),
+                            ),
+                          ),
+                          Card(
+                            color: ColorsApp.white,
+                            margin: EdgeInsets.all(16.0.sp),
+                            child: Padding(
+                              padding: EdgeInsets.all(16.0.sp),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  _buildInfoItem(
+                                      context,
+                                      'نوع الطرد',
+                                      'Exdium ',
+                                      Icons.assignment,
+                                      Colors.yellow,
+                                      '',
+                                      false,
+                                      0,
+                                      true,
+                                      SizedBox(
+                                        height: 0,
+                                      )),
+                                  _buildInfoItem(
+                                      context,
+                                      'الوصف',
+                                      'test ',
+                                      Icons.edit,
+                                      Colors.green,
+                                      '',
+                                      false,
+                                      0,
+                                      true,
+                                      SizedBox(
+                                        height: 0,
+                                      )),
+                                  _buildInfoItem(
+                                      context,
+                                      'صورة الطرد',
+                                      ' لايوجد',
+                                      Icons.image,
+                                      Colors.purple,
+                                      '',
+                                      false,
+                                      0,
+                                      false,
+                                      Image.network(
+                                          width: 160.w,
+                                          height: 100.h,
+                                          'https://www.syncfusion.com/blogs/wp-content/uploads/2021/04/How-to-perform-text-search-over-the-PDF-document-using-Flutter-PDF-Viewer.png')),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10.h),
+
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 30.w),
+                            child: Text(
+                              '  إثبات التوصيل ',
+                              textAlign: TextAlign.end,
+                              style: TextStyle(color: Colors.grey[600]),
+                            ),
+                          ),
+                          Card(
+                            color: ColorsApp.white,
+                            margin: EdgeInsets.all(16.0.sp),
+                            child: Padding(
+                              padding: EdgeInsets.all(16.0.sp),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildInfoItem(
+                                      context,
+                                      'إسم المرسل إليه / المستلم',
+                                      'test ',
+                                      Icons.person,
+                                      Colors.grey,
+                                      '',
+                                      false,
+                                      0,
+                                      true,
+                                      SizedBox(
+                                        height: 0,
+                                      )),
+                                  _buildInfoItem(
+                                    context,
+                                    'إثبات هوية المستلم',
+                                    'test ',
+                                    Icons.badge_sharp,
+                                    Colors.blueAccent,
+                                    '',
+                                    false,
+                                    0,
+                                    false,
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        if (_image != null)
+                                          Image.file(
+                                            _image!,
+                                            height: 100.h,
+                                            width: 160.w,
+                                          ),
+                                        SizedBox(height: 16.h),
+                                        ElevatedButton(
+                                          style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty.all<
+                                                        Color>(
+                                                    ColorsApp.backgroundColor),
+                                          ),
+                                          onPressed: () =>
+                                              _pickImage(ImageSource.gallery),
+                                          child: Text(
+                                            'Open Gallery',
+                                            style: TextStyle(
+                                                color: ColorsApp.black),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  _buildInfoItem(
+                                      context,
+                                      'توقيع المستلم',
+                                      ' لايوجد',
+                                      Icons.edit,
+                                      Colors.red,
+                                      '',
+                                      false,
+                                      0,
+                                      false,
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(height: 10.h),
+                                          Signature(
+                                            controller: _controllerSignature,
+                                            height: 100.h,
+                                            width: 160.w,
+                                            backgroundColor: Colors.grey[300]!,
+                                          ),
+                                          SizedBox(height: 16.h),
+                                          ElevatedButton(
+                                            style: ButtonStyle(
+                                              backgroundColor:
+                                                  MaterialStateProperty
+                                                      .all<Color>(ColorsApp
+                                                          .backgroundColor),
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                _controllerSignature.clear();
+                                              });
+                                            },
+                                            child: Text(
+                                              'Clear',
+                                              style: TextStyle(
+                                                  color: ColorsApp.black),
+                                            ),
+                                          ),
+                                        ],
+                                      )),
+                                  _buildInfoItem(
+                                      context,
+                                      'حالة التوصيل',
+                                      ' ',
+                                      Icons.assignment_turned_in_rounded,
+                                      Colors.green,
+                                      '',
+                                      false,
+                                      0,
+                                      true,
+                                      SizedBox(
+                                        height: 0,
+                                      )),
+                                ],
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(height: 10.h),
+
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 30.w),
+                            child: Text(
+                              '  معلومات الدفع ',
+                              textAlign: TextAlign.end,
+                              style: TextStyle(color: Colors.grey[600]),
+                            ),
+                          ),
+                          Card(
+                            color: ColorsApp.white,
+                            margin: EdgeInsets.all(16.0.sp),
+                            child: Padding(
+                              padding: EdgeInsets.all(16.0.sp),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildInfoItem(
+                                      context,
+                                      'نوع الدفع',
+                                      'نقدي ',
+                                      Icons.attach_money,
+                                      Colors.green,
+                                      '',
+                                      false,
+                                      0,
+                                      true,
+                                      SizedBox(
+                                        height: 0,
+                                      )),
+                                  _buildInfoItem(
+                                      context,
+                                      'تم الدفع عن طريق',
+                                      'test ',
+                                      Icons.person,
+                                      Colors.grey,
+                                      '',
+                                      false,
+                                      0,
+                                      true,
+                                      SizedBox(
+                                        height: 0,
+                                      )),
+                                  _buildInfoItem(
+                                      context,
+                                      'تكلفة الخدمة',
+                                      ' لايوجد',
+                                      Icons.money_rounded,
+                                      Colors.lightGreen,
+                                      'مدفوع',
+                                      true,
+                                      1,
+                                      true,
+                                      SizedBox(
+                                        height: 0,
+                                      )),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 100.h,
+                          )
+                        ],
+                      )
+                    : SizedBox(
+                        height: 0,
+                      ),
+              ],
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Stack(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 80.0.h),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: _saveSignature,
+                          child: Container(
+                            height: 50.h,
+                            color: Color(0xFFF35395B),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                'في مرحلة الشحن',
+                                style: TextStyle(color: ColorsApp.white),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          height: 50.h,
+                          color: Colors.red,
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'رفض',
+                              style: TextStyle(color: ColorsApp.white),
+                            ),
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-
-            Padding(
-              padding: EdgeInsets.all(5.0.sp),
-              child: Container(
-                width: 350.w,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.sp),
-                  color: Colors.blue,
                 ),
-                child: TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    'طلب تحديث الموقع',
-                    style: TextStyle(color: ColorsApp.white, fontSize: 18.sp),
-                  ),
-                ),
-              ),
-            ),
-            Divider(color: Colors.grey),
-
-            Card(
-              margin: EdgeInsets.all(7.0),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 105, vertical: 10),
-                child: Column(
+                Stack(
                   children: [
-                    Text(
-                      'المبلغ المطلوب استلامه',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
-                    SizedBox(height: 3),
-                    Text(
-                      '0.00 SAR',
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Icon(Icons.arrow_drop_down_outlined),
-                  Container(
-                    width: 228,
-                    child: Divider(
-                      color: Colors.grey,
-                    ),
-                  ),
-                  Text('  تفاصيل إضافية '),
-                ],
-              ),
-            ),
-
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 25.w),
-              child: Text(
-                '  معلومات الرحلة ',
-                textAlign: TextAlign.end,
-                style: TextStyle(color: Colors.grey[600]),
-              ),
-            ),
-
-            // Additional Details Card
-            Card(
-              color: ColorsApp.white,
-              margin: EdgeInsets.all(16.0),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    _buildRowItem(
-                      context,
-                      'KSA-riyadh, KSA-riyadh, 123, UNKNOWN',
-                      'test الى',
-                      Icons.phone,
-                      Colors.blue,
-                    ),
-                    _buildRowItem(
-                      context,
-                      'KSA-riyadh, 31758, UNKNOWN',
-                      'test من',
-                      Icons.phone,
-                      Colors.green,
-                    ),
-                    // Divider(height: 32),
-                    _buildInfoItem(
-                        context,
-                        'نوع الخدمة',
-                        'Express ',
-                        Icons.local_shipping,
-                        Colors.yellow,
-                        '0.00 SAR',
-                        true,
-                        0,
-                        true,
-                        SizedBox(
-                          height: 0,
-                        )),
-                    _buildInfoItem(
-                        context,
-                        'تاريخ الإنشاء',
-                        'Apr ',
-                        Icons.calendar_month_sharp,
-                        Colors.purple,
-                        '',
-                        false,
-                        0,
-                        true,
-                        SizedBox(
-                          height: 0,
-                        )),
-                    _buildInfoItem(
-                        context,
-                        'فترة الوقت لحمل الشحنة',
-                        ' ممكن',
-                        Icons.access_time,
-                        Colors.orange,
-                        '',
-                        false,
-                        0,
-                        true,
-                        SizedBox(
-                          height: 0,
-                        )),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30.w),
-              child: Text(
-                '  معلومات الطرد ',
-                textAlign: TextAlign.end,
-                style: TextStyle(color: Colors.grey[600]),
-              ),
-            ),
-            Card(
-              color: ColorsApp.white,
-              margin: EdgeInsets.all(16.0),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    _buildInfoItem(
-                        context,
-                        'نوع الطرد',
-                        'Exdium ',
-                        Icons.assignment,
-                        Colors.yellow,
-                        '',
-                        false,
-                        0,
-                        true,
-                        SizedBox(
-                          height: 0,
-                        )),
-                    _buildInfoItem(
-                        context,
-                        'الوصف',
-                        'test ',
-                        Icons.edit,
-                        Colors.green,
-                        '',
-                        false,
-                        0,
-                        true,
-                        SizedBox(
-                          height: 0,
-                        )),
-                    _buildInfoItem(
-                        context,
-                        'صورة الطرد',
-                        ' لايوجد',
-                        Icons.image,
-                        Colors.purple,
-                        '',
-                        false,
-                        0,
-                        false,
-                        Image.network(
-                            width: 280,
-                            height: 200,
-                            'https://www.syncfusion.com/blogs/wp-content/uploads/2021/04/How-to-perform-text-search-over-the-PDF-document-using-Flutter-PDF-Viewer.png')),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30.w),
-              child: Text(
-                '  إثبات التوصيل ',
-                textAlign: TextAlign.end,
-                style: TextStyle(color: Colors.grey[600]),
-              ),
-            ),
-            Card(
-              color: ColorsApp.white,
-              margin: EdgeInsets.all(16.0),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    _buildInfoItem(
-                        context,
-                        'إسم المرسل إليه / المستلم',
-                        'test ',
-                        Icons.person,
-                        Colors.grey,
-                        '',
-                        false,
-                        0,
-                        true,
-                        SizedBox(
-                          height: 0,
-                        )),
-                    _buildInfoItem(
-                        context,
-                        'إثبات هوية المستلم',
-                        'test ',
-                        Icons.badge_sharp,
-                        Colors.blueAccent,
-                        '',
-                        false,
-                        0,
-                        false,
-                        SizedBox(
-                          height: 20,
-                        )),
-                    _buildInfoItem(
-                        context,
-                        'توقيع المستلم',
-                        ' لايوجد',
-                        Icons.edit,
-                        Colors.red,
-                        '',
-                        false,
-                        0,
-                        false,
-                        SizedBox(
-                          height: 20,
-                        )),
-                    _buildInfoItem(
-                        context,
-                        'حالة التوصيل',
-                        ' ',
-                        Icons.assignment_turned_in_rounded,
-                        Colors.green,
-                        '',
-                        false,
-                        0,
-                        true,
-                        SizedBox(
-                          height: 0,
-                        )),
-                  ],
-                ),
-              ),
-            ),
-            // Sender Information Card
-
-            // Delivery Proof Card
-            SizedBox(height: 10),
-
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30.w),
-              child: Text(
-                '  معلومات الدفع ',
-                textAlign: TextAlign.end,
-                style: TextStyle(color: Colors.grey[600]),
-              ),
-            ),
-            Card(
-              color: ColorsApp.white,
-              margin: EdgeInsets.all(16.0),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    _buildInfoItem(
-                        context,
-                        'نوع الدفع',
-                        'نقدي ',
-                        Icons.attach_money,
-                        Colors.green,
-                        '',
-                        false,
-                        0,
-                        true,
-                        SizedBox(
-                          height: 0,
-                        )),
-                    _buildInfoItem(
-                        context,
-                        'تم الدفع عن طريق',
-                        'test ',
-                        Icons.person,
-                        Colors.grey,
-                        '',
-                        false,
-                        0,
-                        true,
-                        SizedBox(
-                          height: 0,
-                        )),
-                    _buildInfoItem(
-                        context,
-                        'تكلفة الخدمة',
-                        ' لايوجد',
-                        Icons.money_rounded,
-                        Colors.lightGreen,
-                        'مدفوع',
-                        true,
-                        1,
-                        true,
-                        SizedBox(
-                          height: 0,
-                        )),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-
-            // Payment Information Card
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    height: 50.h,
-                    color: Color(0xFFF35395B),
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        'في مرحلة الشحن',
-                        style: TextStyle(color: ColorsApp.white),
+                    Padding(
+                      padding: EdgeInsets.only(top: 40.0.h),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                _saveSignature;
+                                _launchMapsUrl;
+                              },
+                              child: Container(
+                                height: 40.h,
+                                color: ColorsApp.white,
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    'طلب موقع التسليم',
+                                    style: TextStyle(
+                                        color: Colors.indigo, fontSize: 15.sp),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    height: 50.h,
-                    color: Colors.red,
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        'رفض',
-                        style: TextStyle(color: ColorsApp.white),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 35.0.h),
+                      child: Container(
+                        color: Colors.transparent,
+                        height: 40.h,
                       ),
                     ),
-                  ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 20.0.w, vertical: 12.h),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              spreadRadius: 5.sp,
+                              blurRadius: 7.sp,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: CircleAvatar(
+                          radius: 30.sp,
+                          backgroundColor: ColorsApp.white,
+                          child: IconButton(
+                            onPressed: () {
+                              // _launchMapsUrl;
+                              setState(() {
+                                LocaleSettings.setLocale(AppLocale.en);
+                              });
+                            },
+                            icon: Icon(
+                              Icons.details,
+                              color: Colors.blue,
+                              size: 30.sp,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-            // Bottom Buttons
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildRowItem(
-    BuildContext context,
-    String address,
-    String name,
-    IconData icon,
-    Color avatarColor,
-  ) {
+  Widget _buildRowItem(BuildContext context, String address, String name,
+      Icon icon, Color avatarColor, String number) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Icon(icon, color: ColorsApp.black),
-        SizedBox(width: 8),
+        Padding(
+          padding: EdgeInsets.all(3.0.sp),
+          child: CircleAvatar(
+            backgroundColor: avatarColor,
+            child: Text(name.substring(0, 1),
+                style: TextStyle(color: Colors.white)),
+          ),
+        ),
+        SizedBox(width: 8.w),
         Expanded(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(name,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              Text(address, style: TextStyle(fontSize: 14)),
+                  style:
+                      TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold)),
+              Text(address, style: TextStyle(fontSize: 14.sp)),
             ],
           ),
         ),
-        SizedBox(width: 8),
-        CircleAvatar(
-          backgroundColor: avatarColor,
-          child:
-              Text(name.substring(0, 1), style: TextStyle(color: Colors.white)),
+        SizedBox(width: 8.w),
+        IconButton(
+          icon: icon,
+          color: ColorsApp.black,
+          onPressed: () => callNumber(number),
         ),
       ],
     );
@@ -599,49 +788,56 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
       bool isValue,
       Widget widgetValue) {
     return Padding(
-      padding: const EdgeInsets.all(3.0),
+      padding: EdgeInsets.all(3.0.sp),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          Stack(
+            children: [
+              CircleAvatar(
+                child: Icon(icon, color: iconColor),
+                backgroundColor: Colors.grey[350],
+              ),
+              SizedBox(width: 8.w),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 65.0.w),
+                        child: Text(title,
+                            style:
+                                TextStyle(fontSize: 14.sp, color: Colors.grey)),
+                      ),
+                      SizedBox(width: 8.w),
+                    ],
+                  ),
+                  isValue
+                      ? Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 65.0.w),
+                          child: Text(value,
+                              style: TextStyle(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.bold)),
+                        )
+                      : Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 65.0.w),
+                          child: widgetValue,
+                        ),
+                ],
+              ),
+            ],
+          ),
           isCash
               ? Text(cash,
                   style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
                       color: cashColor == 1 ? Colors.green : Colors.black))
               : SizedBox(
                   width: 0,
                 ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Row(
-                    children: [
-                      Text(title,
-                          style: TextStyle(fontSize: 14, color: Colors.grey)),
-                      SizedBox(width: 8),
-                      CircleAvatar(
-                        child: Icon(icon, color: iconColor),
-                        backgroundColor: Colors.grey[350],
-                      ),
-                    ],
-                  ),
-                  isValue
-                      ? Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 50.0),
-                          child: Text(value,
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
-                        )
-                      : widgetValue,
-                ],
-              ),
-              SizedBox(width: 8),
-            ],
-          ),
         ],
       ),
     );
@@ -673,6 +869,38 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
       await launch(url);
     } else {
       throw "Unable to open WhatsApp";
+    }
+  }
+
+  Future<void> _saveSignature() async {
+    if (await Permission.storage.request().isGranted) {
+      final Uint8List? data = await _controllerSignature.toPngBytes();
+      if (data != null) {
+        final directory = await getExternalStorageDirectory();
+        final file = File('${directory!.path}/signature.png');
+        await file.writeAsBytes(data);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Signature saved to ${file.path}')),
+        );
+        print('${file.path}');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save signature')),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Storage permission denied')),
+      );
+    }
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedImage = await ImagePicker().pickImage(source: source);
+    if (pickedImage != null) {
+      setState(() {
+        _image = File(pickedImage.path);
+      });
     }
   }
 }

@@ -1,54 +1,22 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:signature/signature.dart';
+import 'package:image_picker/image_picker.dart';
 
-class SignatureScreen extends StatefulWidget {
+class ImagePickerExample extends StatefulWidget {
   @override
-  _SignatureScreenState createState() => _SignatureScreenState();
+  _ImagePickerExampleState createState() => _ImagePickerExampleState();
 }
 
-class _SignatureScreenState extends State<SignatureScreen> {
-  late SignatureController _controller;
+class _ImagePickerExampleState extends State<ImagePickerExample> {
+  File? _image;
 
-  @override
-  void initState() {
-    super.initState();
-    _controller = SignatureController(
-      penStrokeWidth: 5,
-      penColor: Colors.black,
-      exportBackgroundColor: Colors.white,
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  Future<void> _saveSignature() async {
-    if (await Permission.storage.request().isGranted) {
-      final Uint8List? data = await _controller.toPngBytes();
-      if (data != null) {
-        final directory = await getExternalStorageDirectory();
-        final file = File('${directory!.path}/signature.png');
-        await file.writeAsBytes(data);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Signature saved to ${file.path}')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save signature')),
-        );
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Storage permission denied')),
-      );
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedImage = await ImagePicker().pickImage(source: source);
+    if (pickedImage != null) {
+      setState(() {
+        _image = File(pickedImage.path);
+      });
     }
   }
 
@@ -56,35 +24,48 @@ class _SignatureScreenState extends State<SignatureScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Signature Example'),
+        title: Text('Image Picker Example'),
       ),
-      body: Column(
-        children: [
-          Signature(
-            controller: _controller,
-            height: 300,
-            backgroundColor: Colors.grey,
-          ),
-          SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (_image != null) ...[
+              Image.file(
+                _image!,
+                height: 100,
+                width: 100,
+              ),
+              SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  setState(() {
-                    _controller.clear();
-                  });
+                  // Perform any action with the selected image
+                  // For example, you can save the image to the desired location.
+                  // Replace `saveImageToPath` with your own implementation.
+                  saveImageToPath(_image!.path);
                 },
-                child: Text('Clear'),
-              ),
-              ElevatedButton(
-                onPressed: _saveSignature,
-                child: Text('Save'),
+                child: Text('Save Image'),
               ),
             ],
-          ),
-        ],
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => _pickImage(ImageSource.camera),
+              child: Text('Open Camera'),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => _pickImage(ImageSource.gallery),
+              child: Text('Open Gallery'),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  void saveImageToPath(String imagePath) {
+    // Replace this method with your own implementation of saving the image
+    // to the desired location.
+    print('Image saved to: $imagePath');
   }
 }
