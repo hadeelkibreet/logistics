@@ -79,6 +79,8 @@
   "cancel": "رفض",
   "InTheShippingStage": "في مرحلة الشحن",
   "clear": "مسح",
-  "openGallery": "اختر صورة",
-  "RequestADeliveryLocation": "طلب موقع التسليم"
+  "openCamera": "إلتقط صورة",
+  "RequestADeliveryLocation": "طلب موقع التسليم",
+  "Failed": "فشلت",
+  "Done": "تم"
 }

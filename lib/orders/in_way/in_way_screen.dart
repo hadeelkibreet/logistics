@@ -16,14 +16,14 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:signature/signature.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class DetailsOrderScreen extends ConsumerStatefulWidget {
-  const DetailsOrderScreen({Key? key}) : super(key: key);
+class InWayScreen extends ConsumerStatefulWidget {
+  const InWayScreen({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<DetailsOrderScreen> createState() => _detailsOrderScreenState();
+  ConsumerState<InWayScreen> createState() => _detailsOrderScreenState();
 }
 
-class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
+class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
   late SignatureController _controllerSignature;
   File? _image;
   late bool isShow = true;
@@ -641,11 +641,11 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                       Expanded(
                         child: Container(
                           height: 50.h,
-                          color: Colors.red,
+                          color: Color(0xFFFFF4545),
                           child: Align(
                             alignment: Alignment.center,
                             child: Text(
-                              t.cancel,
+                              t.Failed,
                               style: TextStyle(color: ColorsApp.white),
                             ),
                           ),
@@ -656,11 +656,11 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                           onTap: _saveSignature,
                           child: Container(
                             height: 50.h,
-                            color: Color(0xFFF35395B),
+                            color: Color(0xFFF5DB506),
                             child: Align(
                               alignment: Alignment.center,
                               child: Text(
-                                t.InTheShippingStage,
+                                t.Done,
                                 style: TextStyle(color: ColorsApp.white),
                               ),
                             ),

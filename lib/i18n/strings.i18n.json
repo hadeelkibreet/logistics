@@ -79,7 +79,9 @@
   "cancel": "Cancel",
   "InTheShippingStage": "In the shipping stage",
   "clear": "clear",
-  "openGallery": "open gallery",
-  "RequestADeliveryLocation": "Request a delivery location"
+  "openCamera": "open camera",
+  "RequestADeliveryLocation": "Request a delivery location",
+  "Failed": "Failed",
+  "Done": "Done"
 
 }
