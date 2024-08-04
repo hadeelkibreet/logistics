@@ -65,7 +65,7 @@
   "description": "الوصف",
   "PackagePhoto": "صورة الطرد",
   "proofOfDelivery": "إثبات التوصيل",
-  "NameOfAddresseerecipient": "اسم المرسل إليه / المستلم",
+  "NameOfAddresseeRecipient": "اسم المرسل إليه / المستلم",
   "ProofOfTheRecipientsIdentity": "إثبات هوية المستلم",
   "TheRecipientsSignature": "توقيع المستلم",
   "ConnectionStatus": "حاله  التوصيل",

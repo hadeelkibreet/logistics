@@ -30,7 +30,7 @@ class _SendersSignatureScreenState
   File? _image;
   late TextEditingController SendersIDController = TextEditingController();
   late SignatureController _controllerSenderSignature;
-
+  final bool validationNameAndPhone = true;
   @override
   void initState() {
     super.initState();
@@ -77,13 +77,13 @@ class _SendersSignatureScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SnderInfoRow(Icons.person, SendersNameController,
-                        'اسم المرسل', false, false),
+                        ' اسم المرسل', false, false, true),
                     SnderInfoRow(Icons.image, SendersIDController,
-                        'بطاقة الراسل', true, false),
+                        'بطاقة الراسل', true, false, false),
                     SnderInfoRow(Icons.phone, SendersNumberController,
-                        'رقم الهاتف', false, false),
+                        'رقم الهاتف', false, false, true),
                     SnderInfoRow(Icons.confirmation_number, SendersQRController,
-                        'رقم بوليصة الشحن الجوي', false, true),
+                        'رقم بوليصة الشحن الجوي', false, true, false),
                     SizedBox(height: 11),
                     Text(
                       'توقيع المرسل',
@@ -163,8 +163,13 @@ class _SendersSignatureScreenState
     );
   }
 
-  Widget SnderInfoRow(IconData icon, TextEditingController controller,
-      String labelText, bool isimage, bool isQr) {
+  Widget SnderInfoRow(
+      IconData icon,
+      TextEditingController controller,
+      String labelText,
+      bool isimage,
+      bool isQr,
+      bool isValidationNameAndPhone) {
     return Padding(
       padding: EdgeInsets.all(3.0.sp),
       child: Row(
@@ -176,19 +181,27 @@ class _SendersSignatureScreenState
               enabled: isimage ? false : true,
               controller: controller,
               decoration: InputDecoration(
-                labelText: labelText,
-                labelStyle: TextStyle(
-                  color: Colors.grey,
-                ),
-                border: isimage
-                    ? InputBorder.none
-                    : UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.grey,
+                label: Text.rich(
+                  TextSpan(
+                    children: <InlineSpan>[
+                      WidgetSpan(
+                        child: Text(
+                          isValidationNameAndPhone
+                              ? controller.text.isEmpty
+                                  ? '*'
+                                  : ''
+                              : '',
+                          style: TextStyle(color: Colors.red),
                         ),
                       ),
-                //hintText: 'test',
-                //border: OutlineInputBorder(),
+                      WidgetSpan(
+                        child: Text(
+                          labelText,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
@@ -254,7 +267,8 @@ class _SendersSignatureScreenState
       if (!mounted) return;
 
       setState(() {
-        SendersQRController.text = qrCode.toString();
+        SendersQRController.text =
+            qrCode.toString() != '-1' ? qrCode.toString() : '';
       });
 
       print("QRCode_Result:--");

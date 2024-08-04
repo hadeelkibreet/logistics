@@ -65,7 +65,7 @@
   "description": "description",
   "PackagePhoto": "Package photo",
   "proofOfDelivery": "Proof of delivery",
-  "NameOfAddresseerecipient": "Name of addressee/recipient",
+  "NameOfAddresseeRecipient": "Name of addressee/recipient",
   "ProofOfTheRecipientsIdentity": "Proof of the recipients id",
   "TheRecipientsSignature": "The recipients signature",
   "ConnectionStatus": "Connection status",

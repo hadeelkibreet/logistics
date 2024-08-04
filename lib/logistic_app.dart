@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'i18n/strings.g.dart'
     show AppLocaleUtils, LocaleSettings, TranslationProvider;
-import 'orders/senders_signature/senders_signature_screen.dart';
+import 'orders/orders_done/orders_done.dart';
 
 class LogisticsApp extends StatelessWidget {
   const LogisticsApp({super.key});
@@ -21,7 +21,7 @@ class LogisticsApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
         ),
-        home: SendersSignatureScreen(),
+        home: OrdersDon(),
       ),
     );
   }
