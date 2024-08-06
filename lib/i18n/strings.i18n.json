@@ -82,6 +82,12 @@
   "openCamera": "open camera",
   "RequestADeliveryLocation": "Request a delivery location",
   "Failed": "Failed",
-  "Done": "Done"
-
+  "Done": "Done",
+  "SendersName": "Sender's name",
+  "SendersID": "Sender's ID",
+  "Upload": "Upload",
+  "phoneNumber": "Phone number",
+  "AirWaybillNumber": "Air waybill number",
+  "sendersSignature":"Sender's signature",
+  "Save": "Save"
 }

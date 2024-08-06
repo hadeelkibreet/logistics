@@ -4,9 +4,9 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 2
-/// Strings: 168 (84 per locale)
+/// Strings: 182 (91 per locale)
 ///
-/// Built on 2024-07-23 at 12:21 UTC
+/// Built on 2024-08-06 at 16:03 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -214,7 +214,7 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
 	String get description => 'description';
 	String get PackagePhoto => 'Package photo';
 	String get proofOfDelivery => 'Proof of delivery';
-	String get NameOfAddresseerecipient => 'Name of addressee/recipient';
+	String get NameOfAddresseeRecipient => 'Name of addressee/recipient';
 	String get ProofOfTheRecipientsIdentity => 'Proof of the recipients id';
 	String get TheRecipientsSignature => 'The recipients signature';
 	String get ConnectionStatus => 'Connection status';
@@ -232,6 +232,13 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
 	String get RequestADeliveryLocation => 'Request a delivery location';
 	String get Failed => 'Failed';
 	String get Done => 'Done';
+	String get SendersName => 'Sender\'s name';
+	String get SendersID => 'Sender\'s ID';
+	String get Upload => 'Upload';
+	String get phoneNumber => 'Phone number';
+	String get AirWaybillNumber => 'Air waybill number';
+	String get sendersSignature => 'Sender\'s signature';
+	String get Save => 'Save';
 }
 
 // Path: <root>
@@ -324,7 +331,7 @@ class _StringsAr implements Translations {
 	@override String get description => 'الوصف';
 	@override String get PackagePhoto => 'صورة الطرد';
 	@override String get proofOfDelivery => 'إثبات التوصيل';
-	@override String get NameOfAddresseerecipient => 'اسم المرسل إليه / المستلم';
+	@override String get NameOfAddresseeRecipient => 'اسم المرسل إليه / المستلم';
 	@override String get ProofOfTheRecipientsIdentity => 'إثبات هوية المستلم';
 	@override String get TheRecipientsSignature => 'توقيع المستلم';
 	@override String get ConnectionStatus => 'حاله  التوصيل';
@@ -342,6 +349,13 @@ class _StringsAr implements Translations {
 	@override String get RequestADeliveryLocation => 'طلب موقع التسليم';
 	@override String get Failed => 'فشلت';
 	@override String get Done => 'تم';
+	@override String get SendersName => 'أسم المرسل';
+	@override String get SendersID => 'إثبات المرسل';
+	@override String get Upload => 'تحميل';
+	@override String get phoneNumber => 'رقم الهاتف';
+	@override String get AirWaybillNumber => 'رقم بوليصة الشحن الجوي';
+	@override String get sendersSignature => 'توقيع المرسل';
+	@override String get Save => 'حفظ';
 }
 
 /// Flat map(s) containing all translations.
@@ -416,7 +430,7 @@ extension on Translations {
 			case 'description': return 'description';
 			case 'PackagePhoto': return 'Package photo';
 			case 'proofOfDelivery': return 'Proof of delivery';
-			case 'NameOfAddresseerecipient': return 'Name of addressee/recipient';
+			case 'NameOfAddresseeRecipient': return 'Name of addressee/recipient';
 			case 'ProofOfTheRecipientsIdentity': return 'Proof of the recipients id';
 			case 'TheRecipientsSignature': return 'The recipients signature';
 			case 'ConnectionStatus': return 'Connection status';
@@ -434,6 +448,13 @@ extension on Translations {
 			case 'RequestADeliveryLocation': return 'Request a delivery location';
 			case 'Failed': return 'Failed';
 			case 'Done': return 'Done';
+			case 'SendersName': return 'Sender\'s name';
+			case 'SendersID': return 'Sender\'s ID';
+			case 'Upload': return 'Upload';
+			case 'phoneNumber': return 'Phone number';
+			case 'AirWaybillNumber': return 'Air waybill number';
+			case 'sendersSignature': return 'Sender\'s signature';
+			case 'Save': return 'Save';
 			default: return null;
 		}
 	}
@@ -508,7 +529,7 @@ extension on _StringsAr {
 			case 'description': return 'الوصف';
 			case 'PackagePhoto': return 'صورة الطرد';
 			case 'proofOfDelivery': return 'إثبات التوصيل';
-			case 'NameOfAddresseerecipient': return 'اسم المرسل إليه / المستلم';
+			case 'NameOfAddresseeRecipient': return 'اسم المرسل إليه / المستلم';
 			case 'ProofOfTheRecipientsIdentity': return 'إثبات هوية المستلم';
 			case 'TheRecipientsSignature': return 'توقيع المستلم';
 			case 'ConnectionStatus': return 'حاله  التوصيل';
@@ -526,6 +547,13 @@ extension on _StringsAr {
 			case 'RequestADeliveryLocation': return 'طلب موقع التسليم';
 			case 'Failed': return 'فشلت';
 			case 'Done': return 'تم';
+			case 'SendersName': return 'أسم المرسل';
+			case 'SendersID': return 'إثبات المرسل';
+			case 'Upload': return 'تحميل';
+			case 'phoneNumber': return 'رقم الهاتف';
+			case 'AirWaybillNumber': return 'رقم بوليصة الشحن الجوي';
+			case 'sendersSignature': return 'توقيع المرسل';
+			case 'Save': return 'حفظ';
 			default: return null;
 		}
 	}

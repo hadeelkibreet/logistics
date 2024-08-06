@@ -62,7 +62,7 @@ class _SendersSignatureScreenState
           },
         ),
         title: Text(
-          'توقيع المرسل',
+          t.TheRecipientsSignature,
           style: TextStyle(color: Colors.black),
         ),
       ),
@@ -78,21 +78,21 @@ class _SendersSignatureScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SnderInfoRow(Icons.person, RecipientNameController,
-                        ' اسم المرسل', false, false, true),
+                        t.NameOfAddresseeRecipient, false, false, true),
                     SnderInfoRow(Icons.image, RecipientIDController,
-                        'بطاقة الراسل', true, false, false),
+                        t.proofOfDelivery, true, false, false),
                     SnderInfoRow(Icons.phone, RecipientNumberController,
-                        'رقم الهاتف', false, false, true),
+                        t.phoneNumber, false, false, true),
                     SnderInfoRow(
                         Icons.confirmation_number,
                         RecipientQRController,
-                        'رقم بوليصة الشحن الجوي',
+                        t.AirWaybillNumber,
                         false,
                         true,
                         false),
                     SizedBox(height: 11),
                     Text(
-                      'توقيع المرسل',
+                      t.TheRecipientsSignature,
                       style: TextStyle(fontSize: 16.sp, color: Colors.grey),
                     ),
                     SizedBox(height: 8),
@@ -158,7 +158,7 @@ class _SendersSignatureScreenState
                       borderRadius: BorderRadius.zero,
                     )),
                 child: Text(
-                  'حفظ',
+                  t.Save,
                   style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
               ),
@@ -240,7 +240,7 @@ class _SendersSignatureScreenState
                         color: ColorsApp.primaryColor,
                       ),
                       Text(
-                        'إرفاق',
+                        t.Upload,
                         style: TextStyle(
                           color: ColorsApp.primaryColor,
                         ),

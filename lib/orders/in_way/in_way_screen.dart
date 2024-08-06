@@ -448,7 +448,7 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                                 children: [
                                   _buildInfoItem(
                                       context,
-                                      t.NameOfAddresseerecipient,
+                                      t.NameOfAddresseeRecipient,
                                       'test ',
                                       Icons.person,
                                       Colors.grey,

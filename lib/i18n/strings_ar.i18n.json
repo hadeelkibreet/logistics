@@ -82,5 +82,12 @@
   "openCamera": "إلتقط صورة",
   "RequestADeliveryLocation": "طلب موقع التسليم",
   "Failed": "فشلت",
-  "Done": "تم"
+  "Done": "تم",
+  "SendersName": "أسم المرسل",
+  "SendersID": "إثبات المرسل",
+  "Upload": "تحميل",
+  "phoneNumber": "رقم الهاتف",
+  "AirWaybillNumber": "رقم بوليصة الشحن الجوي",
+  "sendersSignature":"توقيع المرسل",
+  "Save": "حفظ"
 }
