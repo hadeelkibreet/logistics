@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/i18n/strings.g.dart';
+import 'package:logistics/orders/detils_order/detilsOrderScreen.dart';
 import 'package:logistics/orders/enum/order_status_enum.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -157,18 +158,26 @@ class _buildOrderCardState extends State<buildOrderCard> {
                     ),
                   ),
                   Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.green,
-                          borderRadius: BorderRadiusDirectional.only(
-                            bottomEnd: Radius.circular(12.sp),
-                          )),
-                      height: 50.h,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          t.Start,
-                          style: TextStyle(color: ColorsApp.white),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => DetailsOrderScreen()));
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.green,
+                            borderRadius: BorderRadiusDirectional.only(
+                              bottomEnd: Radius.circular(12.sp),
+                            )),
+                        height: 50.h,
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            t.Start,
+                            style: TextStyle(color: ColorsApp.white),
+                          ),
                         ),
                       ),
                     ),

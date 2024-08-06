@@ -11,6 +11,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/constants/images.dart';
 import 'package:logistics/i18n/strings.g.dart';
+import 'package:logistics/orders/recipient_signature/RecipientSignatureScreen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:signature/signature.dart';
@@ -653,7 +654,14 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                       ),
                       Expanded(
                         child: InkWell(
-                          onTap: _saveSignature,
+                          onTap: () {
+                            _saveSignature;
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        RecipientSignatureScreen()));
+                          },
                           child: Container(
                             height: 50.h,
                             color: Color(0xFFF5DB506),

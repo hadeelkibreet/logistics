@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/auth/providers/login_provider.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/constants/images.dart';
+import 'package:logistics/driver_status/driverStatusScreen.dart';
 
 import '../i18n/strings.g.dart' show Translations, AppLocale, LocaleSettings, t;
 
@@ -165,6 +166,10 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                                   loginApi.value!.phoneNumber.toString()
                               ? print('yeessss')
                               : print(loginApi.value!.phoneNumber.toString());
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => DriverStatusScreen()));
                         },
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(

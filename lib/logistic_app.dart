@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:logistics/orders/in_way/in_way_screen.dart';
 
 import 'i18n/strings.g.dart'
     show AppLocaleUtils, LocaleSettings, TranslationProvider;
-import 'orders/orders_done/orders_done.dart';
 
 class LogisticsApp extends StatelessWidget {
   const LogisticsApp({super.key});
@@ -21,7 +21,7 @@ class LogisticsApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
         ),
-        home: OrdersDon(),
+        home: InWayScreen(),
       ),
     );
   }
