@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logistics/auth/login.dart';
+import 'package:logistics/data/prefs/prefs.dart';
 import 'package:logistics/driver_status/driverStatusScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,8 +24,11 @@ class _SplashPageState extends ConsumerState<SplashPage> {
 
   void isLogin() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
-    bool? isLogin = sp.getBool('isLogin') ?? false;
-    print("is lohin ${isLogin.toString()}");
+    final Prehelper = PrefsHelper(sp);
+    //bool? isLogin = sp.getBool('isLogin') ?? false;
+    bool? isLogin = Prehelper.getIsLoggedIn ?? false;
+
+    print("is lohin ${s.getIsLoggedIn}");
     if (isLogin) {
       Timer(const Duration(seconds: 5), () {
         Navigator.push(
@@ -42,6 +46,8 @@ class _SplashPageState extends ConsumerState<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Center(
+      child: CircularProgressIndicator(),
+    );
   }
 }

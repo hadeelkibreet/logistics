@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/auth/providers/login_provider.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/constants/images.dart';
+import 'package:logistics/data/prefs/prefs.dart';
 import 'package:logistics/driver_status/driverStatusScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -170,8 +171,10 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                               : print(loginApi.value!.phoneNumber.toString());
                           SharedPreferences sp =
                               await SharedPreferences.getInstance();
-                          sp.setBool('isLogin', true);
-                          print("is lohin ${sp.getBool('isLogin')}");
+                          final Prehelper = PrefsHelper(sp);
+                          Prehelper.setLoggedIn();
+                          //sp.setBool('isLogin', true);
+                          print("is login ${Prehelper.getIsLoggedIn}");
 
                           Navigator.pushReplacement(
                             context,

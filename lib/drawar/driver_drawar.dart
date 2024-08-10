@@ -5,6 +5,7 @@ import 'package:logistics/Settings_screen/SettingsScreen.dart';
 import 'package:logistics/auth/login.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/constants/images.dart';
+import 'package:logistics/data/prefs/prefs.dart';
 import 'package:logistics/drawar/list_tile_drawar.dart';
 import 'package:logistics/driver_status/driverStatusScreen.dart';
 import 'package:logistics/i18n/strings.g.dart';
@@ -242,8 +243,10 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
                               onPressed: () async {
                                 SharedPreferences sp =
                                     await SharedPreferences.getInstance();
-                                sp.setBool('isLogin', false);
-                                print("is lohin ${sp.getBool('isLogin')}");
+                                final Prehelper = PrefsHelper(sp);
+                                Prehelper.clearUserInfo();
+                                // sp.setBool('isLogin', false);
+                                print("is login ${Prehelper.getIsLoggedIn}");
 
                                 Navigator.pushAndRemoveUntil(
                                   context,
