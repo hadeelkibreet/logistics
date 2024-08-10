@@ -13,6 +13,7 @@ import 'package:logistics/orders/orders_done/orders_done.dart';
 import 'package:logistics/orders/providers/orders_provider.dart';
 import 'package:logistics/profile/profile_screen.dart';
 import 'package:logistics/profile/providers/profile_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DriverDrawar extends ConsumerStatefulWidget {
   const DriverDrawar({Key? key}) : super(key: key);
@@ -238,7 +239,12 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
                               ),
                             ),
                             ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
+                                SharedPreferences sp =
+                                    await SharedPreferences.getInstance();
+                                sp.setBool('isLogin', false);
+                                print("is lohin ${sp.getBool('isLogin')}");
+
                                 Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(

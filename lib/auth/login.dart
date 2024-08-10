@@ -6,6 +6,7 @@ import 'package:logistics/auth/providers/login_provider.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/constants/images.dart';
 import 'package:logistics/driver_status/driverStatusScreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../i18n/strings.g.dart' show Translations, AppLocale, LocaleSettings, t;
 
@@ -34,6 +35,7 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
     final t = Translations.of(context);
     final AppLocale activeLocale = LocaleSettings.currentLocale;
     final loginApi = ref.watch(LoginProvider);
+
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -157,7 +159,7 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                     width: width * 0.5,
                     height: height * 0.07,
                     child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           _passwordController.text.toString() ==
                                   loginApi.value!.passWord.toString()
                               ? print('yeessss1')
@@ -166,10 +168,22 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                                   loginApi.value!.phoneNumber.toString()
                               ? print('yeessss')
                               : print(loginApi.value!.phoneNumber.toString());
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => DriverStatusScreen()));
+                          SharedPreferences sp =
+                              await SharedPreferences.getInstance();
+                          sp.setBool('isLogin', true);
+                          print("is lohin ${sp.getBool('isLogin')}");
+
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DriverStatusScreen(),
+                            ),
+                          );
+
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => DriverStatusScreen()));
                         },
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(

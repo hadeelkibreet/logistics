@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:logistics/orders/in_way/in_way_screen.dart';
+import 'package:logistics/SplashPage.dart';
 
 import 'i18n/strings.g.dart'
     show AppLocaleUtils, LocaleSettings, TranslationProvider;
 
-class LogisticsApp extends StatelessWidget {
+class LogisticsApp extends ConsumerStatefulWidget {
   const LogisticsApp({super.key});
 
+  @override
+  ConsumerState<LogisticsApp> createState() => _LogisticsAppState();
+}
+
+class _LogisticsAppState extends ConsumerState<LogisticsApp> {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
@@ -21,7 +27,7 @@ class LogisticsApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
         ),
-        home: InWayScreen(),
+        home: SplashPage(),
       ),
     );
   }

@@ -9,6 +9,7 @@ class LocalProfileRepository implements ProfileRepository {
   @override
   ProfileEntity getProfile() {
     return ProfileEntity(
+      token: '123',
       name: "Amal",
       phone: "0507126387",
       password: "12345",
