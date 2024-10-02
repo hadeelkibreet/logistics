@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:injectable/injectable.dart';
 import 'package:logistics/data/prefs/PreferencesKeys.dart';
 import 'package:logistics/profile/entity/profile_entity.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../auth/entity/login_entity.dart';
 
 @LazySingleton()
 class PrefsHelper {
@@ -13,6 +17,26 @@ class PrefsHelper {
       prefs.getBool(PreferencesKeys.IS_LOGGED_IN) ?? false;
 
   String get getUserToken => prefs.getString(PreferencesKeys.USER_TOKEN) ?? '';
+
+  Future<void> setUserToken(String token) async {
+    await prefs.setString(PreferencesKeys.USER_TOKEN, token);
+  }
+
+  // Save LoginEntity
+  Future<void> saveLoginEntity(LoginEntity entity) async {
+    String jsonString = jsonEncode(entity.toJson());
+    await prefs.setString('login_entity', jsonString);
+  }
+
+  // Retrieve LoginEntity
+  LoginEntity? getLoginEntity() {
+    String? jsonString = prefs.getString('login_entity');
+    if (jsonString != null) {
+      Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+      return LoginEntity.fromJson(jsonMap);
+    }
+    return null;
+  }
 
   ProfileEntity get userInfo {
     return ProfileEntity(

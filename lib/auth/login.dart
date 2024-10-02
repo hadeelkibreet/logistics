@@ -5,10 +5,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/auth/providers/login_provider.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/constants/images.dart';
-import 'package:logistics/data/prefs/prefs.dart';
-import 'package:logistics/driver_status/driverStatusScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../data/prefs/prefs.dart';
+import '../driver_status/driverStatusScreen.dart';
 import '../i18n/strings.g.dart' show Translations, AppLocale, LocaleSettings, t;
 
 class LogInScreen extends ConsumerStatefulWidget {
@@ -161,14 +161,14 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                     height: height * 0.07,
                     child: ElevatedButton(
                         onPressed: () async {
-                          _passwordController.text.toString() ==
-                                  loginApi.value!.passWord.toString()
-                              ? print('yeessss1')
-                              : print('noooooo1');
-                          _phoneController.text.toString() ==
-                                  loginApi.value!.phoneNumber.toString()
-                              ? print('yeessss')
-                              : print(loginApi.value!.phoneNumber.toString());
+                          // _passwordController.text.toString() ==
+                          //         loginApi.value!.passWord.toString()
+                          //     ? print('yeessss1')
+                          //     : print('noooooo1');
+                          // _phoneController.text.toString() ==
+                          //         loginApi.value!.phoneNumber.toString()
+                          //     ? print('yeessss')
+                          //     : print(loginApi.value!.phoneNumber.toString());
                           SharedPreferences sp =
                               await SharedPreferences.getInstance();
                           final Prehelper = PrefsHelper(sp);
