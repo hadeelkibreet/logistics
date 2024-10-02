@@ -7,6 +7,6 @@ final localLoginRepositry = StateProvider((ref) => LocalLoginRepositry());
 class LocalLoginRepositry implements LoginRepositry {
   @override
   LoginEntity setLogin() {
-    return LoginEntity(phoneNumber: '0503792580', passWord: '123');
+    throw UnimplementedError();
   }
 }
