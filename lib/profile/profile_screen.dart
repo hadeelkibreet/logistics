@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/constants/colors.dart';
+import 'package:logistics/constants/images.dart';
 import 'package:logistics/i18n/strings.g.dart';
 import 'package:logistics/profile/entity/profile_entity.dart';
 import 'package:logistics/profile/providers/profile_provider.dart';
@@ -17,217 +18,243 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final GlobalKey _formkey = GlobalKey<FormState>();
 
   bool _passwordVisible = false;
+  TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final profileData = ref.watch(profileProvider);
-    final TextEditingController _passwordController =
-        TextEditingController(text: profileData.value!.password ?? "");
+    final passwordData = ref.watch(passwordProfileProvider);
+    passwordData.whenData((password) {
+      if (password != null && _passwordController.text.isEmpty) {
+        _passwordController.text =
+            password; // Set the controller text to the password
+      }
+    });
+
     return Scaffold(
         backgroundColor: ColorsApp.backgroundColor,
         drawer: DriverDrawar(),
         appBar: AppBar(
-          title: Text(t.MyProfile),
+          title: Text('${t.MyProfile}'),
           centerTitle: true,
         ),
         body: profileData.when(
-          data: (ProfileEntity profile) => SingleChildScrollView(
-            child: Form(
-              key: _formkey,
-              child: Column(
-                children: [
-                  Stack(
-                    children: [
-                      Container(
-                        height: 190,
-                        decoration: BoxDecoration(
-                          color: ColorsApp.primaryColor.withOpacity(0.2),
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(50.0),
-                            bottomRight: Radius.circular(50.0),
+          data: (ProfileEntity? profile) {
+            // Handle case when profile is null
+            if (profile == null) {
+              return Center(child: Text("No profile data available"));
+            }
+
+            return SingleChildScrollView(
+              child: Form(
+                key: _formkey,
+                child: Column(
+                  children: [
+                    Stack(
+                      children: [
+                        Container(
+                          height: 190,
+                          decoration: BoxDecoration(
+                            color: ColorsApp.primaryColor.withOpacity(0.2),
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(50.0),
+                              bottomRight: Radius.circular(50.0),
+                            ),
                           ),
                         ),
-                      ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Column(
-                            children: [
-                              CircleAvatar(
-                                backgroundImage:
-                                    AssetImage(profile.code as String),
-                                radius: 50.sp,
-                              ),
-                              SizedBox(height: 10),
-                              Text(
-                                profile.name,
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                profile.phone,
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.grey[700]),
-                              ),
-                            ],
+                        Align(
+                          alignment: Alignment.center,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Column(
+                              children: [
+                                CircleAvatar(
+                                  backgroundImage: AssetImage(
+                                    ImageAssets.logo,
+                                  ),
+                                  radius: 50.sp,
+                                ),
+                                SizedBox(height: 10),
+                                Text(
+                                  profile.userName,
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  profile.phone,
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.grey[700]),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 16.0),
-                    padding: EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: Offset(0, 3),
                         ),
                       ],
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        buildInfoRow(Icons.info, t.personalInfo, '', true),
-                        Divider(thickness: 1),
-                        buildInfoRow(Icons.cake, profile.phone, t.dateOfBirth),
-                        buildInfoRow(Icons.person, profile.gender, t.gender),
-                        buildInfoRow(Icons.public, profile.name, t.Country),
-                        buildInfoRow(Icons.email, profile.email, t.email),
-                        Stack(
-                          children: [
-                            TextFormField(
-                              controller: _passwordController,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return t.EnterThePassword;
-                                }
-                                // Add additional validation logic here if needed
-                                return null; // Return null if the value is valid
-                              },
-                              obscureText: !_passwordVisible,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: ColorsApp.white,
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide.none,
-                                ),
-                                suffixIcon: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _passwordVisible = !_passwordVisible;
-                                    });
-                                  },
-                                  child: Icon(
-                                    _passwordVisible
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
-                                    color: Colors.grey.withOpacity(0.9),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 16.0),
+                      padding: EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          buildInfoRow(Icons.info, t.personalInfo, '', true),
+                          // Divider(thickness: 1),
+                          // buildInfoRow(
+                          //     Icons.cake, profile., t.dateOfBirth),
+                          buildInfoRow(Icons.person, profile.gender, t.gender),
+                          buildInfoRow(
+                              Icons.public, profile.address, t.Country),
+                          buildInfoRow(Icons.email, profile.email, t.email),
+                          Stack(
+                            children: [
+                              TextFormField(
+                                controller: _passwordController,
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return t.EnterThePassword;
+                                  }
+                                  // Add additional validation logic here if needed
+                                  return null; // Return null if the value is valid
+                                },
+                                obscureText: !_passwordVisible,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: ColorsApp.white,
+                                  border: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  suffixIcon: GestureDetector(
+                                    onTap: () {
+                                      print(
+                                          'Password: ${_passwordController.text}');
+                                      setState(() {
+                                        _passwordVisible = !_passwordVisible;
+                                      });
+                                    },
+                                    child: Icon(
+                                      _passwordVisible
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
+                                      color: Colors.grey.withOpacity(0.9),
+                                    ),
+                                  ),
+                                  prefixIcon: Icon(
+                                    Icons.lock,
+                                    color: Colors.grey[700],
                                   ),
                                 ),
-                                prefixIcon: Icon(
-                                  Icons.lock,
-                                  color: Colors.grey[700],
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 4.0, horizontal: 50),
+                                child: Text(
+                                  t.passWord,
+                                  // style: TextStyle(color: Colors.red),
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 4.0, horizontal: 50),
-                              child: Text(
-                                t.passWord,
-                                // style: TextStyle(color: Colors.red),
-                              ),
-                            ),
-                          ],
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  backgroundColor: ColorsApp.white,
-                                  title: Column(
-                                    children: [
-                                      Icon(
-                                        Icons.question_mark,
-                                        color: ColorsApp.primaryColor,
-                                        size: 45.sp,
-                                      ),
-                                      SizedBox(
-                                        height: 10.h,
-                                      ),
-                                      Text(
-                                        t.DoYouReallyWantToLogOut,
-                                        style: TextStyle(
-                                          color: ColorsApp.primaryColor,
-                                          fontSize: 16.sp,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  actions: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                            ],
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    backgroundColor: ColorsApp.white,
+                                    title: Column(
                                       children: [
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text(
-                                            t.no,
-                                            style: TextStyle(
-                                              color: ColorsApp.primaryColor,
-                                            ),
-                                          ),
+                                        Icon(
+                                          Icons.question_mark,
+                                          color: ColorsApp.primaryColor,
+                                          size: 45.sp,
                                         ),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            // Navigator.pushAndRemoveUntil(
-                                            //   context,
-                                            //   MaterialPageRoute(
-                                            //       builder: (context) => LogInScreen()),
-                                            //       (route) => false,
-                                            // );
-                                          },
-                                          child: Text(
-                                            t.yes,
-                                            style: TextStyle(
-                                              color: ColorsApp.primaryColor,
-                                            ),
+                                        SizedBox(
+                                          height: 10.h,
+                                        ),
+                                        Text(
+                                          t.DoYouReallyWantToLogOut,
+                                          style: TextStyle(
+                                            color: ColorsApp.primaryColor,
+                                            fontSize: 16.sp,
                                           ),
                                         ),
                                       ],
                                     ),
-                                  ],
-                                );
-                              },
-                            );
-                          },
-                          child: Text(
-                            t.changeThePassWord,
-                            style: TextStyle(color: ColorsApp.primaryColor),
+                                    actions: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text(
+                                              t.no,
+                                              style: TextStyle(
+                                                color: ColorsApp.primaryColor,
+                                              ),
+                                            ),
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              // Navigator.pushAndRemoveUntil(
+                                              //   context,
+                                              //   MaterialPageRoute(
+                                              //       builder: (context) => LogInScreen()),
+                                              //       (route) => false,
+                                              // );
+                                            },
+                                            child: Text(
+                                              t.yes,
+                                              style: TextStyle(
+                                                color: ColorsApp.primaryColor,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            child: Text(
+                              t.changeThePassWord,
+                              style: TextStyle(color: ColorsApp.primaryColor),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ),
-          error: (error, stackTrace) => Text("Error"),
+            );
+          },
+          error: (error, stackTrace) => Center(child: Text("Error")),
           loading: () => CircularProgressIndicator(),
         ));
   }
