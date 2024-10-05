@@ -20,6 +20,7 @@ class _DriverStatusScreenState extends ConsumerState<DriverStatusScreen> {
   Color borderColor1 = Colors.grey[300]!;
   Color borderColor2 = Colors.grey[300]!;
   Color borderColor3 = Colors.grey[300]!;
+
   @override
   Widget build(BuildContext context) {
     final t = Translations.of(context);

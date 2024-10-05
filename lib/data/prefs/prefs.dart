@@ -38,17 +38,42 @@ class PrefsHelper {
     return null;
   }
 
+  // Save ProfileEntity
+  Future<void> saveProfileEntity(ProfileEntity entity) async {
+    String jsonString = jsonEncode(entity.toJson());
+    await prefs.setString('profile_entity', jsonString);
+  }
+
+  // Retrieve ProfileEntity
+  ProfileEntity? getProfileEntity() {
+    String? jsonString = prefs.getString('profile_entity');
+    if (jsonString != null) {
+      Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+      return ProfileEntity.fromJson(jsonMap);
+    }
+    return null;
+  }
+
   ProfileEntity get userInfo {
     return ProfileEntity(
-        token: prefs.getString(PreferencesKeys.USER_TOKEN) ?? '',
-        name: prefs.getString(PreferencesKeys.USER_NAME) ?? '',
-        phone: prefs.getString(PreferencesKeys.USER_PHONE) ?? '',
-        password: prefs.getString(PreferencesKeys.USER_PASSWORD) ?? '',
+        id: prefs.getInt(PreferencesKeys.USER_ID) ?? 0,
+        nationalityId:
+            prefs.getString(PreferencesKeys.USER_nationality_id) ?? '',
+        supervisorId: prefs.getString(PreferencesKeys.USER_supervisor_id) ?? '',
         gender: prefs.getString(PreferencesKeys.USER_GENDER) ?? '',
-        birthDate: prefs.getString(PreferencesKeys.USER_BIRTHDATE) ?? '',
+        image: prefs.getString(PreferencesKeys.USER_IMAGE) ?? '',
+        userName: prefs.getString(PreferencesKeys.USER_USER_NAME) ?? '',
+        name: prefs.getString(PreferencesKeys.USER_NAME) ?? '',
+        password: prefs.getString(PreferencesKeys.USER_PASSWORD) ?? '',
         email: prefs.getString(PreferencesKeys.USER_EMAIL) ?? '',
-        country: prefs.getString(PreferencesKeys.USER_COUNTRY) ?? '',
-        imageProfile: prefs.getString(PreferencesKeys.USER_IMAGEPROFILE) ?? '');
+        phone: prefs.getString(PreferencesKeys.USER_PHONE) ?? '',
+        address: prefs.getString(PreferencesKeys.USER_address) ?? '',
+        isActive: prefs.getInt(PreferencesKeys.USER_is_active) ?? 0,
+        createdAt: prefs.getString(PreferencesKeys.USER_created_at) ?? '',
+        carId: prefs.getInt(PreferencesKeys.USER_car_id) ?? 0,
+        token: prefs.getString(PreferencesKeys.USER_TOKEN) ?? '',
+        code: prefs.getInt(PreferencesKeys.USER_CODE) ?? 0,
+        updatedAt: prefs.getString(PreferencesKeys.USER_updated_at) ?? '');
   }
 
   setLoggedIn() {
@@ -58,17 +83,24 @@ class PrefsHelper {
   Future<void> saveUserInfo(ProfileEntity user,
       {required bool isLoggedIn}) async {
     print("----> saved ${user.toString()}");
-    prefs.setString(PreferencesKeys.USER_EMAIL, user.email);
-    prefs.setString(PreferencesKeys.USER_TOKEN, user.token);
-    prefs.setBool(PreferencesKeys.IS_LOGGED_IN, isLoggedIn);
-    prefs.setString(PreferencesKeys.USER_PASSWORD, user.password);
-    prefs.setString(PreferencesKeys.USER_NAME, user.name);
-    prefs.setString(PreferencesKeys.USER_PHONE, user.phone);
-    prefs.setString(PreferencesKeys.USER_GENDER, user.gender);
-    prefs.setString(PreferencesKeys.USER_BIRTHDATE, user.birthDate);
-    prefs.setString(PreferencesKeys.USER_IMAGEPROFILE, user.imageProfile);
-    prefs.setString(PreferencesKeys.USER_COUNTRY, user.country);
 
+    prefs.setInt(PreferencesKeys.USER_ID, user.id);
+    prefs.setString(PreferencesKeys.USER_nationality_id, user.nationalityId);
+    prefs.setString(PreferencesKeys.USER_supervisor_id, user.supervisorId);
+    prefs.setString(PreferencesKeys.USER_GENDER, user.gender);
+    prefs.setString(PreferencesKeys.USER_IMAGE, user.image);
+    prefs.setString(PreferencesKeys.USER_USER_NAME, user.userName);
+    prefs.setString(PreferencesKeys.USER_NAME, user.name);
+    prefs.setString(PreferencesKeys.USER_PASSWORD, user.password);
+    prefs.setString(PreferencesKeys.USER_EMAIL, user.email);
+    prefs.setString(PreferencesKeys.USER_PHONE, user.phone);
+    prefs.setString(PreferencesKeys.USER_address, user.address);
+    prefs.setInt(PreferencesKeys.USER_is_active, user.isActive);
+    prefs.setString(PreferencesKeys.USER_created_at, user.createdAt);
+    prefs.setInt(PreferencesKeys.USER_car_id, user.carId);
+    prefs.setString(PreferencesKeys.USER_TOKEN, user.token);
+    prefs.setInt(PreferencesKeys.USER_CODE, user.code);
+    prefs.setString(PreferencesKeys.USER_updated_at, user.updatedAt);
     return Future.value();
   }
 

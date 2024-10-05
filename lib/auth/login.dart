@@ -1,14 +1,21 @@
+import 'dart:async';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:logistics/auth/entity/login_entity.dart';
 import 'package:logistics/auth/providers/login_provider.dart';
 import 'package:logistics/constants/colors.dart';
+import 'package:logistics/constants/dio.dart';
+import 'package:logistics/constants/endpoints.dart';
 import 'package:logistics/constants/images.dart';
+import 'package:logistics/profile/entity/profile_entity.dart';
+import 'package:logistics/profile/profile_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/prefs/prefs.dart';
-import '../driver_status/driverStatusScreen.dart';
 import '../i18n/strings.g.dart' show Translations, AppLocale, LocaleSettings, t;
 
 class LogInScreen extends ConsumerStatefulWidget {
@@ -30,6 +37,51 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
   //   _passwordController.dispose();
   //   super.dispose();
   // }
+
+  Future<void> _response() async {
+    var data = FormData.fromMap({'phone': '${_phoneController.text}'});
+    var response =
+        await ApiService().postData(data, Endpoints.login.toString());
+    await _postLoginEntityData(response);
+    var responsegetdata =
+        await ApiService().getData(Endpoints.getProfile.toString());
+    await _saveProfileEntityData(responsegetdata);
+  }
+
+  Future<void> _saveProfileEntityData(responseData) async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    final preHelper = PrefsHelper(sp);
+
+    // Assuming the API response contains the ProfileEntity data
+    ProfileEntity profileEntity = ProfileEntity.fromJson(responseData);
+
+    // Save ProfileEntity in SharedPreferences
+    await preHelper.saveProfileEntity(profileEntity);
+
+    // Retrieve and print the saved ProfileEntity
+    ProfileEntity? retrievedEntity = preHelper.getProfileEntity();
+    print("Saved ProfileEntity Name: ${retrievedEntity?.name}");
+    print("Authorization Token: ${preHelper.getUserToken}");
+  }
+
+  Future<void> _postLoginEntityData(response) async {
+    if (response.statusCode == 200) {
+      LoginEntity loginEntity = LoginEntity.fromJson(response.data);
+      SharedPreferences sp = await SharedPreferences.getInstance();
+      final preHelper = PrefsHelper(sp);
+
+      if (!preHelper.getUserToken.contains("Bearer")) {
+        await preHelper.setUserToken(loginEntity.accessToken);
+      }
+      await preHelper.saveLoginEntity(loginEntity);
+      LoginEntity? infoEntity = preHelper.getLoginEntity();
+      print("1${response.data}");
+      print("2${infoEntity!.user.name.toString()}");
+      print("3${preHelper.getUserToken}");
+    } else {
+      print("4${response.statusMessage}");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -161,6 +213,7 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                     height: height * 0.07,
                     child: ElevatedButton(
                         onPressed: () async {
+                          _response();
                           // _passwordController.text.toString() ==
                           //         loginApi.value!.passWord.toString()
                           //     ? print('yeessss1')
@@ -179,7 +232,8 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => DriverStatusScreen(),
+                              builder: (context) => ProfileScreen(),
+                              //DriverStatusScreen(),
                             ),
                           );
 

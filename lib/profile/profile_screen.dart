@@ -17,6 +17,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final GlobalKey _formkey = GlobalKey<FormState>();
 
   bool _passwordVisible = false;
+
   @override
   Widget build(BuildContext context) {
     final profileData = ref.watch(profileProvider);
@@ -55,7 +56,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             children: [
                               CircleAvatar(
                                 backgroundImage:
-                                    AssetImage(profile.imageProfile),
+                                    AssetImage(profile.code as String),
                                 radius: 50.sp,
                               ),
                               SizedBox(height: 10),
@@ -98,10 +99,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       children: [
                         buildInfoRow(Icons.info, t.personalInfo, '', true),
                         Divider(thickness: 1),
-                        buildInfoRow(
-                            Icons.cake, profile.birthDate, t.dateOfBirth),
+                        buildInfoRow(Icons.cake, profile.phone, t.dateOfBirth),
                         buildInfoRow(Icons.person, profile.gender, t.gender),
-                        buildInfoRow(Icons.public, profile.country, t.Country),
+                        buildInfoRow(Icons.public, profile.name, t.Country),
                         buildInfoRow(Icons.email, profile.email, t.email),
                         Stack(
                           children: [

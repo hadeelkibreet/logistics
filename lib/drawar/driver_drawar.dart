@@ -25,10 +25,25 @@ class DriverDrawar extends ConsumerStatefulWidget {
 
 class _DriverDrawarState extends ConsumerState<DriverDrawar> {
   late String selectedLanguage = 'English';
+  //String userName = "name";
+
+  @override
+  void initState() {
+    _loadUserName();
+    super.initState();
+  }
+
+  _loadUserName() async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    final preHelper = PrefsHelper(sp);
+    final userName = preHelper.getProfileEntity()!.name.toString();
+    ref.read(userNameProvider.notifier).update((state) => userName);
+  }
 
   @override
   Widget build(BuildContext context) {
     final ProfileProvider = ref.watch(profileProvider);
+    final usernameProvider = ref.watch(userNameProvider).toString();
     return SafeArea(
       child: Drawer(
         child: ListView(
@@ -41,14 +56,15 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
               child: Column(
                 children: [
                   CircleAvatar(
-                    backgroundImage:
-                        AssetImage(ProfileProvider.value!.imageProfile),
+                    backgroundImage: AssetImage(
+                      ImageAssets.logo,
+                    ),
                     radius: 50.sp,
                   ),
                   Padding(
                     padding: EdgeInsets.only(right: 8.0.sp),
                     child: Text(
-                      ProfileProvider.value!.name,
+                      usernameProvider,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: ColorsApp.white,
