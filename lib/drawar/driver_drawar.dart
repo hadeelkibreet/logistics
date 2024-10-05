@@ -1,9 +1,13 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/Settings_screen/SettingsScreen.dart';
+import 'package:logistics/auth/entity/login_entity.dart';
 import 'package:logistics/auth/login.dart';
 import 'package:logistics/constants/colors.dart';
+import 'package:logistics/constants/dio.dart';
+import 'package:logistics/constants/endpoints.dart';
 import 'package:logistics/constants/images.dart';
 import 'package:logistics/data/prefs/prefs.dart';
 import 'package:logistics/drawar/list_tile_drawar.dart';
@@ -12,6 +16,7 @@ import 'package:logistics/i18n/strings.g.dart';
 import 'package:logistics/orders/active_orders/active_orders.dart';
 import 'package:logistics/orders/orders_done/orders_done.dart';
 import 'package:logistics/orders/providers/orders_provider.dart';
+import 'package:logistics/profile/entity/profile_entity.dart';
 import 'package:logistics/profile/profile_screen.dart';
 import 'package:logistics/profile/providers/profile_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,7 +31,7 @@ class DriverDrawar extends ConsumerStatefulWidget {
 class _DriverDrawarState extends ConsumerState<DriverDrawar> {
   late String selectedLanguage = 'English';
   //String userName = "name";
-
+  late String phoneNumber;
   @override
   void initState() {
     _loadUserName();
@@ -37,6 +42,7 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
     SharedPreferences sp = await SharedPreferences.getInstance();
     final preHelper = PrefsHelper(sp);
     final userName = preHelper.getProfileEntity()!.name.toString();
+    phoneNumber = preHelper.getProfileEntity()!.phone.toString();
     ref.read(userNameProvider.notifier).update((state) => userName);
   }
 
@@ -111,6 +117,7 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
               ),
               text: t.update,
               onPressed: () {
+                rresponse(phoneNumber);
                 WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
                   ref.read(ordersProvider.notifier).getOrders();
                 });
@@ -295,5 +302,49 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
         ),
       ),
     );
+  }
+}
+
+Future<void> rresponse(phoneNumber) async {
+  var data = FormData.fromMap({'phone': '${phoneNumber.toString()}'});
+  var response = await ApiService().postData(data, Endpoints.login.toString());
+  await _postLoginEntityData(response);
+  var responsegetdata =
+      await ApiService().getData(Endpoints.getProfile.toString());
+  await _saveProfileEntityData(responsegetdata);
+}
+
+Future<void> _saveProfileEntityData(responseData) async {
+  SharedPreferences sp = await SharedPreferences.getInstance();
+  final preHelper = PrefsHelper(sp);
+
+  // Assuming the API response contains the ProfileEntity data
+  ProfileEntity profileEntity = ProfileEntity.fromJson(responseData);
+
+  // Save ProfileEntity in SharedPreferences
+  await preHelper.saveProfileEntity(profileEntity);
+
+  // Retrieve and print the saved ProfileEntity
+  ProfileEntity? retrievedEntity = preHelper.getProfileEntity();
+  print("Saved ProfileEntity Name: ${retrievedEntity?.name}");
+  //print("Authorization Token: ${preHelper.getUserToken}");
+}
+
+Future<void> _postLoginEntityData(response) async {
+  if (response.statusCode == 200) {
+    LoginEntity loginEntity = LoginEntity.fromJson(response.data);
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    final preHelper = PrefsHelper(sp);
+
+    if (!preHelper.getUserToken.contains("Bearer")) {
+      await preHelper.setUserToken(loginEntity.accessToken);
+    }
+    await preHelper.saveLoginEntity(loginEntity);
+    LoginEntity? infoEntity = preHelper.getLoginEntity();
+    // print("1${response.data}");
+    print("2${infoEntity!.user.name.toString()}");
+    //print("3${preHelper.getUserToken}");
+  } else {
+    print("4${response.statusMessage}");
   }
 }
