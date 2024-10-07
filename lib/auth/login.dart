@@ -67,9 +67,7 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
   Future<void> _postLoginEntityData(response) async {
     if (response.statusCode == 200) {
       LoginEntity loginEntity = LoginEntity.fromJson(response.data);
-      SharedPreferences sp = await SharedPreferences.getInstance();
-      final preHelper = PrefsHelper(sp);
-
+      PrefsHelper preHelper = ref.read(prefHelperProvider);
       if (!preHelper.getUserToken.contains("Bearer")) {
         await preHelper.setUserToken(loginEntity.accessToken);
       }
@@ -213,7 +211,7 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                     height: height * 0.07,
                     child: ElevatedButton(
                         onPressed: () async {
-                          _response();
+                          await _response();
                           // _passwordController.text.toString() ==
                           //         loginApi.value!.passWord.toString()
                           //     ? print('yeessss1')
@@ -222,9 +220,8 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                           //         loginApi.value!.phoneNumber.toString()
                           //     ? print('yeessss')
                           //     : print(loginApi.value!.phoneNumber.toString());
-                          SharedPreferences sp =
-                              await SharedPreferences.getInstance();
-                          final Prehelper = PrefsHelper(sp);
+
+                          final Prehelper = ref.read(prefHelperProvider);
                           Prehelper.setLoggedIn();
                           //sp.setBool('isLogin', true);
                           print("is login ${Prehelper.getIsLoggedIn}");

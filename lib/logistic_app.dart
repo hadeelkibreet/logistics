@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/SplashPage.dart';
+import 'package:logistics/data/prefs/shared_pref_provider.dart';
 
 import 'i18n/strings.g.dart'
     show AppLocaleUtils, LocaleSettings, TranslationProvider;
@@ -30,5 +31,15 @@ class _LogisticsAppState extends ConsumerState<LogisticsApp> {
         home: SplashPage(),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initSharedPrefs();
+  }
+
+  void initSharedPrefs() async {
+    await ref.read(sharedPrefProvider.future);
   }
 }

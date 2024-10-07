@@ -1,11 +1,17 @@
 import 'dart:convert';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logistics/data/prefs/PreferencesKeys.dart';
+import 'package:logistics/data/prefs/shared_pref_provider.dart';
 import 'package:logistics/profile/entity/profile_entity.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../auth/entity/login_entity.dart';
+
+final prefHelperProvider = Provider((ref) {
+  return PrefsHelper(ref.read(sharedPrefProvider).requireValue);
+});
 
 @LazySingleton()
 class PrefsHelper {

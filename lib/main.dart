@@ -8,7 +8,9 @@ main() async {
   LocaleSettings.useDeviceLocale();
   runApp(
     ProviderScope(
-      child: TranslationProvider(child: LogisticsApp()),
+      child: TranslationProvider(
+        child: const LogisticsApp(),
+      ),
     ),
   );
 }
