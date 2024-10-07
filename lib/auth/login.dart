@@ -11,8 +11,8 @@ import 'package:logistics/constants/colors.dart';
 import 'package:logistics/constants/dio.dart';
 import 'package:logistics/constants/endpoints.dart';
 import 'package:logistics/constants/images.dart';
+import 'package:logistics/driver_status/driverStatusScreen.dart';
 import 'package:logistics/profile/entity/profile_entity.dart';
-import 'package:logistics/profile/profile_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/prefs/prefs.dart';
@@ -232,7 +232,7 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ProfileScreen(),
+                              builder: (context) => DriverStatusScreen(),
                               //DriverStatusScreen(),
                             ),
                           );

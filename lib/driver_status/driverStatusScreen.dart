@@ -25,7 +25,9 @@ class _DriverStatusScreenState extends ConsumerState<DriverStatusScreen> {
   Widget build(BuildContext context) {
     final t = Translations.of(context);
     final AppLocale activeLocale = LocaleSettings.currentLocale;
-    final DriverStatus = ref.watch(DriverStatusProvider);
+
+    final driverStatusAsync = ref.watch(driverStatusProvider);
+
     return Scaffold(
       backgroundColor: ColorsApp.backgroundColor,
       drawer: DriverDrawar(),
@@ -33,127 +35,128 @@ class _DriverStatusScreenState extends ConsumerState<DriverStatusScreen> {
         title: Text(t.ServiceSchedule),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            color: DriverStatus.status == 1
-                ? Colors.green
-                : DriverStatus.status == 2
-                    ? Colors.amber
-                    : DriverStatus.status == 3
-                        ? Colors.red
-                        : Colors.grey,
-            padding: EdgeInsets.all(10.0.sp),
-            child: Text(
-              DriverStatus.status == 1
-                  ? t.InService
-                  : DriverStatus.status == 2
-                      ? t.InBreak
-                      : DriverStatus.status == 3
-                          ? t.OutOfService
-                          : '',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white, fontSize: 18.sp),
-            ),
-          ),
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.all(16.0.sp),
-              children: [
-                buildStatusOption(
-                  icon: Icons.check_circle,
-                  iconColor: Colors.green,
-                  text: t.IAmInService,
-                  borderColor: borderColor1,
-                  iconBgColor: Colors.grey[300]!,
-                  NumberOfser: 1,
-                  isServes: isServes,
-                  inBrack: inBrack,
-                  inOut: inOut,
-                  onPressed: () {
-                    setState(() {
-                      isServes = true;
-                      inBrack = false;
-                      inOut = false;
-                      borderColor1 = Colors.green;
-                      borderColor2 = Colors.grey[300]!;
-                      borderColor3 = Colors.grey[300]!;
-                    });
-                  },
+      body: driverStatusAsync.when(
+        data: (driverStatus) {
+          return Column(
+            children: [
+              Container(
+                width: double.infinity,
+                color: driverStatus.isActive == 1
+                    ? Colors.green
+                    : driverStatus.isActive == 2
+                        ? Colors.amber
+                        : driverStatus.isActive == 3
+                            ? Colors.red
+                            : Colors.grey,
+                padding: EdgeInsets.all(10.0.sp),
+                child: Text(
+                  "${driverStatus.isActive == 1 ? t.InService : driverStatus.isActive == 2 ? t.InBreak : t.OutOfService}",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white, fontSize: 18.sp),
                 ),
-                SizedBox(height: 15.h),
-                buildStatusOption(
-                  icon: Icons.free_breakfast,
-                  iconColor: Colors.orange,
-                  text: t.IAmInBreak,
-                  borderColor: borderColor2,
-                  iconBgColor: Colors.grey[300]!,
-                  NumberOfser: 2,
-                  isServes: isServes,
-                  inBrack: inBrack,
-                  inOut: inOut,
-                  onPressed: () {
-                    setState(() {
-                      isServes = false;
-                      inBrack = true;
-                      inOut = false;
-                      borderColor1 = Colors.grey[300]!;
-                      borderColor2 = Colors.amber;
-                      borderColor3 = Colors.grey[300]!;
-                    });
-                  },
-                ),
-                SizedBox(height: 15.h),
-                buildStatusOption(
-                  icon: Icons.cancel,
-                  iconColor: Colors.red,
-                  text: t.IAmOutOfService,
-                  borderColor: Colors.grey[300]!,
-                  iconBgColor: Colors.red[100]!,
-                  textColor: Colors.black,
-                  NumberOfser: 3,
-                  isServes: isServes,
-                  inBrack: inBrack,
-                  inOut: inOut,
-                  onPressed: () {
-                    setState(() {
-                      isServes = false;
-                      inBrack = false;
-                      inOut = true;
-
-                      borderColor1 = Colors.grey[300]!;
-                      borderColor2 = Colors.grey[300]!;
-                      borderColor3 = Colors.red;
-                    });
-                  },
-                ),
-                SizedBox(height: 15.h),
-                Container(
-                  width: 10.w,
-                  height: 40.h,
-                  child: ElevatedButton(
-                      onPressed: () async {
-                        activeLocale == AppLocale.en
-                            ? LocaleSettings.setLocale(AppLocale.ar)
-                            : LocaleSettings.setLocale(AppLocale.en);
+              ),
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.all(16.0.sp),
+                  children: [
+                    buildStatusOption(
+                      icon: Icons.check_circle,
+                      iconColor: Colors.green,
+                      text: t.IAmInService,
+                      borderColor: borderColor1,
+                      iconBgColor: Colors.grey[300]!,
+                      NumberOfser: 1,
+                      isServes: isServes,
+                      inBrack: inBrack,
+                      inOut: inOut,
+                      onPressed: () {
+                        setState(() {
+                          isServes = true;
+                          inBrack = false;
+                          inOut = false;
+                          borderColor1 = Colors.green;
+                          borderColor2 = Colors.grey[300]!;
+                          borderColor3 = Colors.grey[300]!;
+                        });
                       },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(ColorsApp.yellow),
-                      ),
-                      child: Text(
-                        '${t.changeToEnglish}',
-                        style: TextStyle(
-                          color: ColorsApp.black,
-                          fontSize: 16.sp,
-                        ),
-                      )),
+                    ),
+                    SizedBox(height: 15.h),
+                    buildStatusOption(
+                      icon: Icons.free_breakfast,
+                      iconColor: Colors.orange,
+                      text: t.IAmInBreak,
+                      borderColor: borderColor2,
+                      iconBgColor: Colors.grey[300]!,
+                      NumberOfser: 2,
+                      isServes: isServes,
+                      inBrack: inBrack,
+                      inOut: inOut,
+                      onPressed: () {
+                        setState(() {
+                          isServes = false;
+                          inBrack = true;
+                          inOut = false;
+                          borderColor1 = Colors.grey[300]!;
+                          borderColor2 = Colors.amber;
+                          borderColor3 = Colors.grey[300]!;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 15.h),
+                    buildStatusOption(
+                      icon: Icons.cancel,
+                      iconColor: Colors.red,
+                      text: t.IAmOutOfService,
+                      borderColor: borderColor3,
+                      iconBgColor: Colors.red[100]!,
+                      textColor: Colors.black,
+                      NumberOfser: 3,
+                      isServes: isServes,
+                      inBrack: inBrack,
+                      inOut: inOut,
+                      onPressed: () {
+                        setState(() {
+                          isServes = false;
+                          inBrack = false;
+                          inOut = true;
+                          borderColor1 = Colors.grey[300]!;
+                          borderColor2 = Colors.grey[300]!;
+                          borderColor3 = Colors.red;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 15.h),
+                    Container(
+                      width: 10.w,
+                      height: 40.h,
+                      child: ElevatedButton(
+                          onPressed: () async {
+                            activeLocale == AppLocale.en
+                                ? LocaleSettings.setLocale(AppLocale.ar)
+                                : LocaleSettings.setLocale(AppLocale.en);
+                          },
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                ColorsApp.yellow),
+                          ),
+                          child: Text(
+                            '${t.changeToEnglish}',
+                            style: TextStyle(
+                              color: ColorsApp.black,
+                              fontSize: 16.sp,
+                            ),
+                          )),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-        ],
+              ),
+            ],
+          );
+        },
+        loading: () =>
+            Center(child: CircularProgressIndicator()), // Show loading spinner
+        error: (error, stack) =>
+            Center(child: Text('Error: $error')), // Handle errors
       ),
     );
   }

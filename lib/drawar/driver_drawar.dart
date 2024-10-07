@@ -41,7 +41,7 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
   _loadUserName() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
     final preHelper = PrefsHelper(sp);
-    final userName = preHelper.getProfileEntity()!.name.toString();
+    final userName = preHelper.getProfileEntity()!.userName.toString();
     phoneNumber = preHelper.getProfileEntity()!.phone.toString();
     ref.read(userNameProvider.notifier).update((state) => userName);
   }
