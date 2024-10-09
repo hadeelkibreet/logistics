@@ -140,12 +140,17 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
                     itemCount: orderListProvider.length,
                     itemBuilder: (context, index) {
                       return buildOrderCard(
-                        name: orderListProvider[index].name,
-                        numberOfLength: 2,
-                        orderNumber: orderListProvider[index].orderNumber,
-                        lat: orderListProvider[index].Orderlat,
-                        long: orderListProvider[index].Orderlong,
-                        statusCard: orderListProvider[index].statusOrder,
+                        name: orderListProvider[index]
+                            .destinationAddress
+                            .toString(),
+                        numberOfLength: orderListProvider.length,
+                        orderNumber:
+                            orderListProvider[index].barcode.toString(),
+                        lat: orderListProvider[index].sourceLatitude.toString(),
+                        long:
+                            orderListProvider[index].sourceLongitude.toString(),
+                        statusCard: orderListProvider[index]
+                            .orderStatus, // Updated line
                       );
                     },
                   ),

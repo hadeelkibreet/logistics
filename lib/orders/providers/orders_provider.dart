@@ -1,13 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logistics/orders/enum/order_status_enum.dart';
-import 'package:logistics/orders/repository/local_orders_repository.dart';
 import 'package:logistics/orders/repository/orders_repository.dart';
 import 'package:logistics/orders/repository/remote_orders_repository.dart';
 
 import '../entity/orders_entity.dart';
 
 final OrdersProvider2 = StateProvider(
-  (ref) => ref.read(localOrdersRepository).getOrders(),
+  (ref) => ref.read(remoteOrdersRepository).getOrders(),
 );
 
 final orderFilterProvider = StateProvider((ref) => OrderStatus.allOrders);
@@ -18,7 +17,7 @@ final ordersProvider =
     StateNotifierProvider<OrderStateNotifier, List<OrdersEntity>>((ref) {
   ref.read(remoteOrdersRepository);
   return OrderStateNotifier(
-      repository: ref.watch(localOrdersRepository),
+      repository: ref.watch(remoteOrdersRepository),
       filter: ref.watch(orderFilterProvider),
       Search: ref.watch(orderSearchProvider))
     ..getOrders()
@@ -35,12 +34,11 @@ class OrderStateNotifier extends StateNotifier<List<OrdersEntity>> {
   List<OrdersEntity> _display = [];
   OrderStatus filter;
   String Search;
-  void getOrders() {
-    _list = repository.getOrders();
+  Future<void> getOrders() async {
+    _list = await repository.getOrders();
     _display = _list;
     if (filter != OrderStatus.allOrders) {
-      _display =
-          _list.where((element) => element.statusOrder == filter).toList();
+      _display = _list.where((element) => element.barcode == filter).toList();
     }
 
     state = _display;
@@ -53,7 +51,7 @@ class OrderStateNotifier extends StateNotifier<List<OrdersEntity>> {
       return;
     }
     _display = _list
-        .where((element) => element.orderNumber.startsWith(Search.toString()))
+        .where((element) => element.barcode.startsWith(Search.toString()))
         .toList();
 
     state = _display;

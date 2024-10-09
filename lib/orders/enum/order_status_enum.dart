@@ -5,7 +5,7 @@ enum OrderStatus {
   allOrders(
     color: Colors.black,
   ),
-  delivered(color: Colors.green),
+  Delivery_Rejected(color: Colors.green),
   loadingTheShipment(color: Colors.amber),
   tryy(color: Colors.lightBlue),
   notTry(color: Colors.red);
@@ -19,7 +19,7 @@ extension OrderStatusExt on OrderStatus {
     switch (this) {
       case OrderStatus.allOrders:
         return t.allOrders;
-      case OrderStatus.delivered:
+      case OrderStatus.Delivery_Rejected:
         return t.delivery;
       case OrderStatus.loadingTheShipment:
         return t.LoadingTheShipment;

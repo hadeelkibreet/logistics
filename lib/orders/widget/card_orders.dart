@@ -10,8 +10,8 @@ class buildOrderCard extends StatefulWidget {
   final String name;
   final int numberOfLength;
   final String orderNumber;
-  final double lat;
-  final double long;
+  final String lat;
+  final String long;
   final OrderStatus statusCard;
   buildOrderCard(
       {Key? key,
@@ -133,7 +133,7 @@ class _buildOrderCardState extends State<buildOrderCard> {
               ),
             ),
             SizedBox(height: 8.sp),
-            if (widget.statusCard != OrderStatus.delivered)
+            if (widget.statusCard != OrderStatus.Delivery_Rejected)
               Row(
                 children: [
                   Expanded(
