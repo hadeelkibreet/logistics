@@ -13,7 +13,6 @@ import 'package:logistics/constants/endpoints.dart';
 import 'package:logistics/constants/images.dart';
 import 'package:logistics/driver_status/driverStatusScreen.dart';
 import 'package:logistics/profile/entity/profile_entity.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/prefs/prefs.dart';
 import '../i18n/strings.g.dart' show Translations, AppLocale, LocaleSettings, t;
@@ -44,19 +43,17 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
         await ApiService().postData(data, Endpoints.login.toString());
     await _postLoginEntityData(response);
     var responsegetdata =
-        await ApiService().getData(Endpoints.getProfile.toString());
+        await ApiService().getData(Endpoints.getProfile.toString(), ref);
     await _saveProfileEntityData(responsegetdata);
   }
 
   Future<void> _saveProfileEntityData(responseData) async {
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    final preHelper = PrefsHelper(sp);
-
+    //SharedPreferences sp = await SharedPreferences.getInstance();
+    //final preHelper = PrefsHelper(sp);
+    final preHelper = ref.read(prefHelperProvider);
     // Assuming the API response contains the ProfileEntity data
     ProfileEntity profileEntity = ProfileEntity.fromJson(responseData);
-
-    // Save ProfileEntity in SharedPreferences
-    await preHelper.saveProfileEntity(profileEntity);
+    preHelper.saveProfileEntity(profileEntity);
 
     // Retrieve and print the saved ProfileEntity
     ProfileEntity? retrievedEntity = preHelper.getProfileEntity();
@@ -66,12 +63,12 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
 
   Future<void> _postLoginEntityData(response) async {
     if (response.statusCode == 200) {
+      final preHelper = ref.read(prefHelperProvider);
       LoginEntity loginEntity = LoginEntity.fromJson(response.data);
-      PrefsHelper preHelper = ref.read(prefHelperProvider);
       if (!preHelper.getUserToken.contains("Bearer")) {
-        await preHelper.setUserToken(loginEntity.accessToken);
+        preHelper.setUserToken(loginEntity.accessToken);
       }
-      await preHelper.saveLoginEntity(loginEntity);
+      preHelper.saveLoginEntity(loginEntity);
       LoginEntity? infoEntity = preHelper.getLoginEntity();
       print("1${response.data}");
       print("2${infoEntity!.user.name.toString()}");

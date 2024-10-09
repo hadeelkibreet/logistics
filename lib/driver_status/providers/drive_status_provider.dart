@@ -5,5 +5,5 @@ import 'package:logistics/driver_status/repo/remote_drive_status.dart';
 // FutureProvider for getting the driver status asynchronously
 final driverStatusProvider = FutureProvider<DriverStatusEntity>((ref) async {
   final repository = ref.read(remoteDriverStatusRepositoryProvider);
-  return await repository.getDriverStatus();
+  return await repository.getDriverStatus(ref);
 });

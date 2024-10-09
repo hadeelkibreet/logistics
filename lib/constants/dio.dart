@@ -2,8 +2,6 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:logistics/data/prefs/prefs.dart';
-import 'package:logistics/profile/entity/profile_entity.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
   final Dio dio = Dio();
@@ -20,9 +18,8 @@ class ApiService {
     }
   }
 
-  getData(String endpoint) async {
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    final preHelper = PrefsHelper(sp);
+  getData(String endpoint, ref) async {
+    final preHelper = ref.read(prefHelperProvider);
 
     // Adding Authorization header if the token exists
     var headers = {'Authorization': 'Bearer ${preHelper.getUserToken}'};
@@ -41,42 +38,27 @@ class ApiService {
     }
   }
 
-  Future<void> _saveProfileEntityData(responseData) async {
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    final preHelper = PrefsHelper(sp);
+  postAllOrdersData(String endpoint, ref) async {
+    final preHelper = ref.read(prefHelperProvider);
 
-    // Assuming the API response contains the ProfileEntity data
-    ProfileEntity profileEntity = ProfileEntity.fromJson(responseData);
+    var data = FormData.fromMap({'type': 'all'});
+    var headers = {'Authorization': 'Bearer ${preHelper.getUserToken}'};
 
-    // Save ProfileEntity in SharedPreferences
-    await preHelper.saveProfileEntity(profileEntity);
+    var response = await dio.request(
+      endpoint.toString(),
+      options: Options(
+        method: 'POST',
+        headers: headers,
+      ),
+      data: data,
+    );
 
-    // Retrieve and print the saved ProfileEntity
-    ProfileEntity? retrievedEntity = preHelper.getProfileEntity();
-    print("Saved ProfileEntity Name: ${retrievedEntity?.name}");
-    print("Authorization Token: ${preHelper.getUserToken}");
+    if (response.statusCode == 200) {
+      print("hiiiiiiiiiii: ${json.encode(response.data)}");
+      return response.data;
+    } else {
+      print(response.statusMessage);
+      return null;
+    }
   }
-
-  //
-  // getData(String Endpoints) async {
-  //   SharedPreferences sp = await SharedPreferences.getInstance();
-  //   final preHelper = PrefsHelper(sp);
-  //   var headers = {'Authorization': '${preHelper.getUserToken}'};
-  //   var dio = Dio();
-  //   var response = await dio.request(
-  //     Endpoints,
-  //     options: Options(
-  //       method: 'GET',
-  //       headers: headers,
-  //     ),
-  //   );
-  //
-  //   if (response.statusCode == 200) {
-  //     print('ssssssssssssssssssssssssssssssssssssssssssss');
-  //     print(json.encode(response.data));
-  //     return response;
-  //   } else {
-  //     print(response.statusMessage);
-  //   }
-  // }
 }

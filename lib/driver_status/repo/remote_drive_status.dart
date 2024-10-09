@@ -11,11 +11,11 @@ final remoteDriverStatusRepositoryProvider = Provider<DriverStatusRepository>(
 
 class RemoteDriverStatusRepository implements DriverStatusRepository {
   @override
-  Future<DriverStatusEntity> getDriverStatus() async {
+  Future<DriverStatusEntity> getDriverStatus(ref) async {
     try {
       // Assuming ApiService is already set up for making HTTP requests
       var responseData =
-          await ApiService().getData(Endpoints.getStatue.toString());
+          await ApiService().getData(Endpoints.getStatue.toString(), ref);
 
       // Parse the JSON response and extract 'is_active'
       DriverStatusEntity driverStatusEntity =

@@ -14,7 +14,6 @@ import 'package:logistics/drawar/list_tile_drawar.dart';
 import 'package:logistics/driver_status/driverStatusScreen.dart';
 import 'package:logistics/i18n/strings.g.dart';
 import 'package:logistics/orders/active_orders/active_orders.dart';
-import 'package:logistics/orders/orders_done/orders_done.dart';
 import 'package:logistics/orders/providers/orders_provider.dart';
 import 'package:logistics/profile/entity/profile_entity.dart';
 import 'package:logistics/profile/profile_screen.dart';
@@ -39,9 +38,9 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
   }
 
   _loadUserName() async {
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    final preHelper = PrefsHelper(sp);
-    final userName = preHelper.getProfileEntity()!.userName.toString();
+    final preHelper = ref.read(prefHelperProvider);
+
+    final userName = await preHelper.getProfileEntity()!.userName.toString();
     phoneNumber = preHelper.getProfileEntity()!.phone.toString();
     ref.read(userNameProvider.notifier).update((state) => userName);
   }
@@ -107,8 +106,8 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
               ),
               text: t.CompletedOrder,
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => OrdersDon()));
+                // Navigator.push(context,
+                //     MaterialPageRoute(builder: (context) => OrdersDon()));
               },
             ),
             ListTileDrawar(
@@ -117,7 +116,7 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
               ),
               text: t.update,
               onPressed: () {
-                rresponse(phoneNumber);
+                rresponse(phoneNumber, ref);
                 WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
                   ref.read(ordersProvider.notifier).getOrders();
                 });
@@ -305,24 +304,23 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
   }
 }
 
-Future<void> rresponse(phoneNumber) async {
+Future<void> rresponse(phoneNumber, ref) async {
   var data = FormData.fromMap({'phone': '${phoneNumber.toString()}'});
   var response = await ApiService().postData(data, Endpoints.login.toString());
-  await _postLoginEntityData(response);
+  await _postLoginEntityData(response, ref);
   var responsegetdata =
-      await ApiService().getData(Endpoints.getProfile.toString());
-  await _saveProfileEntityData(responsegetdata);
+      await ApiService().getData(Endpoints.getProfile.toString(), ref);
+  await _saveProfileEntityData(responsegetdata, ref);
 }
 
-Future<void> _saveProfileEntityData(responseData) async {
-  SharedPreferences sp = await SharedPreferences.getInstance();
-  final preHelper = PrefsHelper(sp);
+Future<void> _saveProfileEntityData(responseData, ref) async {
+  final preHelper = ref.read(prefHelperProvider);
 
   // Assuming the API response contains the ProfileEntity data
   ProfileEntity profileEntity = ProfileEntity.fromJson(responseData);
 
   // Save ProfileEntity in SharedPreferences
-  await preHelper.saveProfileEntity(profileEntity);
+  preHelper.saveProfileEntity(profileEntity);
 
   // Retrieve and print the saved ProfileEntity
   ProfileEntity? retrievedEntity = preHelper.getProfileEntity();
@@ -330,16 +328,15 @@ Future<void> _saveProfileEntityData(responseData) async {
   //print("Authorization Token: ${preHelper.getUserToken}");
 }
 
-Future<void> _postLoginEntityData(response) async {
+Future<void> _postLoginEntityData(response, ref) async {
   if (response.statusCode == 200) {
     LoginEntity loginEntity = LoginEntity.fromJson(response.data);
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    final preHelper = PrefsHelper(sp);
+    final preHelper = ref.read(prefHelperProvider);
 
     if (!preHelper.getUserToken.contains("Bearer")) {
-      await preHelper.setUserToken(loginEntity.accessToken);
+      preHelper.setUserToken(loginEntity.accessToken);
     }
-    await preHelper.saveLoginEntity(loginEntity);
+    preHelper.saveLoginEntity(loginEntity);
     LoginEntity? infoEntity = preHelper.getLoginEntity();
     // print("1${response.data}");
     print("2${infoEntity!.user.name.toString()}");
