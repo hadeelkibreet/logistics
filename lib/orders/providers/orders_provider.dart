@@ -19,41 +19,67 @@ final ordersProvider =
   return OrderStateNotifier(
       repository: ref.watch(remoteOrdersRepository),
       filter: ref.watch(orderFilterProvider),
-      Search: ref.watch(orderSearchProvider))
+      search: ref.watch(orderSearchProvider))
     ..getOrders()
     ..getOrdersBySearch();
 });
 
 class OrderStateNotifier extends StateNotifier<List<OrdersEntity>> {
   OrderStateNotifier(
-      {required this.repository, required this.filter, required this.Search})
-      : super([]);
+      {required this.repository, required this.filter, required this.search})
+      : super([]) {
+    getOrders(); // Automatically fetch orders when initialized
+  }
 
-  OrdersRepository repository;
+  final OrdersRepository repository;
+  final OrderStatus filter;
+  String search;
+
   List<OrdersEntity> _list = [];
   List<OrdersEntity> _display = [];
-  OrderStatus filter;
-  String Search;
-  Future<void> getOrders() async {
-    _list = await repository.getOrders();
-    _display = _list;
-    if (filter != OrderStatus.allOrders) {
-      _display = _list.where((element) => element.barcode == filter).toList();
-    }
 
-    state = _display;
+  // Variables to track the loading and error states
+  bool isLoading = false;
+  String? error;
+
+  Future<void> getOrders() async {
+    isLoading = true; // Start loading
+    error = null; // Reset error before fetching
+    try {
+      _list = await repository.getOrders();
+      _display = _list;
+
+      // Apply the filter if needed
+      if (filter != OrderStatus.allOrders) {
+        _display =
+            _list.where((element) => element.orderStatus == filter).toList();
+      }
+
+      // Apply search filter if there's a search term
+      if (search.isNotEmpty) {
+        getOrdersBySearch();
+      }
+
+      state = _display;
+    } catch (e) {
+      error = e.toString(); // Set error message on failure
+    } finally {
+      isLoading = false; // Stop loading
+    }
   }
 
   void getOrdersBySearch() {
-    if (Search.toString().isEmpty) {
+    if (search.isEmpty) {
       _display = _list;
-      state = _display;
-      return;
+    } else {
+      _display =
+          _list.where((element) => element.barcode.startsWith(search)).toList();
     }
-    _display = _list
-        .where((element) => element.barcode.startsWith(Search.toString()))
-        .toList();
-
     state = _display;
+  }
+
+  void updateSearch(String newSearch) {
+    search = newSearch;
+    getOrdersBySearch();
   }
 }

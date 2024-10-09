@@ -100,16 +100,16 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
                     MaterialPageRoute(builder: (context) => ActiveOrders()));
               },
             ),
-            ListTileDrawar(
-              icon: Icon(
-                Icons.assignment_turned_in_outlined,
-              ),
-              text: t.CompletedOrder,
-              onPressed: () {
-                // Navigator.push(context,
-                //     MaterialPageRoute(builder: (context) => OrdersDon()));
-              },
-            ),
+            // ListTileDrawar(
+            //   icon: Icon(
+            //     Icons.assignment_turned_in_outlined,
+            //   ),
+            //   text: t.CompletedOrder,
+            //   onPressed: () {
+            //     // Navigator.push(context,
+            //     //     MaterialPageRoute(builder: (context) => OrdersDon()));
+            //   },
+            // ),
             ListTileDrawar(
               icon: Icon(
                 Icons.update,

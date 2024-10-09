@@ -34,6 +34,9 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
   @override
   Widget build(BuildContext context) {
     final orderListProvider = ref.watch(ordersProvider);
+    final orderNotifier = ref.watch(ordersProvider.notifier);
+    final isLoading = orderNotifier.isLoading; // Track loading state
+    final error = orderNotifier.error;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -60,7 +63,8 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
                     controller: _SearchController,
                     onChanged: (value) {
                       setState(() {
-                        ref.read(orderSearchProvider.notifier).state = value;
+                        ref.read(orderSearchProvider.notifier).state =
+                            value.isNotEmpty ? value : '';
                       });
                     },
                     decoration: InputDecoration(
@@ -96,65 +100,79 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
               Icon(Icons.arrow_drop_down_outlined),
             ],
           ),
-          orderListProvider.isEmpty
-              ? Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 50.0.sp),
-                      child: Image.asset(
-                        ImageAssets.nullPackage,
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                    Container(
-                      width: 160.w,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            initState();
-                          },
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                ColorsApp.backgroundColor),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.refresh,
-                                color: Colors.black,
-                              ),
-                              Text(
-                                '${t.Reloading}',
-                                style: TextStyle(
-                                  color: ColorsApp.black,
-                                  fontSize: 16.sp,
-                                ),
-                              ),
-                            ],
-                          )),
-                    ),
-                  ],
-                )
-              : Expanded(
-                  child: ListView.builder(
-                    controller: controller,
-                    itemCount: orderListProvider.length,
-                    itemBuilder: (context, index) {
-                      return buildOrderCard(
-                        name: orderListProvider[index]
-                            .destinationAddress
-                            .toString(),
-                        numberOfLength: orderListProvider.length,
-                        orderNumber:
-                            orderListProvider[index].barcode.toString(),
-                        lat: orderListProvider[index].sourceLatitude.toString(),
-                        long:
-                            orderListProvider[index].sourceLongitude.toString(),
-                        statusCard: orderListProvider[index]
-                            .orderStatus, // Updated line
-                      );
-                    },
+          if (isLoading) // Show a loading indicator when loading
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: CircularProgressIndicator(),
+              ),
+            )
+          else if (error !=
+              null) // Show an error message when there is an error
+            Center(
+              child: Text(
+                'Error loading orders: $error',
+                style: TextStyle(color: Colors.red),
+              ),
+            )
+          else if (orderListProvider.isEmpty)
+            Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 50.0.sp),
+                  child: Image.asset(
+                    ImageAssets.nullPackage,
+                    fit: BoxFit.fill,
                   ),
                 ),
+                Container(
+                  width: 160.w,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        initState();
+                        ref.read(ordersProvider.notifier).getOrders();
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            ColorsApp.backgroundColor),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.refresh,
+                            color: Colors.black,
+                          ),
+                          Text(
+                            '${t.Reloading}',
+                            style: TextStyle(
+                              color: ColorsApp.black,
+                              fontSize: 16.sp,
+                            ),
+                          ),
+                        ],
+                      )),
+                ),
+              ],
+            )
+          else
+            Expanded(
+              child: ListView.builder(
+                controller: controller,
+                itemCount: orderListProvider.length,
+                itemBuilder: (context, index) {
+                  return buildOrderCard(
+                    name:
+                        orderListProvider[index].destinationAddress.toString(),
+                    numberOfLength: index + 1,
+                    orderNumber: orderListProvider[index].barcode.toString(),
+                    lat: orderListProvider[index].sourceLatitude.toString(),
+                    long: orderListProvider[index].sourceLongitude.toString(),
+                    statusCard:
+                        orderListProvider[index].orderStatus, // Updated line
+                  );
+                },
+              ),
+            ),
         ],
       ),
     );
@@ -176,6 +194,9 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
           icon: Icon(Icons.autorenew_rounded),
           onPressed: () {
             initState();
+            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+              ref.read(ordersProvider.notifier).getOrders();
+            });
           },
         ),
         IconButton(
@@ -255,7 +276,8 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
       setState(() {
         getResult = qrCode;
         if (getResult.toString() != '-1') {
-          ref.read(orderSearchProvider.notifier).state = getResult.toString();
+          ref.read(orderSearchProvider.notifier).state =
+              getResult.toString().isNotEmpty ? getResult.toString() : '';
         }
       });
 

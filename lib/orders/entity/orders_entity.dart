@@ -3,7 +3,7 @@ import 'package:logistics/orders/enum/order_status_enum.dart';
 class OrdersEntity {
   final int id;
   final String barcode;
-  final String ref;
+  final String? ref;
   final String sourceName;
   final String sourceAddress;
   final String sourceNumberPhone;
@@ -39,7 +39,7 @@ class OrdersEntity {
   OrdersEntity({
     required this.id,
     required this.barcode,
-    required this.ref,
+    this.ref,
     required this.sourceName,
     required this.sourceAddress,
     required this.sourceNumberPhone,
@@ -76,7 +76,7 @@ class OrdersEntity {
     return OrdersEntity(
       id: json['id'],
       barcode: json['barcode'],
-      ref: json['ref'],
+      //ref: json['ref'],
       sourceName: json['source_name'],
       sourceAddress: json['source_address'],
       sourceNumberPhone: json['source_number_phone'],
@@ -123,7 +123,7 @@ class OrdersEntity {
     return {
       'id': id,
       'barcode': barcode,
-      'ref': ref,
+      //'ref': ref,
       'source_name': sourceName,
       'source_address': sourceAddress,
       'source_number_phone': sourceNumberPhone,
