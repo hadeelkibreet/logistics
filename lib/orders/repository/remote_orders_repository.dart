@@ -32,4 +32,16 @@ class RemoteOrdersRepository implements OrdersRepository {
       throw Exception('Failed to load orders: $e');
     }
   }
+
+  Future<OrdersEntity> getStartMission(String ID) async {
+    try {
+      var responsData = await ApiService()
+          .postStartMission(Endpoints.startMission, ref, ID.toString());
+      OrdersEntity ordersEntity = OrdersEntity.fromJson(responsData);
+      print("Orders Entity: ${ordersEntity.id}");
+      return ordersEntity;
+    } catch (e) {
+      throw Exception('Faild to start mission: $e');
+    }
+  }
 }

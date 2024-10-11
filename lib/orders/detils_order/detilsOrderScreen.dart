@@ -18,7 +18,8 @@ import 'package:signature/signature.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DetailsOrderScreen extends ConsumerStatefulWidget {
-  const DetailsOrderScreen({Key? key}) : super(key: key);
+  final String ID;
+  const DetailsOrderScreen({Key? key, required this.ID}) : super(key: key);
 
   @override
   ConsumerState<DetailsOrderScreen> createState() => _detailsOrderScreenState();

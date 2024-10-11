@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/i18n/strings.g.dart';
 import 'package:logistics/orders/detils_order/detilsOrderScreen.dart';
 import 'package:logistics/orders/enum/order_status_enum.dart';
+import 'package:logistics/orders/providers/orders_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class buildOrderCard extends StatefulWidget {
+class buildOrderCard extends ConsumerStatefulWidget {
   final String name;
   final int numberOfLength;
   final String orderNumber;
   final String lat;
   final String long;
   final OrderStatus statusCard;
+  final String ID;
   buildOrderCard(
       {Key? key,
       required this.name,
@@ -20,14 +23,15 @@ class buildOrderCard extends StatefulWidget {
       required this.orderNumber,
       required this.lat,
       required this.long,
-      required this.statusCard})
+      required this.statusCard,
+      required this.ID})
       : super(key: key);
 
   @override
-  State<buildOrderCard> createState() => _buildOrderCardState();
+  _buildOrderCardState createState() => _buildOrderCardState();
 }
 
-class _buildOrderCardState extends State<buildOrderCard> {
+class _buildOrderCardState extends ConsumerState<buildOrderCard> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -160,10 +164,14 @@ class _buildOrderCardState extends State<buildOrderCard> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
+                        final orderProvider =
+                            ref.read(IDProvider.notifier).state = widget.ID;
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => DetailsOrderScreen()));
+                                builder: (context) => DetailsOrderScreen(
+                                      ID: orderProvider,
+                                    )));
                       },
                       child: Container(
                         decoration: BoxDecoration(

@@ -54,11 +54,37 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
-      print("hiiiiiiiiiii: ${json.encode(response.data)}");
+      //print("hiiiiiiiiiii: ${json.encode(response.data)}");
       return response.data;
     } else {
       print(response.statusMessage);
       return null;
+    }
+  }
+
+  postStartMission(String endpoint, ref, String requestId) async {
+    final preHelper = ref.read(prefHelperProvider);
+
+    // Adding Authorization header if the token exists
+    var headers = {'Authorization': 'Bearer ${preHelper.getUserToken}'};
+
+    var data = FormData.fromMap({'request_id': requestId.toString()});
+
+    var response = await dio.request(
+      endpoint.toString(),
+      options: Options(
+        method: 'POST',
+        headers: headers,
+      ),
+      data: data,
+    );
+
+    if (response.statusCode == 200) {
+      print(json.encode(response.data));
+      print(
+          "startMissionnnnnnnnnnnnnnnnnnnnnnnn: ${json.encode(response.data)}");
+    } else {
+      print(response.statusMessage);
     }
   }
 }
