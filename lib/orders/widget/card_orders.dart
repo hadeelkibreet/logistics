@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/i18n/strings.g.dart';
+import 'package:logistics/orders/detils_order/detilsOrderScreen.dart';
 import 'package:logistics/orders/enum/order_status_enum.dart';
 import 'package:logistics/orders/providers/orders_provider.dart';
 import 'package:logistics/orders/repository/remote_orders_repository.dart';
@@ -175,12 +176,12 @@ class _buildOrderCardState extends ConsumerState<buildOrderCard> {
 
                         print("jjjjjjjjjjjjjjj1111 ${p.id}");
 
-                        // Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: (context) => DetailsOrderScreen(
-                        //               ID: widget.ID.toString(),
-                        //             )));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => DetailsOrderScreen(
+                                      DetilsData: p,
+                                    )));
                       },
                       child: Container(
                         decoration: BoxDecoration(

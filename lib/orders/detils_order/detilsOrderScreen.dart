@@ -11,6 +11,9 @@ import 'package:latlong2/latlong.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/constants/images.dart';
 import 'package:logistics/i18n/strings.g.dart';
+import 'package:logistics/orders/entity/detils_entity.dart';
+import 'package:logistics/orders/providers/orders_provider.dart';
+import 'package:logistics/orders/repository/remote_orders_repository.dart';
 import 'package:logistics/orders/senders_signature/senders_signature_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -18,8 +21,9 @@ import 'package:signature/signature.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DetailsOrderScreen extends ConsumerStatefulWidget {
-  final String ID;
-  const DetailsOrderScreen({Key? key, required this.ID}) : super(key: key);
+  final DetilsEntity DetilsData;
+  const DetailsOrderScreen({Key? key, required this.DetilsData})
+      : super(key: key);
 
   @override
   ConsumerState<DetailsOrderScreen> createState() => _detailsOrderScreenState();
@@ -124,12 +128,14 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                   CircleAvatar(
                                     backgroundColor: Colors.red,
                                     child: Text(
-                                      'T',
+                                      widget.DetilsData.destinationName
+                                          .substring(0, 1),
                                       style: TextStyle(color: ColorsApp.white),
                                     ),
                                   ),
                                   Text(
-                                    'test',
+                                    widget.DetilsData.destinationName
+                                        .toString(), // 'test',
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                     style: TextStyle(color: Colors.white),
@@ -137,14 +143,15 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                   Text(
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 2,
-                                    'KSA-riyadh, KSA-riyadh, 123, UNKNOWN',
+                                    widget.DetilsData.destinationAddress
+                                        .toString(),
                                     style: TextStyle(color: Colors.white),
                                   ),
                                   SizedBox(
                                     height: 80.h,
                                   ),
                                   Text(
-                                    '${t.orderNumber} 9937664235780',
+                                    '${t.orderNumber + widget.DetilsData.barcode} ',
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                     style: TextStyle(
@@ -186,7 +193,9 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                           icon: Icon(Icons.phone,
                                               color: ColorsApp.white),
                                           onPressed: () {
-                                            callNumber('0503792580');
+                                            callNumber(widget.DetilsData
+                                                .destinationNumberPhone
+                                                .toString());
                                           },
                                         ),
                                         maxRadius: 25.sp,
@@ -196,7 +205,9 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                     Padding(
                                       padding: EdgeInsets.all(8.0.sp),
                                       child: InkWell(
-                                        onTap: () => openWhatsApp('0503792580'),
+                                        onTap: () => openWhatsApp(widget
+                                            .DetilsData.destinationNumberPhone
+                                            .toString()),
                                         child: CircleAvatar(
                                           backgroundColor: Colors.white,
                                           child: Image.asset(
@@ -243,7 +254,25 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                       color: Colors.blue,
                     ),
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        final orderProvider = ref
+                            .read(IDProvider.notifier)
+                            .update((state) => widget.DetilsData.id.toString());
+                        final p = await ref
+                            .read(remoteOrdersRepository)
+                            .getStartMission(widget.DetilsData.id.toString());
+
+                        print("hhhhhhhhhhhhh: $orderProvider");
+
+                        print("jjjjjjjjjjjjjjj1111 ${p.id}");
+
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => DetailsOrderScreen(
+                                      DetilsData: p,
+                                    )));
+                      },
                       child: Text(
                         t.locationUpdateRequest,
                         style:
@@ -266,7 +295,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                         ),
                         SizedBox(height: 3.h),
                         Text(
-                          '0.00 SAR',
+                          '${widget.DetilsData.cod.toString()} SAR',
                           style: TextStyle(
                               fontSize: 24.sp, fontWeight: FontWeight.bold),
                         ),
@@ -324,23 +353,26 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                 children: [
                                   _buildRowItem(
                                       context,
-                                      'KSA-riyadh, KSA-riyadh, 123, UNKNOWN',
-                                      '${t.to} test ',
+                                      widget.DetilsData.destinationAddress
+                                          .toString(),
+                                      '${t.to + widget.DetilsData.destinationName} ',
                                       Icon(Icons.phone),
                                       Colors.blue,
-                                      '0503792580'),
+                                      widget.DetilsData.destinationNumberPhone
+                                          .toString()),
                                   _buildRowItem(
                                       context,
-                                      'KSA-riyadh, 31758, UNKNOWN',
-                                      '${t.from} test',
+                                      widget.DetilsData.sourceAddress
+                                          .toString(),
+                                      '${t.from + widget.DetilsData.sourceName}',
                                       Icon(Icons.phone),
                                       Colors.green,
-                                      '0503792580'),
+                                      widget.DetilsData.sourceNumberPhone),
                                   // Divider(height: 32),
                                   _buildInfoItem(
                                       context,
                                       t.serviceType,
-                                      'test',
+                                      'Express Delivery',
                                       Icons.local_shipping,
                                       Colors.yellow,
                                       '0.00 SAR',
@@ -353,7 +385,8 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                   _buildInfoItem(
                                       context,
                                       t.dateCreated,
-                                      'testttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt ',
+                                      widget.DetilsData.assignmentDate
+                                          .toString(),
                                       Icons.calendar_month_sharp,
                                       Colors.purple,
                                       '',
@@ -366,7 +399,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                   _buildInfoItem(
                                       context,
                                       t.thePeriodOfTimeToCarryTheShipment,
-                                      ' ممكن',
+                                      ' في أقرب وقت ممكن',
                                       Icons.access_time,
                                       Colors.orange,
                                       '',
@@ -401,7 +434,8 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                   _buildInfoItem(
                                       context,
                                       t.packageType,
-                                      'Exdium ',
+                                      widget.DetilsData.containerType
+                                          .toString(),
                                       Icons.assignment,
                                       Colors.yellow,
                                       '',
@@ -437,7 +471,13 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                       Image.network(
                                           width: 160.w,
                                           height: 100.h,
-                                          'https://www.syncfusion.com/blogs/wp-content/uploads/2021/04/How-to-perform-text-search-over-the-PDF-document-using-Flutter-PDF-Viewer.png')),
+                                          widget.DetilsData.validation1Image
+                                                      .toString() ==
+                                                  'null'
+                                              ? 'https://www.syncfusion.com/blogs/wp-content/uploads/2021/04/How-to-perform-text-search-over-the-PDF-document-using-Flutter-PDF-Viewer.png'
+                                              : widget
+                                                  .DetilsData.validation1Image
+                                                  .toString())),
                                 ],
                               ),
                             ),
@@ -463,7 +503,8 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                   _buildInfoItem(
                                       context,
                                       t.NameOfAddresseeRecipient,
-                                      'test ',
+                                      widget.DetilsData.destinationName
+                                          .toString(),
                                       Icons.person,
                                       Colors.grey,
                                       '',
@@ -557,7 +598,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                   _buildInfoItem(
                                       context,
                                       t.ConnectionStatus,
-                                      ' ',
+                                      widget.DetilsData.type.toString(),
                                       Icons.assignment_turned_in_rounded,
                                       Colors.green,
                                       '',
@@ -837,29 +878,28 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                   Row(
                     children: [
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 65.0.w),
+                        padding: EdgeInsets.symmetric(horizontal: 55.0.w),
                         child: Text(title,
                             style: TextStyle(
-                                fontSize: 11.2.sp, color: Colors.grey)),
+                                fontSize: 15.2.sp, color: Colors.grey)),
                       ),
                       SizedBox(width: 8.w),
                     ],
                   ),
                   isValue
                       ? Padding(
-                          padding: EdgeInsets.only(right: 65.0.w, left: 65.0.w),
+                          padding: EdgeInsets.only(right: 55.0.w, left: 55.0.w),
                           child: Container(
-                            width: 90,
                             child: Text(value,
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                                 style: TextStyle(
-                                    fontSize: 16.sp,
+                                    fontSize: 12.sp,
                                     fontWeight: FontWeight.bold)),
                           ),
                         )
                       : Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 65.0.w),
+                          padding: EdgeInsets.symmetric(horizontal: 60.0.w),
                           child: widgetValue,
                         ),
                 ],
