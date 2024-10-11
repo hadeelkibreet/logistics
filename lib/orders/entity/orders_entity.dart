@@ -76,7 +76,7 @@ class OrdersEntity {
     return OrdersEntity(
       id: json['id'],
       barcode: json['barcode'],
-      //ref: json['ref'],
+      ref: json['ref'],
       sourceName: json['source_name'],
       sourceAddress: json['source_address'],
       sourceNumberPhone: json['source_number_phone'],
@@ -123,7 +123,7 @@ class OrdersEntity {
     return {
       'id': id,
       'barcode': barcode,
-      //'ref': ref,
+      'ref': ref,
       'source_name': sourceName,
       'source_address': sourceAddress,
       'source_number_phone': sourceNumberPhone,

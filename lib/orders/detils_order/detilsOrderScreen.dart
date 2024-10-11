@@ -29,16 +29,26 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
   late SignatureController _controllerSignature;
   File? _image;
   late bool isShow = true;
-
   @override
   void initState() {
+    // _initState();
     super.initState();
+    // _loadingPro();
     _controllerSignature = SignatureController(
       penStrokeWidth: 5,
       penColor: Colors.black,
       exportBackgroundColor: Colors.white,
     );
   }
+
+  // Future<void> _initState() async {
+  //   final orderProvider =
+  //       ref.read(IDProvider.notifier).update((state) => widget.ID.toString());
+  //   final p = await ref.read(remoteOrdersRepository).getStartMission(widget.ID);
+  //   print("hhhhhhhhhhhhh: $orderProvider");
+  //
+  //   print("jjjjjjjjjjjjjjj1111 ${p.id}");
+  // }
 
   @override
   void dispose() {
@@ -49,6 +59,8 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //final detilsProvider = ref.read(orderDetilsProvider);
+
     return Scaffold(
       backgroundColor: ColorsApp.backgroundColor,
       body: Stack(

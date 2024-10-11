@@ -84,9 +84,10 @@ class OrderStateNotifier extends StateNotifier<List<OrdersEntity>> {
   }
 }
 
-final IDProvider = StateProvider((ref) => '');
-
-final orderDetilsProvider = FutureProvider<OrdersEntity>((ref) async {
-  final repository = ref.read(remoteOrdersRepository);
-  return await repository.getStartMission(IDProvider as String);
-});
+final IDProvider = StateProvider<String>((ref) => '');
+//
+// final orderDetilsProvider = FutureProvider<DetilsEntity>((ref) async {
+//   final repository = await ref.read(remoteOrdersRepository);
+//
+//   return await repository.getStartMission(ref.read(IDProvider.notifier).state);
+// });

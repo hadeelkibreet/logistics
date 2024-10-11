@@ -68,7 +68,7 @@ class ApiService {
     // Adding Authorization header if the token exists
     var headers = {'Authorization': 'Bearer ${preHelper.getUserToken}'};
 
-    var data = FormData.fromMap({'request_id': requestId.toString()});
+    var data = FormData.fromMap({'request_id': '${requestId}'});
 
     var response = await dio.request(
       endpoint.toString(),
@@ -80,11 +80,12 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
-      print(json.encode(response.data));
       print(
           "startMissionnnnnnnnnnnnnnnnnnnnnnnn: ${json.encode(response.data)}");
+      return response.data;
     } else {
       print(response.statusMessage);
+      return null;
     }
   }
 }

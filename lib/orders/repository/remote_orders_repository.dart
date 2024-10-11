@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logistics/constants/dio.dart';
 import 'package:logistics/constants/endpoints.dart';
+import 'package:logistics/orders/entity/detils_entity.dart';
 import 'package:logistics/orders/entity/orders_entity.dart';
 import 'package:logistics/orders/repository/orders_repository.dart';
 
@@ -26,22 +27,28 @@ class RemoteOrdersRepository implements OrdersRepository {
       List<OrdersEntity> ordersList = ordersJsonList
           .map((orderJson) => OrdersEntity.fromJson(orderJson))
           .toList();
-      print("${ordersList.length}");
+      // print("${ordersList.length}");
       return ordersList;
     } catch (e) {
       throw Exception('Failed to load orders: $e');
     }
   }
 
-  Future<OrdersEntity> getStartMission(String ID) async {
+  @override
+  Future<DetilsEntity> getStartMission(String ID) async {
     try {
-      var responsData = await ApiService()
+      var responseData = await ApiService()
           .postStartMission(Endpoints.startMission, ref, ID.toString());
-      OrdersEntity ordersEntity = OrdersEntity.fromJson(responsData);
-      print("Orders Entity: ${ordersEntity.id}");
+      print("Orders Entity1: ${responseData}");
+
+      var firstOrderData = responseData.first;
+      print("Orders Entity2: ${firstOrderData}");
+
+      DetilsEntity ordersEntity = DetilsEntity.fromJson(firstOrderData);
+      print("Orders Entity3: ${ordersEntity.id.toString() ?? "null"}");
       return ordersEntity;
     } catch (e) {
-      throw Exception('Faild to start mission: $e');
+      throw Exception('Failed to start mission: $e');
     }
   }
 }
