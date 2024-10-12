@@ -20,7 +20,7 @@ class ApiService {
 
   getData(String endpoint, ref) async {
     final preHelper = ref.read(prefHelperProvider);
-
+    print("tokeen: ${preHelper.getUserToken}");
     // Adding Authorization header if the token exists
     var headers = {'Authorization': 'Bearer ${preHelper.getUserToken}'};
     var response = await dio.get(
@@ -86,6 +86,34 @@ class ApiService {
     } else {
       print(response.statusMessage);
       return null;
+    }
+  }
+
+  postReject(
+      String endpoint, ref, String reasonsRejection, String requestId) async {
+    final preHelper = ref.read(prefHelperProvider);
+
+    var headers = {'Authorization': 'Bearer ${preHelper.getUserToken}'};
+
+    var data = FormData.fromMap({
+      'reasons_rejection': reasonsRejection.toString(),
+      'request_id': requestId.toString()
+    });
+
+    var response = await dio.request(
+      endpoint.toString(),
+      options: Options(
+        method: 'POST',
+        headers: headers,
+      ),
+      data: data,
+    );
+
+    if (response.statusCode == 200) {
+      print(json.encode(response.data));
+      return response.data;
+    } else {
+      print(response.statusMessage);
     }
   }
 }

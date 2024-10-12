@@ -11,6 +11,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/constants/images.dart';
 import 'package:logistics/i18n/strings.g.dart';
+import 'package:logistics/orders/detils_order/bottom_navigationBar.dart';
 import 'package:logistics/orders/entity/detils_entity.dart';
 import 'package:logistics/orders/providers/orders_provider.dart';
 import 'package:logistics/orders/repository/remote_orders_repository.dart';
@@ -162,16 +163,16 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                   Padding(
                                     padding: EdgeInsets.only(top: 28.sp),
                                     child: Container(
-                                      color: Colors.orange,
+                                      color: ColorsApp.backgroundColor,
                                       width: double.infinity,
-                                      padding: EdgeInsets.all(8.0.sp),
-                                      child: Text(
-                                        t.accept,
-                                        textAlign: TextAlign.start,
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 18.sp),
-                                      ),
+                                      padding: EdgeInsets.all(8.7.sp),
+                                      child: Text(''
+                                          // t.accept,
+                                          // textAlign: TextAlign.start,
+                                          // style: TextStyle(
+                                          //     color: Colors.white,
+                                          //     fontSize: 18.sp),
+                                          ),
                                     ),
                                   ),
                                 ],
@@ -295,7 +296,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                         ),
                         SizedBox(height: 3.h),
                         Text(
-                          '${widget.DetilsData.cod.toString()} SAR',
+                          '${widget.DetilsData.cod.toString()}SAR',
                           style: TextStyle(
                               fontSize: 24.sp, fontWeight: FontWeight.bold),
                         ),
@@ -375,7 +376,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                       'Express Delivery',
                                       Icons.local_shipping,
                                       Colors.yellow,
-                                      '0.00 SAR',
+                                      '${widget.DetilsData.cod}SAR',
                                       true,
                                       0,
                                       true,
@@ -448,7 +449,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                   _buildInfoItem(
                                       context,
                                       t.description,
-                                      'test ',
+                                      ' ',
                                       Icons.edit,
                                       Colors.green,
                                       '',
@@ -458,162 +459,161 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                       SizedBox(
                                         height: 0,
                                       )),
-                                  _buildInfoItem(
-                                      context,
-                                      t.PackagePhoto,
-                                      ' لايوجد',
-                                      Icons.image,
-                                      Colors.purple,
-                                      '',
-                                      false,
-                                      0,
-                                      false,
-                                      Image.network(
-                                          width: 160.w,
-                                          height: 100.h,
-                                          widget.DetilsData.validation1Image
-                                                      .toString() ==
-                                                  'null'
-                                              ? 'https://www.syncfusion.com/blogs/wp-content/uploads/2021/04/How-to-perform-text-search-over-the-PDF-document-using-Flutter-PDF-Viewer.png'
-                                              : widget
-                                                  .DetilsData.validation1Image
-                                                  .toString())),
+                                  // _buildInfoItem(
+                                  //     context,
+                                  //     t.PackagePhoto,
+                                  //     ' لايوجد',
+                                  //     Icons.image,
+                                  //     Colors.purple,
+                                  //     '',
+                                  //     false,
+                                  //     0,
+                                  //     false,
+                                  //     Image.network(
+                                  //         width: 160.w,
+                                  //         height: 100.h,
+                                  //         widget.DetilsData.validation1Image
+                                  //                     .toString() ==
+                                  //                 'null'
+                                  //             ? 'https://www.syncfusion.com/blogs/wp-content/uploads/2021/04/How-to-perform-text-search-over-the-PDF-document-using-Flutter-PDF-Viewer.png'
+                                  //             : widget
+                                  //                 .DetilsData.validation1Image
+                                  //                 .toString())),
                                 ],
                               ),
                             ),
                           ),
                           SizedBox(height: 10.h),
-
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 30.w),
-                            child: Text(
-                              t.proofOfDelivery,
-                              textAlign: TextAlign.end,
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                          ),
-                          Card(
-                            color: ColorsApp.white,
-                            margin: EdgeInsets.all(16.0.sp),
-                            child: Padding(
-                              padding: EdgeInsets.all(16.0.sp),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  _buildInfoItem(
-                                      context,
-                                      t.NameOfAddresseeRecipient,
-                                      widget.DetilsData.destinationName
-                                          .toString(),
-                                      Icons.person,
-                                      Colors.grey,
-                                      '',
-                                      false,
-                                      0,
-                                      true,
-                                      SizedBox(
-                                        height: 0,
-                                      )),
-                                  _buildInfoItem(
-                                    context,
-                                    t.ProofOfTheRecipientsIdentity,
-                                    'test ',
-                                    Icons.badge_sharp,
-                                    Colors.blueAccent,
-                                    '',
-                                    false,
-                                    0,
-                                    false,
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        if (_image != null)
-                                          Image.file(
-                                            _image!,
-                                            height: 100.h,
-                                            width: 160.w,
-                                          ),
-                                        SizedBox(height: 16.h),
-                                        ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStateProperty.all<
-                                                        Color>(
-                                                    ColorsApp.backgroundColor),
-                                          ),
-                                          onPressed: () =>
-                                              _pickImage(ImageSource.camera),
-                                          child: Text(
-                                            t.openCamera,
-                                            style: TextStyle(
-                                                color: ColorsApp.black),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  _buildInfoItem(
-                                      context,
-                                      t.TheRecipientsSignature,
-                                      ' لايوجد',
-                                      Icons.edit,
-                                      Colors.red,
-                                      '',
-                                      false,
-                                      0,
-                                      false,
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(height: 10.h),
-                                          Signature(
-                                            controller: _controllerSignature,
-                                            height: 100.h,
-                                            width: 160.w,
-                                            backgroundColor: Colors.grey[300]!,
-                                          ),
-                                          SizedBox(height: 16.h),
-                                          ElevatedButton(
-                                            style: ButtonStyle(
-                                              backgroundColor:
-                                                  MaterialStateProperty
-                                                      .all<Color>(ColorsApp
-                                                          .backgroundColor),
-                                            ),
-                                            onPressed: () {
-                                              setState(() {
-                                                _controllerSignature.clear();
-                                              });
-                                            },
-                                            child: Text(
-                                              t.clear,
-                                              style: TextStyle(
-                                                  color: ColorsApp.black),
-                                            ),
-                                          ),
-                                        ],
-                                      )),
-                                  _buildInfoItem(
-                                      context,
-                                      t.ConnectionStatus,
-                                      widget.DetilsData.type.toString(),
-                                      Icons.assignment_turned_in_rounded,
-                                      Colors.green,
-                                      '',
-                                      false,
-                                      0,
-                                      true,
-                                      SizedBox(
-                                        height: 0,
-                                      )),
-                                ],
-                              ),
-                            ),
-                          ),
-
-                          SizedBox(height: 10.h),
+                          //
+                          // Padding(
+                          //   padding: EdgeInsets.symmetric(horizontal: 30.w),
+                          //   child: Text(
+                          //     t.proofOfDelivery,
+                          //     textAlign: TextAlign.end,
+                          //     style: TextStyle(color: Colors.grey[600]),
+                          //   ),
+                          // ),
+                          // Card(
+                          //   color: ColorsApp.white,
+                          //   margin: EdgeInsets.all(16.0.sp),
+                          //   child: Padding(
+                          //     padding: EdgeInsets.all(16.0.sp),
+                          //     child: Column(
+                          //       crossAxisAlignment: CrossAxisAlignment.start,
+                          //       children: [
+                          //         _buildInfoItem(
+                          //             context,
+                          //             t.NameOfAddresseeRecipient,
+                          //             widget.DetilsData.sourceName.toString(),
+                          //             Icons.person,
+                          //             Colors.grey,
+                          //             '',
+                          //             false,
+                          //             0,
+                          //             true,
+                          //             SizedBox(
+                          //               height: 0,
+                          //             )),
+                          //         _buildInfoItem(
+                          //           context,
+                          //           t.ProofOfTheRecipientsIdentity,
+                          //           'test ',
+                          //           Icons.badge_sharp,
+                          //           Colors.blueAccent,
+                          //           '',
+                          //           false,
+                          //           0,
+                          //           false,
+                          //           Column(
+                          //             crossAxisAlignment:
+                          //                 CrossAxisAlignment.center,
+                          //             children: [
+                          //               if (_image != null)
+                          //                 Image.file(
+                          //                   _image!,
+                          //                   height: 100.h,
+                          //                   width: 160.w,
+                          //                 ),
+                          //               SizedBox(height: 16.h),
+                          //               ElevatedButton(
+                          //                 style: ButtonStyle(
+                          //                   backgroundColor:
+                          //                       MaterialStateProperty.all<
+                          //                               Color>(
+                          //                           ColorsApp.backgroundColor),
+                          //                 ),
+                          //                 onPressed: () =>
+                          //                     _pickImage(ImageSource.camera),
+                          //                 child: Text(
+                          //                   t.openCamera,
+                          //                   style: TextStyle(
+                          //                       color: ColorsApp.black),
+                          //                 ),
+                          //               ),
+                          //             ],
+                          //           ),
+                          //         ),
+                          //         _buildInfoItem(
+                          //             context,
+                          //             t.TheRecipientsSignature,
+                          //             ' لايوجد',
+                          //             Icons.edit,
+                          //             Colors.red,
+                          //             '',
+                          //             false,
+                          //             0,
+                          //             false,
+                          //             Column(
+                          //               crossAxisAlignment:
+                          //                   CrossAxisAlignment.start,
+                          //               children: [
+                          //                 SizedBox(height: 10.h),
+                          //                 Signature(
+                          //                   controller: _controllerSignature,
+                          //                   height: 100.h,
+                          //                   width: 160.w,
+                          //                   backgroundColor: Colors.grey[300]!,
+                          //                 ),
+                          //                 SizedBox(height: 16.h),
+                          //                 ElevatedButton(
+                          //                   style: ButtonStyle(
+                          //                     backgroundColor:
+                          //                         MaterialStateProperty
+                          //                             .all<Color>(ColorsApp
+                          //                                 .backgroundColor),
+                          //                   ),
+                          //                   onPressed: () {
+                          //                     setState(() {
+                          //                       _controllerSignature.clear();
+                          //                     });
+                          //                   },
+                          //                   child: Text(
+                          //                     t.clear,
+                          //                     style: TextStyle(
+                          //                         color: ColorsApp.black),
+                          //                   ),
+                          //                 ),
+                          //               ],
+                          //             )),
+                          //         _buildInfoItem(
+                          //             context,
+                          //             t.ConnectionStatus,
+                          //             widget.DetilsData.type.toString(),
+                          //             Icons.assignment_turned_in_rounded,
+                          //             Colors.green,
+                          //             '',
+                          //             false,
+                          //             0,
+                          //             true,
+                          //             SizedBox(
+                          //               height: 0,
+                          //             )),
+                          //       ],
+                          //     ),
+                          //   ),
+                          // ),
+                          //
+                          // SizedBox(height: 10.h),
 
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 30.w),
@@ -647,7 +647,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                   _buildInfoItem(
                                       context,
                                       t.PaymentWasMadeVia,
-                                      'test ',
+                                      ' ',
                                       Icons.person,
                                       Colors.grey,
                                       '',
@@ -660,7 +660,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                   _buildInfoItem(
                                       context,
                                       t.ServiceCost,
-                                      ' لايوجد',
+                                      ' ${widget.DetilsData.cod}',
                                       Icons.money_rounded,
                                       Colors.lightGreen,
                                       t.paid,
@@ -694,14 +694,24 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                   child: Row(
                     children: [
                       Expanded(
-                        child: Container(
-                          height: 50.h,
-                          color: Colors.red,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              t.cancel,
-                              style: TextStyle(color: ColorsApp.white),
+                        child: InkWell(
+                          onTap: () {
+                            showModalBottomSheet(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return MyBottomNavigationBar2(context, ref,
+                                      "${widget.DetilsData.id.toString()}");
+                                });
+                          },
+                          child: Container(
+                            height: 50.h,
+                            color: Colors.red,
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                t.cancel,
+                                style: TextStyle(color: ColorsApp.white),
+                              ),
                             ),
                           ),
                         ),
