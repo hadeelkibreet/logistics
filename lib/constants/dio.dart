@@ -116,4 +116,40 @@ class ApiService {
       print(response.statusMessage);
     }
   }
+
+  postSendersSig(String endpoint, ref) async {
+    final preHelper = ref.read(prefHelperProvider);
+
+    var headers = {'Authorization': 'Bearer ${preHelper.getUserToken}'};
+
+    var data = FormData.fromMap({
+      'files': [
+        await MultipartFile.fromFile(
+            'postman-cloud:///1eedfe80-cd4e-4670-88e0-4bc3d69c9b59',
+            filename: ''),
+        await MultipartFile.fromFile(
+            'postman-cloud:///1eedfe80-cd4e-4670-88e0-4bc3d69c9b59',
+            filename: '')
+      ],
+      'request_id': '34',
+      'step': '1',
+      'comment':
+          'step twoonestep onestep onestep twoonestep onestep onestep twoonestep onestep onestep twoonestep onestep one'
+    });
+
+    var response = await dio.request(
+      endpoint.toString(),
+      options: Options(
+        method: 'POST',
+        headers: headers,
+      ),
+      data: data,
+    );
+
+    if (response.statusCode == 200) {
+      print(json.encode(response.data));
+    } else {
+      print(response.statusMessage);
+    }
+  }
 }

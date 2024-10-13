@@ -13,6 +13,7 @@ import 'package:logistics/constants/images.dart';
 import 'package:logistics/i18n/strings.g.dart';
 import 'package:logistics/orders/detils_order/bottom_navigationBar.dart';
 import 'package:logistics/orders/entity/detils_entity.dart';
+import 'package:logistics/orders/in_way/in_way_screen.dart';
 import 'package:logistics/orders/providers/orders_provider.dart';
 import 'package:logistics/orders/repository/remote_orders_repository.dart';
 import 'package:logistics/orders/senders_signature/senders_signature_screen.dart';
@@ -720,11 +721,16 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                         child: InkWell(
                           onTap: () {
                             _saveSignature;
+
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        SendersSignatureScreen()));
+                                    builder: (context) => widget
+                                                .DetilsData.validationDateStep1
+                                                .toString() ==
+                                            'null'
+                                        ? SendersSignatureScreen()
+                                        : InWayScreen()));
                           },
                           child: Container(
                             height: 50.h,

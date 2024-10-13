@@ -1,14 +1,15 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:logistics/data/prefs/prefs.dart';
 import 'package:logistics/i18n/strings.g.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:signature/signature.dart';
 
 import '../../constants/colors.dart';
@@ -31,6 +32,7 @@ class _SendersSignatureScreenState
   late TextEditingController SendersIDController = TextEditingController();
   late SignatureController _controllerSenderSignature;
   final bool validationNameAndPhone = true;
+
   @override
   void initState() {
     super.initState();
@@ -44,7 +46,6 @@ class _SendersSignatureScreenState
   @override
   void dispose() {
     _controllerSenderSignature.dispose();
-
     super.dispose();
   }
 
@@ -222,10 +223,6 @@ class _SendersSignatureScreenState
                   ),
                   onPressed: () {
                     _pickImage(ImageSource.camera);
-                    setState(() {
-                      SendersIDController =
-                          _image!.path.toString() as TextEditingController;
-                    });
                   },
                   child: Row(
                     children: [
@@ -283,30 +280,98 @@ class _SendersSignatureScreenState
     if (pickedImage != null) {
       setState(() {
         _image = File(pickedImage.path);
-        SendersIDController.text = _image!.path.toString();
+        SendersIDController.text =
+            _image!.path; // Use the path directly without toString()
       });
+
+      try {
+        var dio = Dio();
+        final prefHelper = ref.read(prefHelperProvider);
+
+        var headers = {'Authorization': 'Bearer ${prefHelper.getUserToken}'};
+
+        var data = FormData.fromMap({
+          'files': [
+            await MultipartFile.fromFile(_image!.path, filename: 'file1.jpg'),
+            await MultipartFile.fromFile(_image!.path, filename: 'file2.jpg'),
+          ],
+          'request_id': '34',
+          'step': '1',
+          'comment': 'hdeel'
+        });
+
+        var response = await dio.post(
+          'https://dashboard.alnco.co/api/validateStep',
+          options: Options(headers: headers),
+          data: data,
+        );
+
+        if (response.statusCode == 200) {
+          print(json.encode(response.data));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Upload successful')),
+          );
+        } else {
+          print(response.statusMessage);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Upload failed: ${response.statusMessage}')),
+          );
+        }
+      } catch (e) {
+        print(e);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error uploading data')),
+        );
+      }
+      print('File path: ${_image!.path}');
     }
   }
 
-  Future<void> _saveSignature() async {
-    if (await Permission.storage.request().isGranted) {
-      final Uint8List? data = await _controllerSenderSignature.toPngBytes();
-      if (data != null) {
-        final directory = await getExternalStorageDirectory();
-        final file = File('${directory!.path}/signature.png');
-        await file.writeAsBytes(data);
+  Future<void> _uploadData(XFile source) async {
+    // if (_image == null) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(content: Text('Please upload an image')),
+    //   );
+    //   return;
+    // }
+
+    try {
+      var dio = Dio();
+      final preHelper = ref.read(prefHelperProvider);
+
+      var headers = {'Authorization': 'Bearer ${preHelper.getUserToken}'};
+
+      var data = FormData.fromMap({
+        'files': [
+          await MultipartFile.fromFile(source.path, filename: '${source.name}'),
+          await MultipartFile.fromFile(source.path, filename: '${source.name}'),
+        ],
+        'request_id': '34',
+        'step': '1',
+        'comment': 'hadeeel'
+      });
+
+      var response = await dio.post(
+        'https://dashboard.alnco.co/api/validateStep',
+        options: Options(headers: headers),
+        data: data,
+      );
+
+      if (response.statusCode == 200) {
+        print(json.encode(response.data));
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Signature saved to ${file.path}')),
+          SnackBar(content: Text('Upload successful')),
         );
-        print('${file.path}');
       } else {
+        print(response.statusMessage);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save signature')),
+          SnackBar(content: Text('Upload failed: ${response.statusMessage}')),
         );
       }
-    } else {
+    } catch (e) {
+      print(e);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Storage permission denied')),
+        SnackBar(content: Text('Error uploading data')),
       );
     }
   }
