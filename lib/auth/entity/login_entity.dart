@@ -1,7 +1,6 @@
 class LoginEntity {
   final String accessToken;
   final String tokenType;
-  final int expiresIn;
   final int flag;
   final User user;
   final List<dynamic> currentRequests;
@@ -10,7 +9,6 @@ class LoginEntity {
   LoginEntity({
     required this.accessToken,
     required this.tokenType,
-    required this.expiresIn,
     required this.flag,
     required this.user,
     required this.currentRequests,
@@ -21,7 +19,6 @@ class LoginEntity {
     return LoginEntity(
       accessToken: json['access_token'],
       tokenType: json['token_type'],
-      expiresIn: json['expires_in'],
       flag: json['flag'],
       user: User.fromJson(json['user']),
       currentRequests: json['current_requests'] ?? [],
@@ -33,7 +30,6 @@ class LoginEntity {
     return {
       'access_token': accessToken,
       'token_type': tokenType,
-      'expires_in': expiresIn,
       'flag': flag,
       'user': user.toJson(),
       'current_requests': currentRequests,

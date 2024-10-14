@@ -1,21 +1,25 @@
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:logistics/data/prefs/prefs.dart';
+import 'package:logistics/constants/dio.dart';
+import 'package:logistics/constants/endpoints.dart';
 import 'package:logistics/i18n/strings.g.dart';
+import 'package:logistics/orders/active_orders/active_orders.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:signature/signature.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../constants/colors.dart';
 
 class SendersSignatureScreen extends ConsumerStatefulWidget {
-  const SendersSignatureScreen({Key? key}) : super(key: key);
+  final String requestId;
+  const SendersSignatureScreen({Key? key, required this.requestId})
+      : super(key: key);
 
   @override
   ConsumerState<SendersSignatureScreen> createState() =>
@@ -29,6 +33,8 @@ class _SendersSignatureScreenState
   late TextEditingController SendersQRController =
       TextEditingController(text: "000");
   File? _image;
+  File? file1;
+  File? file2;
   late TextEditingController SendersIDController = TextEditingController();
   late SignatureController _controllerSenderSignature;
   final bool validationNameAndPhone = true;
@@ -77,14 +83,14 @@ class _SendersSignatureScreenState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SnderInfoRow(Icons.person, SendersNameController,
-                        t.SendersName, false, false, true),
+                    // SnderInfoRow(Icons.person, SendersNameController,
+                    //     t.SendersName, false, false, true),
                     SnderInfoRow(Icons.image, SendersIDController, t.SendersID,
                         true, false, false),
-                    SnderInfoRow(Icons.phone, SendersNumberController,
+                    SnderInfoRow(Icons.comment, SendersNumberController,
                         t.phoneNumber, false, false, true),
-                    SnderInfoRow(Icons.confirmation_number, SendersQRController,
-                        t.AirWaybillNumber, false, true, false),
+                    // SnderInfoRow(Icons.confirmation_num_outlined, SendersQRController,
+                    //     t.AirWaybillNumber, false, true, false),
                     SizedBox(height: 11),
                     Text(
                       t.sendersSignature,
@@ -145,7 +151,32 @@ class _SendersSignatureScreenState
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () async {
+                  await saveSignatureAsFile();
+                  if (file1 != null &&
+                      file2 != null &&
+                      SendersNumberController.text != null) {
+                    await ApiService().postSendersSig(
+                        Endpoints.postSenderSig,
+                        ref,
+                        file1!,
+                        file2!,
+                        widget.requestId,
+                        '1',
+                        SendersNumberController.text);
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => ActiveOrders()),
+                      (Route<dynamic> route) => false,
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text(
+                              'can\'t uploading information,please try agen')),
+                    );
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFFF449F45),
                     padding: EdgeInsets.symmetric(vertical: 12.0),
@@ -222,7 +253,7 @@ class _SendersSignatureScreenState
                     ),
                   ),
                   onPressed: () {
-                    _pickImage(ImageSource.camera);
+                    _showPicker(context);
                   },
                   child: Row(
                     children: [
@@ -275,104 +306,64 @@ class _SendersSignatureScreenState
     }
   }
 
+  Future<File?> saveSignatureAsFile() async {
+    if (_controllerSenderSignature.isNotEmpty) {
+      // Capture the signature as bytes
+      Uint8List? signature = await _controllerSenderSignature.toPngBytes();
+      if (signature != null) {
+        // Get the temporary directory to save the file
+        final tempDir = await getTemporaryDirectory();
+        var uuid = Uuid();
+        final filePath = '${tempDir.path}/${uuid.v4()}.png';
+
+        // Save the signature to a file
+        File file = File(filePath);
+        file2 = await file.writeAsBytes(signature);
+        return file;
+      }
+    }
+    return null;
+  }
+
   Future<void> _pickImage(ImageSource source) async {
     final pickedImage = await ImagePicker().pickImage(source: source);
     if (pickedImage != null) {
-      setState(() {
+      setState(() async {
         _image = File(pickedImage.path);
+        file1 = await File(pickedImage.path);
         SendersIDController.text =
             _image!.path; // Use the path directly without toString()
       });
-
-      try {
-        var dio = Dio();
-        final prefHelper = ref.read(prefHelperProvider);
-
-        var headers = {'Authorization': 'Bearer ${prefHelper.getUserToken}'};
-
-        var data = FormData.fromMap({
-          'files': [
-            await MultipartFile.fromFile(_image!.path, filename: 'file1.jpg'),
-            await MultipartFile.fromFile(_image!.path, filename: 'file2.jpg'),
-          ],
-          'request_id': '34',
-          'step': '1',
-          'comment': 'hdeel'
-        });
-
-        var response = await dio.post(
-          'https://dashboard.alnco.co/api/validateStep',
-          options: Options(headers: headers),
-          data: data,
-        );
-
-        if (response.statusCode == 200) {
-          print(json.encode(response.data));
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Upload successful')),
-          );
-        } else {
-          print(response.statusMessage);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Upload failed: ${response.statusMessage}')),
-          );
-        }
-      } catch (e) {
-        print(e);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error uploading data')),
-        );
-      }
-      print('File path: ${_image!.path}');
     }
   }
 
-  Future<void> _uploadData(XFile source) async {
-    // if (_image == null) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text('Please upload an image')),
-    //   );
-    //   return;
-    // }
-
-    try {
-      var dio = Dio();
-      final preHelper = ref.read(prefHelperProvider);
-
-      var headers = {'Authorization': 'Bearer ${preHelper.getUserToken}'};
-
-      var data = FormData.fromMap({
-        'files': [
-          await MultipartFile.fromFile(source.path, filename: '${source.name}'),
-          await MultipartFile.fromFile(source.path, filename: '${source.name}'),
-        ],
-        'request_id': '34',
-        'step': '1',
-        'comment': 'hadeeel'
-      });
-
-      var response = await dio.post(
-        'https://dashboard.alnco.co/api/validateStep',
-        options: Options(headers: headers),
-        data: data,
-      );
-
-      if (response.statusCode == 200) {
-        print(json.encode(response.data));
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Upload successful')),
+  void _showPicker(context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext bc) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.photo_library),
+                title: Text('Gallery'),
+                onTap: () {
+                  _pickImage(ImageSource.gallery);
+                  Navigator.of(context).pop();
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.camera_alt),
+                title: Text('Camera'),
+                onTap: () {
+                  _pickImage(ImageSource.camera);
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
         );
-      } else {
-        print(response.statusMessage);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Upload failed: ${response.statusMessage}')),
-        );
-      }
-    } catch (e) {
-      print(e);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error uploading data')),
-      );
-    }
+      },
+    );
   }
 }

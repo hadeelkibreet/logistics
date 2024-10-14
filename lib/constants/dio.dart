@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:logistics/data/prefs/prefs.dart';
@@ -117,24 +118,26 @@ class ApiService {
     }
   }
 
-  postSendersSig(String endpoint, ref) async {
+  postSendersSig(String endpoint, ref, File file1, File file2, String requestId,
+      String step, String comment) async {
     final preHelper = ref.read(prefHelperProvider);
 
     var headers = {'Authorization': 'Bearer ${preHelper.getUserToken}'};
 
-    var data = FormData.fromMap({
-      'files': [
-        await MultipartFile.fromFile(
-            'postman-cloud:///1eedfe80-cd4e-4670-88e0-4bc3d69c9b59',
-            filename: ''),
-        await MultipartFile.fromFile(
-            'postman-cloud:///1eedfe80-cd4e-4670-88e0-4bc3d69c9b59',
-            filename: '')
-      ],
-      'request_id': '34',
-      'step': '1',
-      'comment':
-          'step twoonestep onestep onestep twoonestep onestep onestep twoonestep onestep onestep twoonestep onestep one'
+    FormData data = FormData.fromMap({
+      'signature': await MultipartFile.fromFile(
+        file2.path,
+        filename: file2.path.split('/').last,
+        // contentType: hp.MediaType.parse(contentType),
+      ),
+      'image': await MultipartFile.fromFile(
+        file1.path,
+        filename: file1.path.split('/').last,
+        // contentType: hp.MediaType.parse(contentType)
+      ),
+      'request_id': '${requestId}',
+      'step': '${step}',
+      'comment': '${comment}'
     });
 
     var response = await dio.request(

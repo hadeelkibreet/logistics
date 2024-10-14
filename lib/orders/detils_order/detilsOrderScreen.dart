@@ -727,9 +727,12 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                                 MaterialPageRoute(
                                     builder: (context) => widget
                                                 .DetilsData.validationDateStep1
-                                                .toString() ==
+                                                .toString() !=
                                             'null'
-                                        ? SendersSignatureScreen()
+                                        ? SendersSignatureScreen(
+                                            requestId:
+                                                widget.DetilsData.id.toString(),
+                                          )
                                         : InWayScreen()));
                           },
                           child: Container(
