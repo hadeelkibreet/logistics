@@ -34,10 +34,6 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
   @override
   Widget build(BuildContext context) {
     final orderListProvider = ref.watch(ordersProvider);
-    final getOrderProvider =
-        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      ref.read(ordersProvider.notifier).getOrders();
-    });
     final orderNotifier = ref.watch(ordersProvider.notifier);
     final isLoading = orderNotifier.isLoading; // Track loading state
     final error = orderNotifier.error;
@@ -286,11 +282,14 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
     return RadioListTile<String>(
       title: Text(title),
       value: title,
-      groupValue: ref.watch(orderFilterProvider),
+      groupValue: ref.watch(orderSearchProvider) == ''
+          ? ref.watch(orderFilterProvider)
+          : '',
       onChanged: (value) {
         setState(() {
           _selectedOption = value!;
           ref.read(orderFilterProvider.notifier).state = value;
+          ref.watch(orderSearchProvider.notifier).state = '';
         });
         Navigator.pop(context);
       },
@@ -306,9 +305,12 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
 
       setState(() {
         getResult = qrCode;
+        print(qrCode);
+
         if (getResult.toString() != '-1') {
+          //  isSearch = !isSearch;
           ref.read(orderSearchProvider.notifier).state =
-              getResult.toString().isNotEmpty ? getResult.toString() : '';
+              getResult.isNotEmpty ? getResult : '';
         }
       });
 

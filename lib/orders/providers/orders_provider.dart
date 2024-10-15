@@ -46,7 +46,10 @@ class OrderStateNotifier extends StateNotifier<List<OrdersEntity>> {
     try {
       _list = await repository.getOrders();
       _display = _list;
-
+      // Apply search filter if there's a search term
+      if (search.isNotEmpty) {
+        getOrdersBySearch();
+      }
       if (filter == "all") {
         state = _display;
         return;
@@ -55,11 +58,6 @@ class OrderStateNotifier extends StateNotifier<List<OrdersEntity>> {
       // Apply the filter if needed
       if (filter != '') {
         _display = _list.where((element) => element.status == filter).toList();
-      }
-
-      // Apply search filter if there's a search term
-      if (search.isNotEmpty) {
-        getOrdersBySearch();
       }
 
       state = _display;
