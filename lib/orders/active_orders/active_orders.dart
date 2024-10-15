@@ -7,7 +7,6 @@ import 'package:logistics/constants/colors.dart';
 import 'package:logistics/constants/images.dart';
 import 'package:logistics/drawar/driver_drawar.dart';
 import 'package:logistics/i18n/strings.g.dart';
-import 'package:logistics/orders/enum/order_status_enum.dart';
 import 'package:logistics/orders/providers/orders_provider.dart';
 import 'package:logistics/orders/widget/card_orders.dart';
 
@@ -23,6 +22,7 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
   late bool isdone = false;
   bool isSearch = false;
   final TextEditingController _SearchController = TextEditingController();
+  int? _selectedId;
 
   @override
   void initState() {
@@ -34,6 +34,10 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
   @override
   Widget build(BuildContext context) {
     final orderListProvider = ref.watch(ordersProvider);
+    final getOrderProvider =
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      ref.read(ordersProvider.notifier).getOrders();
+    });
     final orderNotifier = ref.watch(ordersProvider.notifier);
     final isLoading = orderNotifier.isLoading; // Track loading state
     final error = orderNotifier.error;
@@ -43,7 +47,7 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
       backgroundColor:
           orderListProvider.isEmpty ? Colors.white : ColorsApp.backgroundColor,
       drawer: DriverDrawar(),
-      appBar: myAppBar(context),
+      appBar: myAppBar(context, orderListProvider),
       body: Column(
         children: [
           Container(
@@ -167,7 +171,7 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
                     orderNumber: orderListProvider[index].barcode.toString(),
                     lat: orderListProvider[index].sourceLatitude.toString(),
                     long: orderListProvider[index].sourceLongitude.toString(),
-                    statusCard: orderListProvider[index].orderStatus,
+                    status: orderListProvider[index].status.toString(),
                     ID: orderListProvider[index].id.toString(), // Updated line
                   );
                 },
@@ -178,7 +182,7 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
     );
   }
 
-  AppBar myAppBar(BuildContext context) {
+  AppBar myAppBar(BuildContext context, getOrderProvider) {
     return AppBar(
       title: Text(t.orders),
       actions: [
@@ -207,59 +211,86 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
         ),
         IconButton(
           icon: Icon(Icons.more_vert),
-          onPressed: () {
-            _showTopModalSheet(context);
+          onPressed: () async {
+            // Assuming the response is a list of JSON objects
+            // final List<ReasonsRejectionStatusEntity> options =
+            //     (ReasonsRejection as List)
+            //         .map((json) => ReasonsRejectionStatusEntity.fromJson(json))
+            //         .toList();
+            // Now pass the list to the modal
+            _showTopModalSheet(
+                context, ref.watch(ordersProvider.notifier).getFilterOptions());
           },
         ),
       ],
     );
   }
 
-  void _showTopModalSheet(BuildContext context) {
+  void _showTopModalSheet(BuildContext context, List<String> options) {
     final double leftshowTopModalSheet = isdone ? 0 : 150.sp;
     final double rightshowTopModalSheet = isdone ? 150.sp : 0;
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Stack(
-          children: [
-            Positioned(
-              top: 3.sp,
-              left: leftshowTopModalSheet,
-              right: rightshowTopModalSheet,
-              child: Container(
-                width: 10.w,
-                child: Material(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: OrderStatus.values
-                        .map((e) => _buildRadioOption(e.title, e.index))
-                        .toList(),
+        // Use StatefulBuilder to manage the state within the dialog
+        return StatefulBuilder(
+          builder:
+              (BuildContext context, void Function(void Function()) setState) {
+            return Stack(
+              children: [
+                Positioned(
+                  top: 3.sp,
+                  left: leftshowTopModalSheet,
+                  right: rightshowTopModalSheet,
+                  child: Container(
+                    width: 10.w,
+                    child: Material(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: ListView(
+                        shrinkWrap:
+                            true, // Prevent the ListView from taking up infinite height
+                        children: options.map((option) {
+                          return _buildRadioOption(option, option.length);
+                        }).toList(),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         );
       },
     );
   }
 
-  Widget _buildRadioOption(String title, int numberOfStatus) {
-    //final OrderDataR = ref.watch(OrdersProvider.notifier);
+  // Widget _buildRadioOption(OrdersEntity option,
+  //     void Function(void Function()) setState) {
+  //   return RadioListTile<int>(
+  //     title: Text(
+  //       option.status,
+  //     ),
+  //     value:ref.watch(orderFilterProvider.notifier).state.title ,
+  //     groupValue: _selectedId, // Use the same groupValue
+  //     onChanged: (int? value) {
+  //       setState(() {
+  //         _selectedId = value; // Set the selected id
+  //       });
+  //     },
+  //   );
+  // }
 
+// Widget to build the radio option
+  Widget _buildRadioOption(String title, int numberOfStatus) {
     return RadioListTile<String>(
       title: Text(title),
       value: title,
-      groupValue: ref.watch(orderFilterProvider.notifier).state.title,
+      groupValue: ref.watch(orderFilterProvider),
       onChanged: (value) {
         setState(() {
           _selectedOption = value!;
-          ref.read(orderFilterProvider.notifier).state = OrderStatus.values
-              .firstWhere((element) => element.title == value);
-          //OrderDataR.state[index].statusOrder = numberOfStatus;
+          ref.read(orderFilterProvider.notifier).state = value;
         });
         Navigator.pop(context);
       },

@@ -9,10 +9,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:logistics/constants/colors.dart';
+import 'package:logistics/constants/dio.dart';
+import 'package:logistics/constants/endpoints.dart';
 import 'package:logistics/constants/images.dart';
 import 'package:logistics/i18n/strings.g.dart';
 import 'package:logistics/orders/detils_order/bottom_navigationBar.dart';
 import 'package:logistics/orders/entity/detils_entity.dart';
+import 'package:logistics/orders/entity/reasons_rejection_entity.dart';
 import 'package:logistics/orders/in_way/in_way_screen.dart';
 import 'package:logistics/orders/providers/orders_provider.dart';
 import 'package:logistics/orders/repository/remote_orders_repository.dart';
@@ -696,12 +699,23 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                     children: [
                       Expanded(
                         child: InkWell(
-                          onTap: () {
+                          onTap: () async {
+                            var ReasonsRejection = await ApiService()
+                                .getReasonsRejection(
+                                    Endpoints.ReasonsRejection, ref);
+                            // Assuming the response is a list of JSON objects
+                            final ReasonsRejectionStatusEntity options =
+                                await ReasonsRejectionStatusEntity.fromJson(
+                                    ReasonsRejection);
+
                             showModalBottomSheet(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return MyBottomNavigationBar2(context, ref,
-                                      "${widget.DetilsData.id.toString()}");
+                                  return MyBottomNavigationBar2(
+                                      context,
+                                      ref,
+                                      "${widget.DetilsData.id.toString()}",
+                                      options);
                                 });
                           },
                           child: Container(

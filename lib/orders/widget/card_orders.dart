@@ -15,7 +15,8 @@ class buildOrderCard extends ConsumerStatefulWidget {
   final String orderNumber;
   final String lat;
   final String long;
-  final OrderStatus statusCard;
+  //final OrderStatus statusCard;
+  final String status;
   final String ID;
   buildOrderCard(
       {Key? key,
@@ -24,7 +25,7 @@ class buildOrderCard extends ConsumerStatefulWidget {
       required this.orderNumber,
       required this.lat,
       required this.long,
-      required this.statusCard,
+      required this.status,
       required this.ID})
       : super(key: key);
 
@@ -68,8 +69,8 @@ class _buildOrderCardState extends ConsumerState<buildOrderCard> {
                             style: TextStyle(color: Colors.grey[300]),
                           ),
                           Text(
-                            widget.statusCard.title,
-                            style: TextStyle(color: widget.statusCard.color),
+                            widget.status,
+                            // style: TextStyle(color: widget.statusCard.color),
                           ),
                         ],
                       ),
@@ -128,7 +129,7 @@ class _buildOrderCardState extends ConsumerState<buildOrderCard> {
                       ),
                     ],
                   ),
-                  widget.statusCard == 1
+                  widget.status == 1
                       ? Text(
                           t.done,
                           style: TextStyle(color: Colors.amber),
@@ -138,7 +139,7 @@ class _buildOrderCardState extends ConsumerState<buildOrderCard> {
               ),
             ),
             SizedBox(height: 8.sp),
-            if (widget.statusCard != OrderStatus.Delivery_Rejected)
+            if (widget.status != OrderStatus.Delivery_Rejected)
               Row(
                 children: [
                   Expanded(

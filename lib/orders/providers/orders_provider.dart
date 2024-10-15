@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:logistics/orders/enum/order_status_enum.dart';
 import 'package:logistics/orders/repository/orders_repository.dart';
 import 'package:logistics/orders/repository/remote_orders_repository.dart';
 
@@ -9,9 +8,9 @@ final OrdersProvider2 = StateProvider(
   (ref) => ref.read(remoteOrdersRepository).getOrders(),
 );
 
-final orderFilterProvider = StateProvider((ref) => OrderStatus.allOrders);
+final orderFilterProvider = StateProvider<String>((ref) => 'all');
 
-final orderSearchProvider = StateProvider((ref) => '');
+final orderSearchProvider = StateProvider<String>((ref) => '');
 
 final ordersProvider =
     StateNotifierProvider<OrderStateNotifier, List<OrdersEntity>>((ref) {
@@ -32,12 +31,11 @@ class OrderStateNotifier extends StateNotifier<List<OrdersEntity>> {
   }
 
   final OrdersRepository repository;
-  final OrderStatus filter;
+  final String filter;
   String search;
 
   List<OrdersEntity> _list = [];
   List<OrdersEntity> _display = [];
-
   // Variables to track the loading and error states
   bool isLoading = false;
   String? error;
@@ -49,10 +47,14 @@ class OrderStateNotifier extends StateNotifier<List<OrdersEntity>> {
       _list = await repository.getOrders();
       _display = _list;
 
+      if (filter == "all") {
+        state = _display;
+        return;
+      }
+
       // Apply the filter if needed
-      if (filter != OrderStatus.allOrders) {
-        _display =
-            _list.where((element) => element.orderStatus == filter).toList();
+      if (filter != '') {
+        _display = _list.where((element) => element.status == filter).toList();
       }
 
       // Apply search filter if there's a search term
@@ -66,6 +68,10 @@ class OrderStateNotifier extends StateNotifier<List<OrdersEntity>> {
     } finally {
       isLoading = false; // Stop loading
     }
+  }
+
+  List<String> getFilterOptions() {
+    return _list.map((element) => element.status).toList()..add('all');
   }
 
   void getOrdersBySearch() {

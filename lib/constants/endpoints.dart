@@ -9,6 +9,7 @@ class Endpoints {
   static String startMission = "$baseURL/api/startMission";
   static String reject = "$baseURL/api/reject";
   static String postSenderSig = "$baseURL/api/validateStep";
+  static String ReasonsRejection = "$baseURL/api/reasons-rejection";
 
 // static String getBooks(int id) => "$baseURL/api/library/books/$id";
 }
