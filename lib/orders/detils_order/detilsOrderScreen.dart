@@ -16,8 +16,8 @@ import 'package:logistics/i18n/strings.g.dart';
 import 'package:logistics/orders/detils_order/bottom_navigationBar.dart';
 import 'package:logistics/orders/entity/detils_entity.dart';
 import 'package:logistics/orders/entity/reasons_rejection_entity.dart';
-import 'package:logistics/orders/in_way/in_way_screen.dart';
 import 'package:logistics/orders/providers/orders_provider.dart';
+import 'package:logistics/orders/recipient_signature/RecipientSignatureScreen.dart';
 import 'package:logistics/orders/repository/remote_orders_repository.dart';
 import 'package:logistics/orders/senders_signature/senders_signature_screen.dart';
 import 'package:path_provider/path_provider.dart';
@@ -735,19 +735,22 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                         child: InkWell(
                           onTap: () {
                             _saveSignature;
-
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => widget
-                                                .DetilsData.validationDateStep1
-                                                .toString() !=
-                                            'null'
-                                        ? SendersSignatureScreen(
-                                            requestId:
-                                                widget.DetilsData.id.toString(),
-                                          )
-                                        : InWayScreen()));
+                            if (widget.DetilsData.validationDateStep1 ==
+                                'null') {
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) {
+                                return SendersSignatureScreen(
+                                  requestId: widget.DetilsData.id.toString(),
+                                );
+                              }));
+                            } else {
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) {
+                                return RecipientSignatureScreen(
+                                  requestId: widget.DetilsData.id.toString(),
+                                );
+                              }));
+                            }
                           },
                           child: Container(
                             height: 50.h,

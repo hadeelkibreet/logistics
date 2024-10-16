@@ -89,5 +89,6 @@
   "phoneNumber": "رقم الهاتف",
   "AirWaybillNumber": "رقم بوليصة الشحن الجوي",
   "sendersSignature":"توقيع المرسل",
-  "Save": "حفظ"
+  "Save": "حفظ",
+  "comment": "تعليق"
 }

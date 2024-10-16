@@ -4,9 +4,9 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 2
-/// Strings: 182 (91 per locale)
+/// Strings: 184 (92 per locale)
 ///
-/// Built on 2024-08-06 at 16:03 UTC
+/// Built on 2024-10-16 at 10:55 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -239,6 +239,7 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
 	String get AirWaybillNumber => 'Air waybill number';
 	String get sendersSignature => 'Sender\'s signature';
 	String get Save => 'Save';
+	String get comment => 'comment';
 }
 
 // Path: <root>
@@ -356,6 +357,7 @@ class _StringsAr implements Translations {
 	@override String get AirWaybillNumber => 'رقم بوليصة الشحن الجوي';
 	@override String get sendersSignature => 'توقيع المرسل';
 	@override String get Save => 'حفظ';
+	@override String get comment => 'تعليق';
 }
 
 /// Flat map(s) containing all translations.
@@ -455,6 +457,7 @@ extension on Translations {
 			case 'AirWaybillNumber': return 'Air waybill number';
 			case 'sendersSignature': return 'Sender\'s signature';
 			case 'Save': return 'Save';
+			case 'comment': return 'comment';
 			default: return null;
 		}
 	}
@@ -554,6 +557,7 @@ extension on _StringsAr {
 			case 'AirWaybillNumber': return 'رقم بوليصة الشحن الجوي';
 			case 'sendersSignature': return 'توقيع المرسل';
 			case 'Save': return 'حفظ';
+			case 'comment': return 'تعليق';
 			default: return null;
 		}
 	}

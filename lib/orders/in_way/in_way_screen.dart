@@ -9,16 +9,27 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:logistics/constants/colors.dart';
+import 'package:logistics/constants/dio.dart';
+import 'package:logistics/constants/endpoints.dart';
 import 'package:logistics/constants/images.dart';
 import 'package:logistics/i18n/strings.g.dart';
+import 'package:logistics/orders/detils_order/bottom_navigationBar.dart';
+import 'package:logistics/orders/entity/detils_entity.dart';
+import 'package:logistics/orders/entity/reasons_rejection_entity.dart';
 import 'package:logistics/orders/recipient_signature/RecipientSignatureScreen.dart';
+import 'package:logistics/orders/repository/remote_orders_repository.dart';
+import 'package:logistics/orders/senders_signature/senders_signature_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:signature/signature.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../providers/orders_provider.dart';
+
 class InWayScreen extends ConsumerStatefulWidget {
-  const InWayScreen({Key? key}) : super(key: key);
+  final DetilsEntity DetilsData;
+
+  const InWayScreen({Key? key, required this.DetilsData}) : super(key: key);
 
   @override
   ConsumerState<InWayScreen> createState() => _detailsOrderScreenState();
@@ -28,16 +39,26 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
   late SignatureController _controllerSignature;
   File? _image;
   late bool isShow = true;
-
   @override
   void initState() {
+    // _initState();
     super.initState();
+    // _loadingPro();
     _controllerSignature = SignatureController(
       penStrokeWidth: 5,
       penColor: Colors.black,
       exportBackgroundColor: Colors.white,
     );
   }
+
+  // Future<void> _initState() async {
+  //   final orderProvider =
+  //       ref.read(IDProvider.notifier).update((state) => widget.ID.toString());
+  //   final p = await ref.read(remoteOrdersRepository).getStartMission(widget.ID);
+  //   print("hhhhhhhhhhhhh: $orderProvider");
+  //
+  //   print("jjjjjjjjjjjjjjj1111 ${p.id}");
+  // }
 
   @override
   void dispose() {
@@ -48,6 +69,8 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //final detilsProvider = ref.read(orderDetilsProvider);
+
     return Scaffold(
       backgroundColor: ColorsApp.backgroundColor,
       body: Stack(
@@ -111,12 +134,14 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                                   CircleAvatar(
                                     backgroundColor: Colors.red,
                                     child: Text(
-                                      'T',
+                                      widget.DetilsData.destinationName
+                                          .substring(0, 1),
                                       style: TextStyle(color: ColorsApp.white),
                                     ),
                                   ),
                                   Text(
-                                    'test',
+                                    widget.DetilsData.destinationName
+                                        .toString(), // 'test',
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                     style: TextStyle(color: Colors.white),
@@ -124,14 +149,15 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                                   Text(
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 2,
-                                    'KSA-riyadh, KSA-riyadh, 123, UNKNOWN',
+                                    widget.DetilsData.destinationAddress
+                                        .toString(),
                                     style: TextStyle(color: Colors.white),
                                   ),
                                   SizedBox(
                                     height: 80.h,
                                   ),
                                   Text(
-                                    '${t.orderNumber} 9937664235780',
+                                    '${t.orderNumber + widget.DetilsData.barcode} ',
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                     style: TextStyle(
@@ -142,16 +168,16 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                                   Padding(
                                     padding: EdgeInsets.only(top: 28.sp),
                                     child: Container(
-                                      color: Colors.orange,
+                                      color: ColorsApp.backgroundColor,
                                       width: double.infinity,
-                                      padding: EdgeInsets.all(8.0.sp),
-                                      child: Text(
-                                        t.accept,
-                                        textAlign: TextAlign.start,
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 18.sp),
-                                      ),
+                                      padding: EdgeInsets.all(8.7.sp),
+                                      child: Text(''
+                                          // t.accept,
+                                          // textAlign: TextAlign.start,
+                                          // style: TextStyle(
+                                          //     color: Colors.white,
+                                          //     fontSize: 18.sp),
+                                          ),
                                     ),
                                   ),
                                 ],
@@ -173,7 +199,9 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                                           icon: Icon(Icons.phone,
                                               color: ColorsApp.white),
                                           onPressed: () {
-                                            callNumber('0503792580');
+                                            callNumber(widget.DetilsData
+                                                .destinationNumberPhone
+                                                .toString());
                                           },
                                         ),
                                         maxRadius: 25.sp,
@@ -183,7 +211,9 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                                     Padding(
                                       padding: EdgeInsets.all(8.0.sp),
                                       child: InkWell(
-                                        onTap: () => openWhatsApp('0503792580'),
+                                        onTap: () => openWhatsApp(widget
+                                            .DetilsData.destinationNumberPhone
+                                            .toString()),
                                         child: CircleAvatar(
                                           backgroundColor: Colors.white,
                                           child: Image.asset(
@@ -230,7 +260,25 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                       color: Colors.blue,
                     ),
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        final orderProvider = ref
+                            .read(IDProvider.notifier)
+                            .update((state) => widget.DetilsData.id.toString());
+                        final p = await ref
+                            .read(remoteOrdersRepository)
+                            .getStartMission(widget.DetilsData.id.toString());
+
+                        print("hhhhhhhhhhhhh: $orderProvider");
+
+                        print("jjjjjjjjjjjjjjj1111 ${p.id}");
+
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => InWayScreen(
+                                      DetilsData: p,
+                                    )));
+                      },
                       child: Text(
                         t.locationUpdateRequest,
                         style:
@@ -253,7 +301,7 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                         ),
                         SizedBox(height: 3.h),
                         Text(
-                          '0.00 SAR',
+                          '${widget.DetilsData.cod.toString()}SAR',
                           style: TextStyle(
                               fontSize: 24.sp, fontWeight: FontWeight.bold),
                         ),
@@ -311,26 +359,29 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                                 children: [
                                   _buildRowItem(
                                       context,
-                                      'KSA-riyadh, KSA-riyadh, 123, UNKNOWN',
-                                      '${t.to} test ',
+                                      widget.DetilsData.destinationAddress
+                                          .toString(),
+                                      '${t.to + widget.DetilsData.destinationName} ',
                                       Icon(Icons.phone),
                                       Colors.blue,
-                                      '0503792580'),
+                                      widget.DetilsData.destinationNumberPhone
+                                          .toString()),
                                   _buildRowItem(
                                       context,
-                                      'KSA-riyadh, 31758, UNKNOWN',
-                                      '${t.from} test',
+                                      widget.DetilsData.sourceAddress
+                                          .toString(),
+                                      '${t.from + widget.DetilsData.sourceName}',
                                       Icon(Icons.phone),
                                       Colors.green,
-                                      '0503792580'),
+                                      widget.DetilsData.sourceNumberPhone),
                                   // Divider(height: 32),
                                   _buildInfoItem(
                                       context,
                                       t.serviceType,
-                                      'test',
+                                      'Express Delivery',
                                       Icons.local_shipping,
                                       Colors.yellow,
-                                      '0.00 SAR',
+                                      '${widget.DetilsData.cod}SAR',
                                       true,
                                       0,
                                       true,
@@ -340,7 +391,8 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                                   _buildInfoItem(
                                       context,
                                       t.dateCreated,
-                                      'testttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt ',
+                                      widget.DetilsData.assignmentDate
+                                          .toString(),
                                       Icons.calendar_month_sharp,
                                       Colors.purple,
                                       '',
@@ -353,7 +405,7 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                                   _buildInfoItem(
                                       context,
                                       t.thePeriodOfTimeToCarryTheShipment,
-                                      ' ممكن',
+                                      ' في أقرب وقت ممكن',
                                       Icons.access_time,
                                       Colors.orange,
                                       '',
@@ -388,7 +440,8 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                                   _buildInfoItem(
                                       context,
                                       t.packageType,
-                                      'Exdium ',
+                                      widget.DetilsData.containerType
+                                          .toString(),
                                       Icons.assignment,
                                       Colors.yellow,
                                       '',
@@ -401,151 +454,8 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                                   _buildInfoItem(
                                       context,
                                       t.description,
-                                      'test ',
-                                      Icons.edit,
-                                      Colors.green,
-                                      '',
-                                      false,
-                                      0,
-                                      true,
-                                      SizedBox(
-                                        height: 0,
-                                      )),
-                                  _buildInfoItem(
-                                      context,
-                                      t.PackagePhoto,
-                                      ' لايوجد',
-                                      Icons.image,
-                                      Colors.purple,
-                                      '',
-                                      false,
-                                      0,
-                                      false,
-                                      Image.network(
-                                          width: 160.w,
-                                          height: 100.h,
-                                          'https://www.syncfusion.com/blogs/wp-content/uploads/2021/04/How-to-perform-text-search-over-the-PDF-document-using-Flutter-PDF-Viewer.png')),
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 10.h),
-
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 30.w),
-                            child: Text(
-                              t.proofOfDelivery,
-                              textAlign: TextAlign.end,
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                          ),
-                          Card(
-                            color: ColorsApp.white,
-                            margin: EdgeInsets.all(16.0.sp),
-                            child: Padding(
-                              padding: EdgeInsets.all(16.0.sp),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  _buildInfoItem(
-                                      context,
-                                      t.NameOfAddresseeRecipient,
-                                      'test ',
-                                      Icons.person,
-                                      Colors.grey,
-                                      '',
-                                      false,
-                                      0,
-                                      true,
-                                      SizedBox(
-                                        height: 0,
-                                      )),
-                                  _buildInfoItem(
-                                    context,
-                                    t.ProofOfTheRecipientsIdentity,
-                                    'test ',
-                                    Icons.badge_sharp,
-                                    Colors.blueAccent,
-                                    '',
-                                    false,
-                                    0,
-                                    false,
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        if (_image != null)
-                                          Image.file(
-                                            _image!,
-                                            height: 100.h,
-                                            width: 160.w,
-                                          ),
-                                        SizedBox(height: 16.h),
-                                        ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStateProperty.all<
-                                                        Color>(
-                                                    ColorsApp.backgroundColor),
-                                          ),
-                                          onPressed: () =>
-                                              _pickImage(ImageSource.camera),
-                                          child: Text(
-                                            t.openCamera,
-                                            style: TextStyle(
-                                                color: ColorsApp.black),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  _buildInfoItem(
-                                      context,
-                                      t.TheRecipientsSignature,
-                                      ' لايوجد',
-                                      Icons.edit,
-                                      Colors.red,
-                                      '',
-                                      false,
-                                      0,
-                                      false,
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(height: 10.h),
-                                          Signature(
-                                            controller: _controllerSignature,
-                                            height: 100.h,
-                                            width: 160.w,
-                                            backgroundColor: Colors.grey[300]!,
-                                          ),
-                                          SizedBox(height: 16.h),
-                                          ElevatedButton(
-                                            style: ButtonStyle(
-                                              backgroundColor:
-                                                  MaterialStateProperty
-                                                      .all<Color>(ColorsApp
-                                                          .backgroundColor),
-                                            ),
-                                            onPressed: () {
-                                              setState(() {
-                                                _controllerSignature.clear();
-                                              });
-                                            },
-                                            child: Text(
-                                              t.clear,
-                                              style: TextStyle(
-                                                  color: ColorsApp.black),
-                                            ),
-                                          ),
-                                        ],
-                                      )),
-                                  _buildInfoItem(
-                                      context,
-                                      t.ConnectionStatus,
                                       ' ',
-                                      Icons.assignment_turned_in_rounded,
+                                      Icons.edit,
                                       Colors.green,
                                       '',
                                       false,
@@ -554,12 +464,161 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                                       SizedBox(
                                         height: 0,
                                       )),
+                                  // _buildInfoItem(
+                                  //     context,
+                                  //     t.PackagePhoto,
+                                  //     ' لايوجد',
+                                  //     Icons.image,
+                                  //     Colors.purple,
+                                  //     '',
+                                  //     false,
+                                  //     0,
+                                  //     false,
+                                  //     Image.network(
+                                  //         width: 160.w,
+                                  //         height: 100.h,
+                                  //         widget.DetilsData.validation1Image
+                                  //                     .toString() ==
+                                  //                 'null'
+                                  //             ? 'https://www.syncfusion.com/blogs/wp-content/uploads/2021/04/How-to-perform-text-search-over-the-PDF-document-using-Flutter-PDF-Viewer.png'
+                                  //             : widget
+                                  //                 .DetilsData.validation1Image
+                                  //                 .toString())),
                                 ],
                               ),
                             ),
                           ),
-
                           SizedBox(height: 10.h),
+                          //
+                          // Padding(
+                          //   padding: EdgeInsets.symmetric(horizontal: 30.w),
+                          //   child: Text(
+                          //     t.proofOfDelivery,
+                          //     textAlign: TextAlign.end,
+                          //     style: TextStyle(color: Colors.grey[600]),
+                          //   ),
+                          // ),
+                          // Card(
+                          //   color: ColorsApp.white,
+                          //   margin: EdgeInsets.all(16.0.sp),
+                          //   child: Padding(
+                          //     padding: EdgeInsets.all(16.0.sp),
+                          //     child: Column(
+                          //       crossAxisAlignment: CrossAxisAlignment.start,
+                          //       children: [
+                          //         _buildInfoItem(
+                          //             context,
+                          //             t.NameOfAddresseeRecipient,
+                          //             widget.DetilsData.sourceName.toString(),
+                          //             Icons.person,
+                          //             Colors.grey,
+                          //             '',
+                          //             false,
+                          //             0,
+                          //             true,
+                          //             SizedBox(
+                          //               height: 0,
+                          //             )),
+                          //         _buildInfoItem(
+                          //           context,
+                          //           t.ProofOfTheRecipientsIdentity,
+                          //           'test ',
+                          //           Icons.badge_sharp,
+                          //           Colors.blueAccent,
+                          //           '',
+                          //           false,
+                          //           0,
+                          //           false,
+                          //           Column(
+                          //             crossAxisAlignment:
+                          //                 CrossAxisAlignment.center,
+                          //             children: [
+                          //               if (_image != null)
+                          //                 Image.file(
+                          //                   _image!,
+                          //                   height: 100.h,
+                          //                   width: 160.w,
+                          //                 ),
+                          //               SizedBox(height: 16.h),
+                          //               ElevatedButton(
+                          //                 style: ButtonStyle(
+                          //                   backgroundColor:
+                          //                       MaterialStateProperty.all<
+                          //                               Color>(
+                          //                           ColorsApp.backgroundColor),
+                          //                 ),
+                          //                 onPressed: () =>
+                          //                     _pickImage(ImageSource.camera),
+                          //                 child: Text(
+                          //                   t.openCamera,
+                          //                   style: TextStyle(
+                          //                       color: ColorsApp.black),
+                          //                 ),
+                          //               ),
+                          //             ],
+                          //           ),
+                          //         ),
+                          //         _buildInfoItem(
+                          //             context,
+                          //             t.TheRecipientsSignature,
+                          //             ' لايوجد',
+                          //             Icons.edit,
+                          //             Colors.red,
+                          //             '',
+                          //             false,
+                          //             0,
+                          //             false,
+                          //             Column(
+                          //               crossAxisAlignment:
+                          //                   CrossAxisAlignment.start,
+                          //               children: [
+                          //                 SizedBox(height: 10.h),
+                          //                 Signature(
+                          //                   controller: _controllerSignature,
+                          //                   height: 100.h,
+                          //                   width: 160.w,
+                          //                   backgroundColor: Colors.grey[300]!,
+                          //                 ),
+                          //                 SizedBox(height: 16.h),
+                          //                 ElevatedButton(
+                          //                   style: ButtonStyle(
+                          //                     backgroundColor:
+                          //                         MaterialStateProperty
+                          //                             .all<Color>(ColorsApp
+                          //                                 .backgroundColor),
+                          //                   ),
+                          //                   onPressed: () {
+                          //                     setState(() {
+                          //                       _controllerSignature.clear();
+                          //                     });
+                          //                   },
+                          //                   child: Text(
+                          //                     t.clear,
+                          //                     style: TextStyle(
+                          //                         color: ColorsApp.black),
+                          //                   ),
+                          //                 ),
+                          //               ],
+                          //             )),
+                          //         _buildInfoItem(
+                          //             context,
+                          //             t.ConnectionStatus,
+                          //             widget.DetilsData.type.toString(),
+                          //             Icons.assignment_turned_in_rounded,
+                          //             Colors.green,
+                          //             '',
+                          //             false,
+                          //             0,
+                          //             true,
+                          //             SizedBox(
+                          //               height: 0,
+                          //             )),
+                          //       ],
+                          //     ),
+                          //   ),
+                          // ),
+                          //
+                          // SizedBox(height: 10.h),
 
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 30.w),
@@ -593,7 +652,7 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                                   _buildInfoItem(
                                       context,
                                       t.PaymentWasMadeVia,
-                                      'test ',
+                                      ' ',
                                       Icons.person,
                                       Colors.grey,
                                       '',
@@ -606,7 +665,7 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                                   _buildInfoItem(
                                       context,
                                       t.ServiceCost,
-                                      ' لايوجد',
+                                      ' ${widget.DetilsData.cod}',
                                       Icons.money_rounded,
                                       Colors.lightGreen,
                                       t.paid,
@@ -640,14 +699,35 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                   child: Row(
                     children: [
                       Expanded(
-                        child: Container(
-                          height: 50.h,
-                          color: Color(0xFFFFF4545),
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              t.Failed,
-                              style: TextStyle(color: ColorsApp.white),
+                        child: InkWell(
+                          onTap: () async {
+                            var ReasonsRejection = await ApiService()
+                                .getReasonsRejection(
+                                    Endpoints.ReasonsRejection, ref);
+                            // Assuming the response is a list of JSON objects
+                            final ReasonsRejectionStatusEntity options =
+                                await ReasonsRejectionStatusEntity.fromJson(
+                                    ReasonsRejection);
+
+                            showModalBottomSheet(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return MyBottomNavigationBar2(
+                                      context,
+                                      ref,
+                                      "${widget.DetilsData.id.toString()}",
+                                      options);
+                                });
+                          },
+                          child: Container(
+                            height: 50.h,
+                            color: Color(0xFFFFF4545),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                t.Failed,
+                                style: TextStyle(color: ColorsApp.white),
+                              ),
                             ),
                           ),
                         ),
@@ -656,11 +736,23 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                         child: InkWell(
                           onTap: () {
                             _saveSignature;
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        RecipientSignatureScreen()));
+
+                            if (widget.DetilsData.validationDateStep1 ==
+                                'null') {
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) {
+                                return SendersSignatureScreen(
+                                  requestId: widget.DetilsData.id.toString(),
+                                );
+                              }));
+                            } else {
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) {
+                                return RecipientSignatureScreen(
+                                  requestId: widget.DetilsData.id.toString(),
+                                );
+                              }));
+                            }
                           },
                           child: Container(
                             height: 50.h,
@@ -824,29 +916,28 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                   Row(
                     children: [
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 65.0.w),
+                        padding: EdgeInsets.symmetric(horizontal: 55.0.w),
                         child: Text(title,
                             style: TextStyle(
-                                fontSize: 11.2.sp, color: Colors.grey)),
+                                fontSize: 15.2.sp, color: Colors.grey)),
                       ),
                       SizedBox(width: 8.w),
                     ],
                   ),
                   isValue
                       ? Padding(
-                          padding: EdgeInsets.only(right: 65.0.w, left: 65.0.w),
+                          padding: EdgeInsets.only(right: 55.0.w, left: 55.0.w),
                           child: Container(
-                            width: 90,
                             child: Text(value,
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                                 style: TextStyle(
-                                    fontSize: 16.sp,
+                                    fontSize: 12.sp,
                                     fontWeight: FontWeight.bold)),
                           ),
                         )
                       : Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 65.0.w),
+                          padding: EdgeInsets.symmetric(horizontal: 60.0.w),
                           child: widgetValue,
                         ),
                 ],

@@ -6,15 +6,21 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:logistics/constants/dio.dart';
+import 'package:logistics/constants/endpoints.dart';
 import 'package:logistics/i18n/strings.g.dart';
+import 'package:logistics/orders/active_orders/active_orders.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:signature/signature.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../constants/colors.dart';
 
 class RecipientSignatureScreen extends ConsumerStatefulWidget {
-  const RecipientSignatureScreen({Key? key}) : super(key: key);
+  final String requestId;
+
+  const RecipientSignatureScreen({Key? key, required this.requestId})
+      : super(key: key);
 
   @override
   ConsumerState<RecipientSignatureScreen> createState() =>
@@ -23,19 +29,21 @@ class RecipientSignatureScreen extends ConsumerStatefulWidget {
 
 class _SendersSignatureScreenState
     extends ConsumerState<RecipientSignatureScreen> {
-  late TextEditingController RecipientNameController = TextEditingController();
-  late TextEditingController RecipientNumberController =
-      TextEditingController();
-  late TextEditingController RecipientQRController =
+  late TextEditingController SendersNameController = TextEditingController();
+  late TextEditingController SendersNumberController = TextEditingController();
+  late TextEditingController SendersQRController =
       TextEditingController(text: "000");
   File? _image;
-  late TextEditingController RecipientIDController = TextEditingController();
-  late SignatureController _controllerRecipientSignature;
+  File? file1;
+  File? file2;
+  late TextEditingController SendersIDController = TextEditingController();
+  late SignatureController _controllerSenderSignature;
   final bool validationNameAndPhone = true;
+
   @override
   void initState() {
     super.initState();
-    _controllerRecipientSignature = SignatureController(
+    _controllerSenderSignature = SignatureController(
       penStrokeWidth: 5,
       penColor: Colors.black,
       exportBackgroundColor: Colors.white,
@@ -44,8 +52,7 @@ class _SendersSignatureScreenState
 
   @override
   void dispose() {
-    _controllerRecipientSignature.dispose();
-
+    _controllerSenderSignature.dispose();
     super.dispose();
   }
 
@@ -77,19 +84,14 @@ class _SendersSignatureScreenState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SnderInfoRow(Icons.person, RecipientNameController,
-                        t.NameOfAddresseeRecipient, false, false, true),
-                    SnderInfoRow(Icons.image, RecipientIDController,
+                    // SnderInfoRow(Icons.person, SendersNameController,
+                    //     t.SendersName, false, false, true),
+                    SnderInfoRow(Icons.image, SendersIDController,
                         t.proofOfDelivery, true, false, false),
-                    SnderInfoRow(Icons.phone, RecipientNumberController,
-                        t.phoneNumber, false, false, true),
-                    SnderInfoRow(
-                        Icons.confirmation_number,
-                        RecipientQRController,
-                        t.AirWaybillNumber,
-                        false,
-                        true,
-                        false),
+                    SnderInfoRow(Icons.comment, SendersNumberController,
+                        t.comment, false, false, false),
+                    // SnderInfoRow(Icons.confirmation_num_outlined, SendersQRController,
+                    //     t.AirWaybillNumber, false, true, false),
                     SizedBox(height: 11),
                     Text(
                       t.TheRecipientsSignature,
@@ -108,7 +110,7 @@ class _SendersSignatureScreenState
                             color: Colors.grey[300],
                           ),
                           child: Signature(
-                            controller: _controllerRecipientSignature,
+                            controller: _controllerSenderSignature,
                             backgroundColor: Colors.transparent,
                           ),
                         ),
@@ -130,7 +132,7 @@ class _SendersSignatureScreenState
                           ),
                           onPressed: () {
                             setState(() {
-                              _controllerRecipientSignature.clear();
+                              _controllerSenderSignature.clear();
                             });
                           },
                           child: Text(
@@ -150,7 +152,32 @@ class _SendersSignatureScreenState
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () async {
+                  await saveSignatureAsFile();
+                  if (file1 != null &&
+                      file2 != null &&
+                      SendersNumberController.text != null) {
+                    await ApiService().postSendersSig(
+                        Endpoints.postSenderSig,
+                        ref,
+                        file1!,
+                        file2!,
+                        widget.requestId,
+                        '2',
+                        SendersNumberController.text);
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => ActiveOrders()),
+                      (Route<dynamic> route) => false,
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text(
+                              'can\'t uploading information,please try agen')),
+                    );
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFFF449F45),
                     padding: EdgeInsets.symmetric(vertical: 12.0),
@@ -227,11 +254,7 @@ class _SendersSignatureScreenState
                     ),
                   ),
                   onPressed: () {
-                    _pickImage(ImageSource.camera);
-                    setState(() {
-                      RecipientIDController =
-                          _image!.path.toString() as TextEditingController;
-                    });
+                    _showPicker(context);
                   },
                   child: Row(
                     children: [
@@ -273,7 +296,7 @@ class _SendersSignatureScreenState
       if (!mounted) return;
 
       setState(() {
-        RecipientQRController.text =
+        SendersQRController.text =
             qrCode.toString() != '-1' ? qrCode.toString() : '';
       });
 
@@ -284,36 +307,64 @@ class _SendersSignatureScreenState
     }
   }
 
+  Future<File?> saveSignatureAsFile() async {
+    if (_controllerSenderSignature.isNotEmpty) {
+      // Capture the signature as bytes
+      Uint8List? signature = await _controllerSenderSignature.toPngBytes();
+      if (signature != null) {
+        // Get the temporary directory to save the file
+        final tempDir = await getTemporaryDirectory();
+        var uuid = Uuid();
+        final filePath = '${tempDir.path}/${uuid.v4()}.png';
+
+        // Save the signature to a file
+        File file = File(filePath);
+        file2 = await file.writeAsBytes(signature);
+        return file;
+      }
+    }
+    return null;
+  }
+
   Future<void> _pickImage(ImageSource source) async {
     final pickedImage = await ImagePicker().pickImage(source: source);
     if (pickedImage != null) {
-      setState(() {
+      setState(() async {
         _image = File(pickedImage.path);
-        RecipientIDController.text = _image!.path.toString();
+        file1 = await File(pickedImage.path);
+        SendersIDController.text =
+            _image!.path; // Use the path directly without toString()
       });
     }
   }
 
-  Future<void> _saveSignature() async {
-    if (await Permission.storage.request().isGranted) {
-      final Uint8List? data = await _controllerRecipientSignature.toPngBytes();
-      if (data != null) {
-        final directory = await getExternalStorageDirectory();
-        final file = File('${directory!.path}/signature.png');
-        await file.writeAsBytes(data);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Signature saved to ${file.path}')),
+  void _showPicker(context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext bc) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.photo_library),
+                title: Text('Gallery'),
+                onTap: () {
+                  _pickImage(ImageSource.gallery);
+                  Navigator.of(context).pop();
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.camera_alt),
+                title: Text('Camera'),
+                onTap: () {
+                  _pickImage(ImageSource.camera);
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
         );
-        print('${file.path}');
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save signature')),
-        );
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Storage permission denied')),
-      );
-    }
+      },
+    );
   }
 }

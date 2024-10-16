@@ -88,7 +88,7 @@ class _SendersSignatureScreenState
                     SnderInfoRow(Icons.image, SendersIDController, t.SendersID,
                         true, false, false),
                     SnderInfoRow(Icons.comment, SendersNumberController,
-                        t.phoneNumber, false, false, true),
+                        t.comment, false, false, false),
                     // SnderInfoRow(Icons.confirmation_num_outlined, SendersQRController,
                     //     t.AirWaybillNumber, false, true, false),
                     SizedBox(height: 11),

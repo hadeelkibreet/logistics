@@ -61,4 +61,12 @@ class RemoteOrdersRepository implements OrdersRepository {
       throw Exception('Failed to start mission: $e');
     }
   }
+
+  Future<void> postArrived(String PostArrived, ref, String requestId) async {
+    try {
+      await ApiService().postArrived(Endpoints.PostArrived, ref, requestId);
+    } catch (e) {
+      throw Exception('Failed to start mission: $e');
+    }
+  }
 }

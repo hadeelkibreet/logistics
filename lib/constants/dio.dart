@@ -177,4 +177,29 @@ class ApiService {
       print(response.statusMessage);
     }
   }
+
+  postArrived(String endpoint, ref, String requestId) async {
+    final preHelper = ref.read(prefHelperProvider);
+
+    var headers = {'Authorization': 'Bearer ${preHelper.getUserToken}'};
+
+    var data = FormData.fromMap({'request_id': requestId});
+
+    var dio = Dio();
+    var response = await dio.request(
+      endpoint.toString(),
+      options: Options(
+        method: 'POST',
+        headers: headers,
+      ),
+      data: data,
+    );
+
+    if (response.statusCode == 200) {
+      print(json.encode(response.data));
+      return response.statusCode;
+    } else {
+      print(response.statusMessage);
+    }
+  }
 }

@@ -89,5 +89,6 @@
   "phoneNumber": "Phone number",
   "AirWaybillNumber": "Air waybill number",
   "sendersSignature":"Sender's signature",
-  "Save": "Save"
+  "Save": "Save",
+  "comment": "comment"
 }

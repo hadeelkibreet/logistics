@@ -5,6 +5,7 @@ import 'package:logistics/constants/colors.dart';
 import 'package:logistics/i18n/strings.g.dart';
 import 'package:logistics/orders/detils_order/detilsOrderScreen.dart';
 import 'package:logistics/orders/enum/order_status_enum.dart';
+import 'package:logistics/orders/in_way/in_way_screen.dart';
 import 'package:logistics/orders/providers/orders_provider.dart';
 import 'package:logistics/orders/repository/remote_orders_repository.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -180,9 +181,14 @@ class _buildOrderCardState extends ConsumerState<buildOrderCard> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => DetailsOrderScreen(
-                                      DetilsData: p,
-                                    )));
+                                builder: (context) =>
+                                    p.validationDateStep1 == 'null'
+                                        ? DetailsOrderScreen(
+                                            DetilsData: p,
+                                          )
+                                        : InWayScreen(
+                                            DetilsData: p,
+                                          )));
                       },
                       child: Container(
                         decoration: BoxDecoration(
