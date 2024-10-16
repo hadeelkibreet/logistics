@@ -155,54 +155,54 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                   SizedBox(
                     height: height * 0.04,
                   ),
-                  Container(
-                    padding: EdgeInsetsDirectional.symmetric(horizontal: 15.sp),
-                    child: TextFormField(
-                      controller: _passwordController,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return t.EnterThePassword;
-                        }
-                        // Add additional validation logic here if needed
-                        return null; // Return null if the value is valid
-                      },
-
-                      // textAlign: TextAlign.right,
-                      obscureText: !_passwordVisible,
-                      decoration: InputDecoration(
-                        hintText: t.EnterThePassword,
-                        hintStyle: TextStyle(color: Colors.grey),
-                        filled: true,
-                        fillColor: ColorsApp.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30.0.sp),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 15.0.sp, horizontal: 20.0.sp),
-                        suffixIcon: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _passwordVisible = !_passwordVisible;
-                            });
-                          },
-                          child: Icon(
-                            _passwordVisible
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                            color: Colors.grey.withOpacity(0.9),
-                          ),
-                        ),
-                        prefixIcon: Icon(
-                          Icons.password,
-                          color: ColorsApp.primaryColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: height * 0.04,
-                  ),
+                  // Container(
+                  //   padding: EdgeInsetsDirectional.symmetric(horizontal: 15.sp),
+                  //   child: TextFormField(
+                  //     controller: _passwordController,
+                  //     validator: (value) {
+                  //       if (value!.isEmpty) {
+                  //         return t.EnterThePassword;
+                  //       }
+                  //       // Add additional validation logic here if needed
+                  //       return null; // Return null if the value is valid
+                  //     },
+                  //
+                  //     // textAlign: TextAlign.right,
+                  //     obscureText: !_passwordVisible,
+                  //     decoration: InputDecoration(
+                  //       hintText: t.EnterThePassword,
+                  //       hintStyle: TextStyle(color: Colors.grey),
+                  //       filled: true,
+                  //       fillColor: ColorsApp.white,
+                  //       border: OutlineInputBorder(
+                  //         borderRadius: BorderRadius.circular(30.0.sp),
+                  //         borderSide: BorderSide.none,
+                  //       ),
+                  //       contentPadding: EdgeInsets.symmetric(
+                  //           vertical: 15.0.sp, horizontal: 20.0.sp),
+                  //       suffixIcon: GestureDetector(
+                  //         onTap: () {
+                  //           setState(() {
+                  //             _passwordVisible = !_passwordVisible;
+                  //           });
+                  //         },
+                  //         child: Icon(
+                  //           _passwordVisible
+                  //               ? Icons.visibility
+                  //               : Icons.visibility_off,
+                  //           color: Colors.grey.withOpacity(0.9),
+                  //         ),
+                  //       ),
+                  //       prefixIcon: Icon(
+                  //         Icons.password,
+                  //         color: ColorsApp.primaryColor,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  // SizedBox(
+                  //   height: height * 0.04,
+                  // ),
                   Container(
                     width: width * 0.5,
                     height: height * 0.07,
@@ -251,27 +251,27 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                   SizedBox(
                     height: height * 0.02,
                   ),
-                  Container(
-                    width: width * 0.5,
-                    height: height * 0.07,
-                    child: ElevatedButton(
-                        onPressed: () async {
-                          activeLocale == AppLocale.en
-                              ? LocaleSettings.setLocale(AppLocale.ar)
-                              : LocaleSettings.setLocale(AppLocale.en);
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              ColorsApp.yellow),
-                        ),
-                        child: Text(
-                          '${t.changeToEnglish}',
-                          style: TextStyle(
-                            color: ColorsApp.black,
-                            fontSize: 16.sp,
-                          ),
-                        )),
-                  ),
+                  // Container(
+                  //   width: width * 0.5,
+                  //   height: height * 0.07,
+                  //   child: ElevatedButton(
+                  //       onPressed: () async {
+                  //         activeLocale == AppLocale.en
+                  //             ? LocaleSettings.setLocale(AppLocale.ar)
+                  //             : LocaleSettings.setLocale(AppLocale.en);
+                  //       },
+                  //       style: ButtonStyle(
+                  //         backgroundColor: MaterialStateProperty.all<Color>(
+                  //             ColorsApp.yellow),
+                  //       ),
+                  //       child: Text(
+                  //         '${t.changeToEnglish}',
+                  //         style: TextStyle(
+                  //           color: ColorsApp.black,
+                  //           fontSize: 16.sp,
+                  //         ),
+                  //       )),
+                  // ),
                 ],
               ),
             ),

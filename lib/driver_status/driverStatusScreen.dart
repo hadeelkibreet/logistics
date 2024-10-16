@@ -50,7 +50,7 @@ class _DriverStatusScreenState extends ConsumerState<DriverStatusScreen> {
                             : Colors.grey,
                 padding: EdgeInsets.all(10.0.sp),
                 child: Text(
-                  "${driverStatus.isActive == 1 ? t.InService : driverStatus.isActive == 2 ? t.InBreak : driverStatus.isActive == 3 ? t.OutOfService : ''}",
+                  "${driverStatus.isActive == 1 ? t.InService : driverStatus.isActive == 2 ? t.InBreak : t.OutOfService}",
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.white, fontSize: 18.sp),
                 ),
@@ -125,28 +125,28 @@ class _DriverStatusScreenState extends ConsumerState<DriverStatusScreen> {
                         });
                       },
                     ),
-                    SizedBox(height: 15.h),
-                    Container(
-                      width: 10.w,
-                      height: 40.h,
-                      child: ElevatedButton(
-                          onPressed: () async {
-                            activeLocale == AppLocale.en
-                                ? LocaleSettings.setLocale(AppLocale.ar)
-                                : LocaleSettings.setLocale(AppLocale.en);
-                          },
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                ColorsApp.yellow),
-                          ),
-                          child: Text(
-                            '${t.changeToEnglish}',
-                            style: TextStyle(
-                              color: ColorsApp.black,
-                              fontSize: 16.sp,
-                            ),
-                          )),
-                    ),
+                    // SizedBox(height: 15.h),
+                    // Container(
+                    //   width: 10.w,
+                    //   height: 40.h,
+                    //   child: ElevatedButton(
+                    //       onPressed: () async {
+                    //         activeLocale == AppLocale.en
+                    //             ? LocaleSettings.setLocale(AppLocale.ar)
+                    //             : LocaleSettings.setLocale(AppLocale.en);
+                    //       },
+                    //       style: ButtonStyle(
+                    //         backgroundColor: MaterialStateProperty.all<Color>(
+                    //             ColorsApp.yellow),
+                    //       ),
+                    //       child: Text(
+                    //         '${t.changeToEnglish}',
+                    //         style: TextStyle(
+                    //           color: ColorsApp.black,
+                    //           fontSize: 16.sp,
+                    //         ),
+                    //       )),
+                    // ),
                   ],
                 ),
               ),

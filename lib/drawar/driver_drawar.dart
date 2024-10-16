@@ -267,6 +267,7 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
                                     await SharedPreferences.getInstance();
                                 final Prehelper = PrefsHelper(sp);
                                 Prehelper.clearUserInfo();
+                                LocaleSettings.setLocale(AppLocale.en);
                                 // sp.setBool('isLogin', false);
                                 print("is login ${Prehelper.getIsLoggedIn}");
 
