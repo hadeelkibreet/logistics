@@ -733,10 +733,14 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
                       ),
                       Expanded(
                         child: InkWell(
-                          onTap: () {
+                          onTap: () async {
                             _saveSignature;
+                            final String reaspons = await ApiService()
+                                .postArrived(Endpoints.PostArrived, ref,
+                                    widget.DetilsData.id.toString());
                             if (widget.DetilsData.validationDateStep1 ==
-                                'null') {
+                                    'null' &&
+                                reaspons == '200') {
                               Navigator.push(context,
                                   MaterialPageRoute(builder: (context) {
                                 return SendersSignatureScreen(

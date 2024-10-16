@@ -50,7 +50,7 @@ class _DriverStatusScreenState extends ConsumerState<DriverStatusScreen> {
                             : Colors.grey,
                 padding: EdgeInsets.all(10.0.sp),
                 child: Text(
-                  "${driverStatus.isActive == 1 ? t.InService : driverStatus.isActive == 2 ? t.InBreak : t.OutOfService}",
+                  "${driverStatus.isActive == 1 ? t.InService : driverStatus.isActive == 2 ? t.InBreak : driverStatus.isActive == 3 ? t.OutOfService : ''}",
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.white, fontSize: 18.sp),
                 ),

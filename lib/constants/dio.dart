@@ -197,7 +197,7 @@ class ApiService {
 
     if (response.statusCode == 200) {
       print(json.encode(response.data));
-      return response.statusCode;
+      return response.statusCode.toString();
     } else {
       print(response.statusMessage);
     }
