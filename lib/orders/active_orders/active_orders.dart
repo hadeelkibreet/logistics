@@ -1,3 +1,4 @@
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -185,6 +186,9 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
         IconButton(
           icon: Icon(Icons.search),
           onPressed: () {
+            print(
+                "Hi feras ${FirebaseRemoteConfig.instance.getBool("forceUpdate")}");
+
             setState(() {
               isSearch = !isSearch;
             });

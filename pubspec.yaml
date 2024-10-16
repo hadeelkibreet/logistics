@@ -54,9 +54,9 @@ dependencies:
   firebase_storage: ^11.6.10
   firebase_auth: ^4.17.9
   firebase_core: ^2.27.2
-  vibration: ^1.7.4
-
-
+  firebase_remote_config: ^4.3.0
+  flutter_local_notifications: ^17.2.3
+  
   #pdf: ^3.6.0
   #flutter_downloader: ^1.11.7
 

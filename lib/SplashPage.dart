@@ -1,12 +1,17 @@
 import 'dart:async';
+import 'dart:developer';
+import 'dart:io';
 
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/auth/login.dart';
+import 'package:logistics/block_him.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/constants/images.dart';
 import 'package:logistics/data/prefs/prefs.dart';
+import 'package:logistics/orders/active_orders/active_orders.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'driver_status/driverStatusScreen.dart';
@@ -35,9 +40,15 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     bool? isLogin = preHelper.getIsLoggedIn ?? false;
 
     print("is login ${preHelper.getIsLoggedIn}");
+
+    bool blockHim = FirebaseRemoteConfig.instance.getBool("forceUpdate");
+    if (blockHim == true) {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => ForceUpdateScreen()));
+      return;
+    }
     Timer(const Duration(seconds: 5), () {
-      final nextPage =
-          isLogin ? const DriverStatusScreen() : const LogInScreen();
+      final nextPage = isLogin ? ActiveOrders() : const LogInScreen();
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => nextPage));
     });

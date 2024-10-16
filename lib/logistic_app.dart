@@ -1,3 +1,4 @@
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,9 +38,15 @@ class _LogisticsAppState extends ConsumerState<LogisticsApp> {
   void initState() {
     super.initState();
     initSharedPrefs();
+    readForceUpdate();
   }
 
   void initSharedPrefs() async {
     await ref.read(sharedPrefProvider.future);
+  }
+
+  void readForceUpdate() {
+    final bool flag = FirebaseRemoteConfig.instance.getBool("forceUpdate");
+    print("force update is : $flag");
   }
 }
