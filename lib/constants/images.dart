@@ -1,5 +1,5 @@
 class ImageAssets {
-  static const logo = 'assets/images/logo.jpg';
+  static const logo = 'assets/images/logo.png';
   static const usa = 'assets/images/Flag_usa.png';
   static const ksa = 'assets/images/flag_ksa.png';
   static const profile = 'assets/images/profile.png';

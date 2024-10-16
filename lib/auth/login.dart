@@ -95,25 +95,26 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    height: height * 0.06,
-                  ),
+                  // SizedBox(
+                  //   height: height * 0.06,
+                  // ),
                   Image.asset(
                     ImageAssets.logo,
-                    width: width * 0.5,
+                    width: width * 0.8.w,
+                    height: height * 0.5.h,
                   ),
-                  SizedBox(height: height * 0.04),
-                  DefaultTextStyle(
-                    style: TextStyle(
-                      color: ColorsApp.white,
-                      fontSize: 35.sp,
-                      fontWeight: FontWeight.w900,
-                    ),
-                    child: Text(t.LogIn),
-                  ),
-                  SizedBox(
-                    height: height * 0.04,
-                  ),
+                  //  SizedBox(height: height * 0.04),
+                  // DefaultTextStyle(
+                  //   style: TextStyle(
+                  //     color: ColorsApp.white,
+                  //     fontSize: 35.sp,
+                  //     fontWeight: FontWeight.w900,
+                  //   ),
+                  //   child: Text(t.LogIn),
+                  // ),
+                  // SizedBox(
+                  //   height: height * 0.04,
+                  // ),
                   Container(
                     padding: EdgeInsetsDirectional.symmetric(horizontal: 15.sp),
                     child: Column(

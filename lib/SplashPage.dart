@@ -2,7 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/auth/login.dart';
+import 'package:logistics/constants/colors.dart';
+import 'package:logistics/constants/images.dart';
 import 'package:logistics/data/prefs/prefs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -32,7 +35,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     bool? isLogin = preHelper.getIsLoggedIn ?? false;
 
     print("is login ${preHelper.getIsLoggedIn}");
-    Timer(const Duration(seconds: 10), () {
+    Timer(const Duration(seconds: 5), () {
       final nextPage =
           isLogin ? const DriverStatusScreen() : const LogInScreen();
       Navigator.push(
@@ -42,8 +45,23 @@ class _SplashPageState extends ConsumerState<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: CircularProgressIndicator(),
-    );
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+    return Scaffold(
+        backgroundColor: ColorsApp.primaryColor,
+        body: Center(
+          child: Column(
+            children: [
+              Image.asset(
+                ImageAssets.logo,
+                width: width * 0.9.w,
+                height: height * 0.6.h,
+              ),
+              CircularProgressIndicator(
+                color: ColorsApp.white,
+              ),
+            ],
+          ),
+        ));
   }
 }

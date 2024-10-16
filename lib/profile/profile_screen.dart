@@ -61,7 +61,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         Container(
                           height: 190,
                           decoration: BoxDecoration(
-                            color: ColorsApp.primaryColor.withOpacity(0.2),
+                            color: ColorsApp.primaryColor,
                             borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(50.0),
                               bottomRight: Radius.circular(50.0),
@@ -85,12 +85,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   profile.userName,
                                   style: TextStyle(
                                       fontSize: 18,
+                                      color: ColorsApp.white,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   profile.phone,
                                   style: TextStyle(
-                                      fontSize: 16, color: Colors.grey[700]),
+                                      fontSize: 16, color: Colors.white),
                                 ),
                               ],
                             ),
