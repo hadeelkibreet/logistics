@@ -69,7 +69,10 @@ class OrderStateNotifier extends StateNotifier<List<OrdersEntity>> {
   }
 
   List<String> getFilterOptions() {
-    return _list.map((element) => element.status).toList()..add('all');
+    final uniqueStatuses =
+        _list.map((element) => element.status).toSet().toList();
+    uniqueStatuses.add('all');
+    return uniqueStatuses;
   }
 
   void getOrdersBySearch() {

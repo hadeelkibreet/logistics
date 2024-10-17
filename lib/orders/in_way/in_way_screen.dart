@@ -705,9 +705,22 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                                 .getReasonsRejection(
                                     Endpoints.ReasonsRejection, ref);
                             // Assuming the response is a list of JSON objects
-                            final ReasonsRejectionStatusEntity options =
-                                await ReasonsRejectionStatusEntity.fromJson(
-                                    ReasonsRejection);
+                            // final ReasonsRejectionStatusEntity optionss =
+                            //     await ReasonsRejectionStatusEntity.fromJson(
+                            //         ReasonsRejection);
+                            List<ReasonsRejectionStatusEntity> entities =
+                                ReasonsRejection
+                                    .map<ReasonsRejectionStatusEntity>((json) =>
+                                        ReasonsRejectionStatusEntity.fromJson(
+                                            json)).toList();
+
+                            // Convert the list of entities to a list of maps
+                            List<Map<String, dynamic>> options =
+                                ReasonsRejectionStatusEntity.toJsonList(
+                                    entities);
+
+                            print(options);
+                            // Convert the list of entities to a list of maps
 
                             showModalBottomSheet(
                                 context: context,

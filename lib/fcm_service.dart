@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -11,15 +10,32 @@ class FCMService {
 
   Future<void> setupFCM() async {
     await setupNotificationChannel();
+
     // Request permissions for iOS
-    await _firebaseMessaging.requestPermission();
+    NotificationSettings settings = await _firebaseMessaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+    } else {
+      print('User declined or has not accepted permission');
+    }
 
     // Initialize local notifications
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     final InitializationSettings initializationSettings =
         InitializationSettings(android: initializationSettingsAndroid);
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    await flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: (NotificationResponse response) async {
+        // Handle notification tapped logic here
+        print('Notification tapped with payload: ${response.payload}');
+      },
+    );
 
     // Handle background messages
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -43,13 +59,16 @@ class FCMService {
       channelDescription: 'your_channel_description',
       importance: Importance.max,
       priority: Priority.high,
+      visibility: NotificationVisibility.public, // Show on lock screen
+      showWhen: true,
+      showProgress: true,
     );
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
       0,
-      message.notification?.title,
-      message.notification?.body,
+      message.notification?.title ?? 'No Title',
+      message.notification?.body ?? 'No Body',
       platformChannelSpecifics,
       payload: message.data['some_data'], // Pass any data you want
     );
@@ -57,19 +76,16 @@ class FCMService {
 
   static Future<void> _firebaseMessagingBackgroundHandler(
       RemoteMessage message) async {
-    // This will be called when the app is in the background or terminated
     print('Handling a background message: ${message.messageId}');
-    // Here, you can display a notification or handle the message data
-    // You can also call _showNotification() if needed
+    // Handle background notification logic here
   }
 
   Future<void> setupNotificationChannel() async {
     if (Platform.isAndroid) {
       const AndroidNotificationChannel channel = AndroidNotificationChannel(
-        'your_channel_id', // Replace with your channel ID
-        'your_channel_name', // Replace with your channel name
-        description:
-            'your_channel_description', // Replace with your channel description
+        'your_channel_id',
+        'your_channel_name',
+        description: 'your_channel_description',
         importance: Importance.high,
       );
 

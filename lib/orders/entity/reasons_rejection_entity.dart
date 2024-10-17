@@ -10,10 +10,16 @@ class ReasonsRejectionStatusEntity {
       name: json['name'],
     );
   }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'name': name,
     };
+  }
+
+  static List<Map<String, dynamic>> toJsonList(
+      List<ReasonsRejectionStatusEntity> objects) {
+    return objects.map((object) => object.toJson()).toList();
   }
 }

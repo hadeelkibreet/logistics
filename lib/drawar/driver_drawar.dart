@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:logistics/Settings_screen/SettingsScreen.dart';
 import 'package:logistics/auth/entity/login_entity.dart';
 import 'package:logistics/auth/login.dart';
 import 'package:logistics/constants/colors.dart';
@@ -197,16 +196,7 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
               },
             ),
             Divider(color: ColorsApp.primaryColor),
-            ListTileDrawar(
-              icon: Icon(
-                Icons.settings,
-              ),
-              text: t.Setting,
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => SettingsScreen()));
-              },
-            ),
+
             ListTileDrawar(
               icon: Icon(
                 Icons.share,
