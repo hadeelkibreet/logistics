@@ -10,12 +10,12 @@ class ProfileEntity {
   final String email;
   final String phone;
   final String address;
-  final int isActive;
+  final String isActive;
   final String createdAt;
-  final int carId;
+  final String carId;
   final String token;
   final String? fcmToken; // Nullable field
-  final int code;
+  final String code;
   final String updatedAt;
 
   // Constructor

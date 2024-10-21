@@ -74,11 +74,11 @@ class PrefsHelper {
         email: prefs.getString(PreferencesKeys.USER_EMAIL) ?? '',
         phone: prefs.getString(PreferencesKeys.USER_PHONE) ?? '',
         address: prefs.getString(PreferencesKeys.USER_address) ?? '',
-        isActive: prefs.getInt(PreferencesKeys.USER_is_active) ?? 0,
+        isActive: prefs.getString(PreferencesKeys.USER_is_active) ?? '0',
         createdAt: prefs.getString(PreferencesKeys.USER_created_at) ?? '',
-        carId: prefs.getInt(PreferencesKeys.USER_car_id) ?? 0,
+        carId: prefs.getString(PreferencesKeys.USER_car_id) ?? '',
         token: prefs.getString(PreferencesKeys.USER_TOKEN) ?? '',
-        code: prefs.getInt(PreferencesKeys.USER_CODE) ?? 0,
+        code: prefs.getString(PreferencesKeys.USER_CODE) ?? "",
         updatedAt: prefs.getString(PreferencesKeys.USER_updated_at) ?? '');
   }
 
@@ -101,11 +101,11 @@ class PrefsHelper {
     prefs.setString(PreferencesKeys.USER_EMAIL, user.email);
     prefs.setString(PreferencesKeys.USER_PHONE, user.phone);
     prefs.setString(PreferencesKeys.USER_address, user.address);
-    prefs.setInt(PreferencesKeys.USER_is_active, user.isActive);
+    prefs.setString(PreferencesKeys.USER_is_active, user.isActive);
     prefs.setString(PreferencesKeys.USER_created_at, user.createdAt);
-    prefs.setInt(PreferencesKeys.USER_car_id, user.carId);
+    prefs.setString(PreferencesKeys.USER_car_id, user.carId);
     prefs.setString(PreferencesKeys.USER_TOKEN, user.token);
-    prefs.setInt(PreferencesKeys.USER_CODE, user.code);
+    prefs.setString(PreferencesKeys.USER_CODE, user.code);
     prefs.setString(PreferencesKeys.USER_updated_at, user.updatedAt);
     return Future.value();
   }

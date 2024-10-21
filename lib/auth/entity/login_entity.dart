@@ -1,7 +1,7 @@
 class LoginEntity {
   final String accessToken;
   final String tokenType;
-  final int flag;
+  final String flag;
   final User user;
   final List<dynamic> currentRequests;
   final int nbNotifs;
@@ -50,12 +50,12 @@ class User {
   final String email;
   final String phone;
   final String address;
-  final int isActive;
+  final String isActive;
   final DateTime createdAt;
-  final int carId;
+  final String carId;
   final String token;
-  final dynamic fcmToken;
-  final int code;
+  final String? fcmToken;
+  final String code;
   final DateTime updatedAt;
   final List<City> cities;
 
@@ -131,10 +131,10 @@ class User {
 }
 
 class City {
-  final int cityId;
+  final String cityId;
   final int id;
   final String name;
-  final int isActive;
+  final String isActive;
   final dynamic createdAt;
   final dynamic updatedAt;
   final Pivot pivot;
@@ -175,8 +175,8 @@ class City {
 }
 
 class Pivot {
-  final int driverId;
-  final int citieId;
+  final String driverId;
+  final String citieId;
 
   Pivot({
     required this.driverId,
