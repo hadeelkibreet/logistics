@@ -16,6 +16,7 @@ import 'package:logistics/i18n/strings.g.dart';
 import 'package:logistics/orders/detils_order/bottom_navigationBar.dart';
 import 'package:logistics/orders/entity/detils_entity.dart';
 import 'package:logistics/orders/entity/reasons_rejection_entity.dart';
+import 'package:logistics/orders/enum/order_type_enum.dart';
 import 'package:logistics/orders/recipient_signature/RecipientSignatureScreen.dart';
 import 'package:logistics/orders/repository/remote_orders_repository.dart';
 import 'package:logistics/orders/senders_signature/senders_signature_screen.dart';
@@ -25,6 +26,10 @@ import 'package:signature/signature.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../providers/orders_provider.dart';
+
+final inWayScreenLoaderProvider = StateProvider<bool>(
+  (ref) => false,
+);
 
 class InWayScreen extends ConsumerStatefulWidget {
   final DetilsEntity DetilsData;
@@ -80,6 +85,7 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
               // crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.max,
               children: [
+                Text("on the way"),
                 Container(
                   color: Colors.grey[300],
                   child: Column(
@@ -90,9 +96,9 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                             height: 300.h,
                             child: FlutterMap(
                               options: MapOptions(
-                                center: LatLng(
-                                    24.778810, 46.730354), // إحداثيات الموقع
-                                zoom: 14.0.sp,
+                                center:
+                                    LatLng(24.88, 34.986), // إحداثيات الموقع
+                                zoom: 15.0.sp,
                               ),
                               children: [
                                 TileLayer(
@@ -226,21 +232,22 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                                         ),
                                       ),
                                     ),
-                                    Padding(
-                                      padding: EdgeInsets.all(8.0.sp),
-                                      child: CircleAvatar(
-                                        backgroundColor: Colors.white,
-                                        child: IconButton(
-                                          icon: Icon(Icons.cloud_download,
-                                              color: Colors.grey),
-                                          onPressed: () {
-                                            //   downloadAndConvertImageToPDF();
-                                          },
+                                    if (false)
+                                      Padding(
+                                        padding: EdgeInsets.all(8.0.sp),
+                                        child: CircleAvatar(
+                                          backgroundColor: Colors.white,
+                                          child: IconButton(
+                                            icon: Icon(Icons.cloud_download,
+                                                color: Colors.grey),
+                                            onPressed: () {
+                                              //   downloadAndConvertImageToPDF();
+                                            },
+                                          ),
+                                          maxRadius: 25.sp,
+                                          minRadius: 25.sp,
                                         ),
-                                        maxRadius: 25.sp,
-                                        minRadius: 25.sp,
                                       ),
-                                    ),
                                   ],
                                 ),
                               ],
@@ -251,44 +258,48 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                     ],
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.all(5.0.sp),
-                  child: Container(
-                    width: 350.w,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.sp),
-                      color: Colors.blue,
-                    ),
-                    child: TextButton(
-                      onPressed: () async {
-                        final orderProvider = ref
-                            .read(IDProvider.notifier)
-                            .update((state) => widget.DetilsData.id.toString());
-                        final p = await ref
-                            .read(remoteOrdersRepository)
-                            .getStartMission(widget.DetilsData.id.toString());
+                if (false) ...[
+                  Padding(
+                    padding: EdgeInsets.all(5.0.sp),
+                    child: Container(
+                      width: 350.w,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.sp),
+                        color: Colors.blue,
+                      ),
+                      child: TextButton(
+                        onPressed: () async {
+                          final orderProvider = ref
+                              .read(IDProvider.notifier)
+                              .update(
+                                  (state) => widget.DetilsData.id.toString());
+                          final p = await ref
+                              .read(remoteOrdersRepository)
+                              .getStartMission(widget.DetilsData.id.toString());
 
-                        print("hhhhhhhhhhhhh: $orderProvider");
+                          print("hhhhhhhhhhhhh: $orderProvider");
 
-                        print("jjjjjjjjjjjjjjj1111 ${p.id}");
+                          print("jjjjjjjjjjjjjjj1111 ${p.id}");
 
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => InWayScreen(
-                                      DetilsData: p,
-                                    )));
-                      },
-                      child: Text(
-                        t.locationUpdateRequest,
-                        style:
-                            TextStyle(color: ColorsApp.white, fontSize: 18.sp),
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => InWayScreen(
+                                        DetilsData: p,
+                                      )));
+                        },
+                        child: Text(
+                          t.locationUpdateRequest,
+                          style: TextStyle(
+                              color: ColorsApp.white, fontSize: 18.sp),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Divider(color: Colors.grey),
+                  Divider(color: Colors.grey),
+                ],
                 Card(
+                  color: Colors.white,
                   margin: EdgeInsets.all(7.0.sp),
                   child: Padding(
                     padding:
@@ -301,7 +312,7 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                         ),
                         SizedBox(height: 3.h),
                         Text(
-                          '${widget.DetilsData.cod.toString()}SAR',
+                          '${widget.DetilsData.cod.toString()} SAR',
                           style: TextStyle(
                               fontSize: 24.sp, fontWeight: FontWeight.bold),
                         ),
@@ -377,8 +388,8 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                                   // Divider(height: 32),
                                   _buildInfoItem(
                                       context,
-                                      t.serviceType,
-                                      'Express Delivery',
+                                      t.deliveryZone,
+                                      widget.DetilsData.deliveryZone,
                                       Icons.local_shipping,
                                       Colors.yellow,
                                       '${widget.DetilsData.cod}SAR',
@@ -453,10 +464,23 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                                       )),
                                   _buildInfoItem(
                                       context,
-                                      t.description,
-                                      ' ',
-                                      Icons.edit,
+                                      t.Weight,
+                                      widget.DetilsData.weight,
+                                      Icons.line_weight,
                                       Colors.green,
+                                      '',
+                                      false,
+                                      0,
+                                      true,
+                                      SizedBox(
+                                        height: 0,
+                                      )),
+                                  _buildInfoItem(
+                                      context,
+                                      t.Quantity,
+                                      widget.DetilsData.quantity,
+                                      Icons.numbers,
+                                      Colors.red,
                                       '',
                                       false,
                                       0,
@@ -649,28 +673,30 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
                                       SizedBox(
                                         height: 0,
                                       )),
-                                  _buildInfoItem(
-                                      context,
-                                      t.PaymentWasMadeVia,
-                                      ' ',
-                                      Icons.person,
-                                      Colors.grey,
-                                      '',
-                                      false,
-                                      0,
-                                      true,
-                                      SizedBox(
-                                        height: 0,
-                                      )),
+                                  if (false)
+                                    _buildInfoItem(
+                                        context,
+                                        t.PaymentWasMadeVia,
+                                        ' ',
+                                        Icons.person,
+                                        Colors.grey,
+                                        '',
+                                        false,
+                                        0,
+                                        true,
+                                        SizedBox(
+                                          height: 0,
+                                        )),
                                   _buildInfoItem(
                                       context,
                                       t.ServiceCost,
-                                      ' ${widget.DetilsData.cod}',
+                                      ' ${widget.DetilsData.cod} SAR',
                                       Icons.money_rounded,
                                       Colors.lightGreen,
                                       t.paid,
-                                      true,
+                                      false,
                                       1,
+                                      //TODO Firas : once jhiad add isPaid as bool use it here!
                                       true,
                                       SizedBox(
                                         height: 0,
@@ -690,173 +716,317 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
               ],
             ),
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Stack(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 80.0.h),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: InkWell(
-                          onTap: () async {
-                            var ReasonsRejection = await ApiService()
-                                .getReasonsRejection(
-                                    Endpoints.ReasonsRejection, ref);
-                            // Assuming the response is a list of JSON objects
-                            // final ReasonsRejectionStatusEntity optionss =
-                            //     await ReasonsRejectionStatusEntity.fromJson(
-                            //         ReasonsRejection);
-                            List<ReasonsRejectionStatusEntity> entities =
-                                ReasonsRejection
-                                    .map<ReasonsRejectionStatusEntity>((json) =>
-                                        ReasonsRejectionStatusEntity.fromJson(
-                                            json)).toList();
+          if (widget.DetilsData.status == "assigned_to_driver")
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 80.0.h),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            onTap: () async {
+                              final orderProvider = ref
+                                  .read(IDProvider.notifier)
+                                  .update((state) =>
+                                      widget.DetilsData.id.toString());
+                              final p = await ref
+                                  .read(remoteOrdersRepository)
+                                  .getStartMission(
+                                      widget.DetilsData.id.toString());
 
-                            // Convert the list of entities to a list of maps
-                            List<Map<String, dynamic>> options =
-                                ReasonsRejectionStatusEntity.toJsonList(
-                                    entities);
+                              print("hhhhhhhhhhhhh: $orderProvider");
 
-                            print(options);
-                            // Convert the list of entities to a list of maps
+                              print("jjjjjjjjjjjjjjj1111 ${p.id}");
 
-                            showModalBottomSheet(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return MyBottomNavigationBar2(
-                                      context,
-                                      ref,
-                                      "${widget.DetilsData.id.toString()}",
-                                      options);
-                                });
-                          },
-                          child: Container(
-                            height: 50.h,
-                            color: Color(0xFFFFF4545),
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                t.Failed,
-                                style: TextStyle(color: ColorsApp.white),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: InkWell(
-                          onTap: () {
-                            _saveSignature;
-
-                            if (widget.DetilsData.validationDateStep1 ==
-                                'null') {
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) {
-                                return SendersSignatureScreen(
-                                  requestId: widget.DetilsData.id.toString(),
-                                );
-                              }));
-                            } else {
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) {
-                                return RecipientSignatureScreen(
-                                  requestId: widget.DetilsData.id.toString(),
-                                );
-                              }));
-                            }
-                          },
-                          child: Container(
-                            height: 50.h,
-                            color: Color(0xFFF5DB506),
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                t.Done,
-                                style: TextStyle(color: ColorsApp.white),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Stack(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: 40.0.h),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: InkWell(
-                              onTap: () {
-                                _launchMapsUrl;
-                              },
-                              child: Container(
-                                height: 40.h,
-                                color: ColorsApp.white,
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    t.RequestADeliveryLocation,
-                                    style: TextStyle(
-                                        color: Colors.indigo, fontSize: 15.sp),
-                                  ),
+                              ref
+                                  .read(ordersProvider.notifier)
+                                  .getOrders(
+                                      type: ref.read(orderFilterProvider))
+                                  .then(
+                                (value) {
+                                  Navigator.pop(context);
+                                },
+                              );
+                            },
+                            child: Container(
+                              height: 50.h,
+                              color: Color(0xFFF5DB506),
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  t.Start,
+                                  style: TextStyle(color: ColorsApp.white),
                                 ),
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 35.0.h),
-                      child: Container(
-                        color: Colors.transparent,
-                        height: 30.h,
-                      ),
-                    ),
-                    PositionedDirectional(
-                      start: 280.sp,
-                      top: 12.sp,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              spreadRadius: 5.sp,
-                              blurRadius: 7.sp,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
                         ),
-                        child: CircleAvatar(
-                          radius: 30.sp,
-                          backgroundColor: ColorsApp.white,
-                          child: IconButton(
-                            onPressed: () {
-                              _launchMapsUrl;
-                              setState(() {
-                                //LocaleSettings.setLocale(AppLocale.en);
-                              });
-                            },
-                            icon: Icon(
-                              Icons.details,
-                              color: Colors.blue,
-                              size: 30.sp,
+                      ],
+                    ),
+                  ),
+                  if (false)
+                    Stack(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(top: 40.0.h),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    _launchMapsUrl;
+                                  },
+                                  child: Container(
+                                    height: 40.h,
+                                    color: ColorsApp.white,
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        t.RequestADeliveryLocation,
+                                        style: TextStyle(
+                                            color: Colors.indigo,
+                                            fontSize: 15.sp),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 35.0.h),
+                          child: Container(
+                            color: Colors.transparent,
+                            height: 30.h,
+                          ),
+                        ),
+                        PositionedDirectional(
+                          start: 280.sp,
+                          top: 12.sp,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  spreadRadius: 5.sp,
+                                  blurRadius: 7.sp,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: CircleAvatar(
+                              radius: 30.sp,
+                              backgroundColor: ColorsApp.white,
+                              child: IconButton(
+                                onPressed: () {
+                                  _launchMapsUrl;
+                                  setState(() {
+                                    //LocaleSettings.setLocale(AppLocale.en);
+                                  });
+                                },
+                                icon: Icon(
+                                  Icons.details,
+                                  color: Colors.blue,
+                                  size: 30.sp,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
+          if (widget.DetilsData.status == "out_for_pickup" ||
+              widget.DetilsData.status == "arrived")
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 80.0.h),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            onTap: () async {
+                              var ReasonsRejection = await ApiService()
+                                  .getReasonsRejection(
+                                      Endpoints.ReasonsRejection, ref);
+                              // Assuming the response is a list of JSON objects
+                              // final ReasonsRejectionStatusEntity optionss =
+                              //     await ReasonsRejectionStatusEntity.fromJson(
+                              //         ReasonsRejection);
+                              List<ReasonsRejectionStatusEntity> entities =
+                                  ReasonsRejection.map<
+                                          ReasonsRejectionStatusEntity>(
+                                      (json) =>
+                                          ReasonsRejectionStatusEntity.fromJson(
+                                              json)).toList();
+
+                              // Convert the list of entities to a list of maps
+                              List<Map<String, dynamic>> options =
+                                  ReasonsRejectionStatusEntity.toJsonList(
+                                      entities);
+
+                              print(options);
+                              // Convert the list of entities to a list of maps
+
+                              showModalBottomSheet(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return MyBottomNavigationBar2(
+                                        context,
+                                        ref,
+                                        "${widget.DetilsData.id.toString()}",
+                                        options);
+                                  });
+                            },
+                            child: Container(
+                              height: 50.h,
+                              color: Color(0xFFFFF4545),
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "Reject",
+                                  style: TextStyle(color: ColorsApp.white),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () async {
+                              _saveSignature;
+                              final String reaspons = await ApiService()
+                                  .postArrived(Endpoints.PostArrived, ref,
+                                      widget.DetilsData.id.toString());
+                              if (widget.DetilsData.validationDateStep1 ==
+                                      'null' &&
+                                  reaspons == '200') {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return SendersSignatureScreen(
+                                    requestId: widget.DetilsData.id.toString(),
+                                  );
+                                }));
+                              } else {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return RecipientSignatureScreen(
+                                    requestId: widget.DetilsData.id.toString(),
+                                  );
+                                }));
+                              }
+                            },
+                            child: Container(
+                              height: 50.h,
+                              color: Color(0xFFF5DB506),
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "Arrived",
+                                  style: TextStyle(color: ColorsApp.white),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (false)
+                    Stack(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(top: 40.0.h),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    _launchMapsUrl;
+                                  },
+                                  child: Container(
+                                    height: 40.h,
+                                    color: ColorsApp.white,
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        t.RequestADeliveryLocation,
+                                        style: TextStyle(
+                                            color: Colors.indigo,
+                                            fontSize: 15.sp),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 35.0.h),
+                          child: Container(
+                            color: Colors.transparent,
+                            height: 30.h,
+                          ),
+                        ),
+                        PositionedDirectional(
+                          start: 280.sp,
+                          top: 12.sp,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  spreadRadius: 5.sp,
+                                  blurRadius: 7.sp,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: CircleAvatar(
+                              radius: 30.sp,
+                              backgroundColor: ColorsApp.white,
+                              child: IconButton(
+                                onPressed: () {
+                                  _launchMapsUrl;
+                                  setState(() {
+                                    //LocaleSettings.setLocale(AppLocale.en);
+                                  });
+                                },
+                                icon: Icon(
+                                  Icons.details,
+                                  color: Colors.blue,
+                                  size: 30.sp,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                ],
+              ),
+            ),
+          if (ref.watch(inWayScreenLoaderProvider))
+            ModalBarrier(
+              dismissible: false, // Prevent dismissing by tapping outside
+              color: Colors.black54,
+            ),
+          if (ref.watch(inWayScreenLoaderProvider))
+            Center(
+              child: CircularProgressIndicator(),
+            ),
         ],
       ),
     );
@@ -907,7 +1077,7 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
       IconData icon,
       Color iconColor,
       String cash,
-      bool isCash,
+      bool isPaid,
       int cashColor,
       bool isValue,
       Widget widgetValue) {
@@ -957,20 +1127,17 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
               ),
             ],
           ),
-          isCash
-              ? Container(
-                  width: 65.w,
-                  child: Text(cash,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: TextStyle(
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.bold,
-                          color: cashColor == 1 ? Colors.green : Colors.black)),
-                )
-              : SizedBox(
-                  width: 0,
-                ),
+          if (isPaid)
+            Container(
+              width: 65.w,
+              child: Text(cash,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: TextStyle(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.bold,
+                      color: cashColor == 1 ? Colors.green : Colors.black)),
+            ),
         ],
       ),
     );
@@ -997,9 +1164,10 @@ class _detailsOrderScreenState extends ConsumerState<InWayScreen> {
   }
 
   void openWhatsApp(String WhatsappNumber) async {
-    String url = "https://wa.me/$WhatsappNumber";
-    if (await canLaunch(url)) {
-      await launch(url);
+    String url = "https://wa.me/+966$WhatsappNumber";
+    Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
     } else {
       throw "Unable to open WhatsApp";
     }

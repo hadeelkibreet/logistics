@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/constants/dio.dart';
 import 'package:logistics/constants/endpoints.dart';
 import 'package:logistics/i18n/strings.g.dart';
+import 'package:logistics/orders/active_orders/active_orders.dart';
+import 'package:logistics/orders/enum/order_type_enum.dart';
+import 'package:logistics/orders/providers/orders_provider.dart';
 
 Widget MyBottomNavigationBar2(
-    BuildContext context, ref, requestId, statusData) {
+    BuildContext context, WidgetRef ref, requestId, statusData) {
   dynamic selectedId; // Track the selected radio button id
   //
   // final List<Map<String, dynamic>> statusData = [
@@ -60,11 +64,24 @@ Widget MyBottomNavigationBar2(
               ),
             ),
             ElevatedButton(
-              onPressed: () async {
+              onPressed: () {
                 // Handle submit button press
                 print("Submit button pressed. Selected ID: $selectedId");
-                await ApiService()
-                    .postReject(Endpoints.reject, ref, selectedId, requestId);
+                ApiService()
+                    .postReject(Endpoints.reject, ref, selectedId, requestId)
+                    .then(
+                  (value) {
+                    ref
+                        .read(ordersProvider.notifier)
+                        .getOrders(type: ref.read(orderFilterProvider))
+                        .then(
+                      (value) {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      },
+                    );
+                  },
+                );
               },
               child: Container(
                 width: 250.w,

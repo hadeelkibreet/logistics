@@ -20,7 +20,7 @@ class OrdersEntity {
   final String status;
   final int priority; // Ensure this is defined as int
   final DateTime deliveryTime;
-  final DateTime assignmentDate;
+  final DateTime? assignmentDate;
   final String? notice;
   final String? commentStep1;
   final String? validation1Image;
@@ -73,6 +73,7 @@ class OrdersEntity {
   });
 
   factory OrdersEntity.fromJson(Map<String, dynamic> json) {
+    print(json['id']);
     return OrdersEntity(
       id: json['id'],
       barcode: json['barcode'],
@@ -97,7 +98,9 @@ class OrdersEntity {
       priority: int.parse(
           json['priority'].toString()), // Convert to int if it's a String
       deliveryTime: DateTime.parse(json['delivery_time']),
-      assignmentDate: DateTime.parse(json['assignment_date']),
+      assignmentDate: json['assignment_date'] != null
+          ? DateTime.parse(json['assignment_date'])
+          : null,
       notice: json['notice'],
       commentStep1: json['comment_step1'],
       validation1Image: json['validation1_image'],
@@ -170,6 +173,11 @@ class OrdersEntity {
       default:
         throw Exception('Unknown status: $status');
     }
+  }
+
+  @override
+  String toString() {
+    return 'OrdersEntity{id: $id, barcode: $barcode, ref: $ref, sourceName: $sourceName, sourceAddress: $sourceAddress, sourceNumberPhone: $sourceNumberPhone, sourceLatitude: $sourceLatitude, sourceLongitude: $sourceLongitude, destinationName: $destinationName, destinationAddress: $destinationAddress, destinationNumberPhone: $destinationNumberPhone, containerType: $containerType, quantity: $quantity, weight: $weight, cod: $cod, deliveryZone: $deliveryZone, status: $status, priority: $priority, deliveryTime: $deliveryTime, assignmentDate: $assignmentDate, notice: $notice, commentStep1: $commentStep1, validation1Image: $validation1Image, validation1Signature: $validation1Signature, validationDateStep1: $validationDateStep1, commentStep2: $commentStep2, validation2Image: $validation2Image, validation2Signature: $validation2Signature, validationDateStep2: $validationDateStep2, startTime: $startTime, started: $started, type: $type, driverId: $driverId}';
   }
 }
 

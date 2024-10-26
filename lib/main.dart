@@ -23,8 +23,8 @@ void main() async {
   ));
   remoteConfig.fetchAndActivate();
 
-  final fcmService = FCMService();
-  await fcmService.setupFCM();
+  // final fcmService = FCMService();
+  // await fcmService.setupFCM();
 
 //     FirebaseMessaging messaging =
 //     FirebaseMessaging.instance;

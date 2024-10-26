@@ -39,10 +39,37 @@ class ApiService {
     }
   }
 
-  postAllOrdersData(String endpoint, ref) async {
+  postAllOrdersData(String endpoint, ref, String type) async {
     final preHelper = ref.read(prefHelperProvider);
 
-    var data = FormData.fromMap({'type': 'all'});
+    var data = FormData.fromMap({'type': type});
+    var headers = {
+      'Authorization': 'Bearer ${preHelper.getUserToken}',
+      "Content-Type": "application/json"
+    };
+
+    var response = await dio.request(
+      endpoint.toString(),
+      options: Options(
+        method: 'POST',
+        headers: headers,
+      ),
+      data: data,
+    );
+
+    if (response.statusCode == 200) {
+      //print("hiiiiiiiiiii: ${json.encode(response.data)}");
+      return response.data;
+    } else {
+      print(response.statusMessage);
+      return null;
+    }
+  }
+
+  getSingleOrder(String endpoint, ref, int id) async {
+    final preHelper = ref.read(prefHelperProvider);
+
+    Map<String, dynamic> data = {'id': id};
     var headers = {'Authorization': 'Bearer ${preHelper.getUserToken}'};
 
     var response = await dio.request(
@@ -90,7 +117,7 @@ class ApiService {
     }
   }
 
-  postReject(
+  Future<dynamic> postReject(
       String endpoint, ref, String reasonsRejection, String requestId) async {
     final preHelper = ref.read(prefHelperProvider);
 

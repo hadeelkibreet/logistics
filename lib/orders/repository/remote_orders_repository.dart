@@ -3,6 +3,7 @@ import 'package:logistics/constants/dio.dart';
 import 'package:logistics/constants/endpoints.dart';
 import 'package:logistics/orders/entity/detils_entity.dart';
 import 'package:logistics/orders/entity/orders_entity.dart';
+import 'package:logistics/orders/enum/order_type_enum.dart';
 import 'package:logistics/orders/repository/orders_repository.dart';
 
 final remoteOrdersRepository = Provider((ref) => RemoteOrdersRepository(ref));
@@ -14,12 +15,12 @@ class RemoteOrdersRepository implements OrdersRepository {
   RemoteOrdersRepository(this.ref);
 
   @override
-  Future<List<OrdersEntity>> getOrders() async {
+  Future<List<OrdersEntity>> getOrders(OrderType type) async {
     // No ref in this method signature
     try {
       // Assuming ApiService is already set up for making HTTP requests
-      var responseData =
-          await ApiService().postAllOrdersData(Endpoints.getRequests, ref);
+      var responseData = await ApiService()
+          .postAllOrdersData(Endpoints.getRequests, ref, type.name);
       // Assuming the responseData is a list of orders in JSON format
       List ordersJsonList = responseData;
 
@@ -30,6 +31,7 @@ class RemoteOrdersRepository implements OrdersRepository {
       // print("${ordersList.length}");
       return ordersList;
     } catch (e) {
+      print(e.toString());
       throw Exception('Failed to load orders: $e');
     }
   }
@@ -67,6 +69,19 @@ class RemoteOrdersRepository implements OrdersRepository {
       await ApiService().postArrived(Endpoints.PostArrived, ref, requestId);
     } catch (e) {
       throw Exception('Failed to start mission: $e');
+    }
+  }
+
+  @override
+  Future<DetilsEntity> getSingleOrderDetails(WidgetRef ref, int orderId) async {
+    try {
+      var responseData = await ApiService()
+          .getSingleOrder(Endpoints.getRequests, ref, orderId);
+      List<dynamic> ordersJson = responseData;
+      DetilsEntity ordersList = DetilsEntity.fromJson(ordersJson.first);
+      return ordersList;
+    } catch (e) {
+      throw Exception('Failed to load orders: $e');
     }
   }
 }

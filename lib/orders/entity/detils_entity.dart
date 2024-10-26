@@ -11,9 +11,9 @@ class DetilsEntity {
   String destinationAddress;
   String destinationNumberPhone;
   String containerType;
-  int quantity;
-  int weight;
-  int cod;
+  String quantity;
+  String weight;
+  String cod;
   String deliveryZone;
   String status;
   String priority;
@@ -28,10 +28,10 @@ class DetilsEntity {
   dynamic validation2Image;
   dynamic validation2Signature;
   dynamic validationDateStep2;
-  String startTime;
-  int started;
-  String type;
-  int driverId;
+  dynamic startTime;
+  dynamic started;
+  dynamic type;
+  dynamic driverId;
 
   DetilsEntity({
     required this.id,

@@ -224,13 +224,13 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                           //sp.setBool('isLogin', true);
                           print("is login ${Prehelper.getIsLoggedIn}");
 
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ActiveOrders(),
-                              //DriverStatusScreen(),
-                            ),
-                          );
+                          // Navigator.pushReplacement(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => ActiveOrders(),
+                          //     //DriverStatusScreen(),
+                          //   ),
+                          // );
 
                           // Navigator.push(
                           //     context,

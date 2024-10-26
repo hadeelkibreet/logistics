@@ -1,15 +1,18 @@
-import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/constants/images.dart';
 import 'package:logistics/drawar/driver_drawar.dart';
 import 'package:logistics/i18n/strings.g.dart';
+import 'package:logistics/orders/enum/order_type_enum.dart';
 import 'package:logistics/orders/providers/orders_provider.dart';
 import 'package:logistics/orders/widget/card_orders.dart';
+
+final activeOrderLoaderProvider = StateProvider<bool>(
+  (ref) => false,
+);
 
 class ActiveOrders extends ConsumerStatefulWidget {
   @override
@@ -27,9 +30,9 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      ref.read(ordersProvider.notifier).getOrders();
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    //   ref.read(ordersProvider.notifier).getOrders(type: OrderType.loading);
+    // });
   }
 
   @override
@@ -39,140 +42,174 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
     final isLoading = orderNotifier.isLoading; // Track loading state
     final error = orderNotifier.error;
 
+    bool _isLoading = false;
+
+    Future<void> _simulateLoading() async {
+      setState(() {
+        _isLoading = true; // Show the loader
+      });
+
+      // Simulate a network request or some processing
+      await Future.delayed(Duration(seconds: 2));
+
+      setState(() {
+        _isLoading = false; // Hide the loader
+      });
+    }
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor:
           orderListProvider.isEmpty ? Colors.white : ColorsApp.backgroundColor,
       drawer: DriverDrawar(),
       appBar: myAppBar(context, orderListProvider),
-      body: Column(
+      body: Stack(
         children: [
-          Container(
-            width: double.infinity,
-            color: Colors.green,
-            padding: EdgeInsets.all(5.0.sp),
-            child: Text(
-              t.InService,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white, fontSize: 18.sp),
-            ),
-          ),
-          isSearch == true
-              ? Container(
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                  child: TextFormField(
-                    controller: _SearchController,
-                    onChanged: (value) {
-                      setState(() {
-                        ref.read(orderSearchProvider.notifier).state =
-                            value.isNotEmpty ? value : '';
-                      });
-                    },
-                    decoration: InputDecoration(
-                      hintText: "${t.Search}",
-                      hintStyle: TextStyle(color: Colors.grey),
-                      filled: true,
-                      fillColor: ColorsApp.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30.0.sp),
-                        borderSide: BorderSide.none,
+          Column(
+            children: [
+              Container(
+                width: double.infinity,
+                color: Colors.green,
+                padding: EdgeInsets.all(5.0.sp),
+                child: Text(
+                  ref.watch(orderFilterProvider).name,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white, fontSize: 18.sp),
+                ),
+              ),
+              isSearch == true
+                  ? Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                      child: TextFormField(
+                        controller: _SearchController,
+                        onChanged: (value) {
+                          setState(() {
+                            ref.read(orderSearchProvider.notifier).state =
+                                value.isNotEmpty ? value : '';
+                          });
+                        },
+                        decoration: InputDecoration(
+                          hintText: "${t.Search}",
+                          hintStyle: TextStyle(color: Colors.grey),
+                          filled: true,
+                          fillColor: ColorsApp.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.0.sp),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 15.0.sp, horizontal: 20.0.sp),
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: ColorsApp.primaryColor,
+                          ),
+                        ),
                       ),
-                      contentPadding: EdgeInsets.symmetric(
-                          vertical: 15.0.sp, horizontal: 20.0.sp),
-                      prefixIcon: Icon(
-                        Icons.search,
-                        color: ColorsApp.primaryColor,
-                      ),
+                    )
+                  : SizedBox(
+                      height: 0,
                     ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    t.order,
+                  ),
+                  Text(
+                    ' ${orderListProvider.length} ',
+                  ),
+                  Icon(Icons.arrow_drop_down_outlined),
+                ],
+              ),
+              if (isLoading) // Show a loading indicator when loading
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: CircularProgressIndicator(),
                   ),
                 )
-              : SizedBox(
-                  height: 0,
-                ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(
-                t.order,
-              ),
-              Text(
-                ' ${orderListProvider.length} ',
-              ),
-              Icon(Icons.arrow_drop_down_outlined),
-            ],
-          ),
-          if (isLoading) // Show a loading indicator when loading
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: CircularProgressIndicator(),
-              ),
-            )
-          else if (error !=
-              null) // Show an error message when there is an error
-            Center(
-              child: Text(
-                'Error loading orders: $error',
-                style: TextStyle(color: Colors.red),
-              ),
-            )
-          else if (orderListProvider.isEmpty)
-            Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 50.0.sp),
-                  child: Image.asset(
-                    ImageAssets.nullPackage,
-                    fit: BoxFit.fill,
+              else if (error !=
+                  null) // Show an error message when there is an error
+                Center(
+                  child: Text(
+                    'Error loading orders: $error',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                )
+              else if (orderListProvider.isEmpty)
+                Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 50.0.sp),
+                      child: Image.asset(
+                        ImageAssets.nullPackage,
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                    Container(
+                      width: 160.w,
+                      child: ElevatedButton(
+                          onPressed: () {
+                            ref
+                                .read(ordersProvider.notifier)
+                                .getOrders(type: ref.read(orderFilterProvider));
+                          },
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                ColorsApp.backgroundColor),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.refresh,
+                                color: Colors.black,
+                              ),
+                              Text(
+                                '${t.Reloading}',
+                                style: TextStyle(
+                                  color: ColorsApp.black,
+                                  fontSize: 16.sp,
+                                ),
+                              ),
+                            ],
+                          )),
+                    ),
+                  ],
+                )
+              else
+                Expanded(
+                  child: ListView.builder(
+                    controller: controller,
+                    itemCount: orderListProvider.length,
+                    itemBuilder: (context, index) {
+                      return buildOrderCard(
+                        refNumber: orderListProvider[index].ref.toString(),
+                        name: orderListProvider[index]
+                            .destinationAddress
+                            .toString(),
+                        numberOfLength: index + 1,
+                        orderNumber:
+                            orderListProvider[index].barcode.toString(),
+                        lat: orderListProvider[index].sourceLatitude.toString(),
+                        long:
+                            orderListProvider[index].sourceLongitude.toString(),
+                        status: orderListProvider[index].status.toString(),
+                        ID: orderListProvider[index].id, // Updated line
+                      );
+                    },
                   ),
                 ),
-                Container(
-                  width: 160.w,
-                  child: ElevatedButton(
-                      onPressed: () {
-                        initState();
-                        ref.read(ordersProvider.notifier).getOrders();
-                      },
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            ColorsApp.backgroundColor),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.refresh,
-                            color: Colors.black,
-                          ),
-                          Text(
-                            '${t.Reloading}',
-                            style: TextStyle(
-                              color: ColorsApp.black,
-                              fontSize: 16.sp,
-                            ),
-                          ),
-                        ],
-                      )),
-                ),
-              ],
-            )
-          else
-            Expanded(
-              child: ListView.builder(
-                controller: controller,
-                itemCount: orderListProvider.length,
-                itemBuilder: (context, index) {
-                  return buildOrderCard(
-                    name:
-                        orderListProvider[index].destinationAddress.toString(),
-                    numberOfLength: index + 1,
-                    orderNumber: orderListProvider[index].barcode.toString(),
-                    lat: orderListProvider[index].sourceLatitude.toString(),
-                    long: orderListProvider[index].sourceLongitude.toString(),
-                    status: orderListProvider[index].status.toString(),
-                    ID: orderListProvider[index].id.toString(), // Updated line
-                  );
-                },
-              ),
+            ],
+          ),
+          if (ref.watch(activeOrderLoaderProvider))
+            ModalBarrier(
+              dismissible: false, // Prevent dismissing by tapping outside
+              color: Colors.black54,
+            ),
+          if (ref.watch(activeOrderLoaderProvider))
+            Center(
+              child: CircularProgressIndicator(),
             ),
         ],
       ),
@@ -186,21 +223,19 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
         IconButton(
           icon: Icon(Icons.search),
           onPressed: () {
-            print(
-                "Hi feras ${FirebaseRemoteConfig.instance.getBool("forceUpdate")}");
-
             setState(() {
               isSearch = !isSearch;
             });
           },
         ),
         IconButton(
-          icon: Icon(Icons.autorenew_rounded),
+          icon: const Icon(
+            Icons.autorenew_rounded,
+          ),
           onPressed: () {
-            initState();
-            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-              ref.read(ordersProvider.notifier).getOrders();
-            });
+            ref
+                .read(ordersProvider.notifier)
+                .getOrders(type: ref.read(orderFilterProvider));
           },
         ),
         IconButton(
@@ -287,13 +322,30 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
       title: Text(title),
       value: title,
       groupValue: ref.watch(orderSearchProvider) == ''
-          ? ref.watch(orderFilterProvider)
+          ? ref.watch(orderFilterProvider).name
           : '',
       onChanged: (value) {
         setState(() {
           _selectedOption = value!;
-          ref.read(orderFilterProvider.notifier).state = value;
-          ref.watch(orderSearchProvider.notifier).state = '';
+          ref.read(orderFilterProvider.notifier).state =
+              OrderType.fromString(value);
+          switch (OrderType.fromString(value)) {
+            case OrderType.all:
+              ref.watch(ordersProvider.notifier).getOrders(type: OrderType.all);
+              break;
+            case OrderType.loading:
+              ref
+                  .watch(ordersProvider.notifier)
+                  .getOrders(type: OrderType.loading);
+              break;
+            case OrderType.delivery:
+              ref
+                  .watch(ordersProvider.notifier)
+                  .getOrders(type: OrderType.delivery);
+              break;
+            default:
+              ref.watch(ordersProvider.notifier).getOrders(type: OrderType.all);
+          }
         });
         Navigator.pop(context);
       },
@@ -301,27 +353,27 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
   }
 
   void scanQRCode() async {
-    try {
-      final qrCode = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'Cancel', true, ScanMode.QR);
-
-      if (!mounted) return;
-
-      setState(() {
-        getResult = qrCode;
-        print(qrCode);
-
-        if (getResult.toString() != '-1') {
-          //  isSearch = !isSearch;
-          ref.read(orderSearchProvider.notifier).state =
-              getResult.isNotEmpty ? getResult : '';
-        }
-      });
-
-      print("QRCode_Result:--");
-      print(qrCode);
-    } on PlatformException {
-      getResult = 'Failed to scan QR Code.';
-    }
+    // try {
+    //   final qrCode = await FlutterBarcodeScanner.scanBarcode(
+    //       '#ff6666', 'Cancel', true, ScanMode.QR);
+    //
+    //   if (!mounted) return;
+    //
+    //   setState(() {
+    //     getResult = qrCode;
+    //     print(qrCode);
+    //
+    //     if (getResult.toString() != '-1') {
+    //       //  isSearch = !isSearch;
+    //       ref.read(orderSearchProvider.notifier).state =
+    //           getResult.isNotEmpty ? getResult : '';
+    //     }
+    //   });
+    //
+    //   print("QRCode_Result:--");
+    //   print(qrCode);
+    // } on PlatformException {
+    //   getResult = 'Failed to scan QR Code.';
+    // }
   }
 }

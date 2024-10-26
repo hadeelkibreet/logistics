@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
@@ -15,6 +14,10 @@ import 'package:signature/signature.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../constants/colors.dart';
+
+final recipientSignatureLoaderProvider = StateProvider<bool>(
+  (ref) => false,
+);
 
 class RecipientSignatureScreen extends ConsumerStatefulWidget {
   final String requestId;
@@ -153,6 +156,7 @@ class _SendersSignatureScreenState
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  ref.read(activeOrderLoaderProvider.notifier).state = true;
                   await saveSignatureAsFile();
                   if (file1 != null &&
                       file2 != null &&
@@ -170,7 +174,9 @@ class _SendersSignatureScreenState
                       MaterialPageRoute(builder: (context) => ActiveOrders()),
                       (Route<dynamic> route) => false,
                     );
+                    ref.read(activeOrderLoaderProvider.notifier).state = false;
                   } else {
+                    ref.read(activeOrderLoaderProvider.notifier).state = false;
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                           content: Text(
@@ -191,6 +197,15 @@ class _SendersSignatureScreenState
               ),
             ),
           ),
+          if (ref.watch(recipientSignatureLoaderProvider))
+            ModalBarrier(
+              dismissible: false, // Prevent dismissing by tapping outside
+              color: Colors.black54,
+            ),
+          if (ref.watch(recipientSignatureLoaderProvider))
+            Center(
+              child: CircularProgressIndicator(),
+            ),
         ],
       ),
     );
@@ -289,22 +304,22 @@ class _SendersSignatureScreenState
   }
 
   void scanQRCode() async {
-    try {
-      final qrCode = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'Cancel', true, ScanMode.QR);
-
-      if (!mounted) return;
-
-      setState(() {
-        SendersQRController.text =
-            qrCode.toString() != '-1' ? qrCode.toString() : '';
-      });
-
-      print("QRCode_Result:--");
-      print(qrCode);
-    } on PlatformException {
-      print('Failed to scan QR Code.');
-    }
+    // try {
+    //   final qrCode = await FlutterBarcodeScanner.scanBarcode(
+    //       '#ff6666', 'Cancel', true, ScanMode.QR);
+    //
+    //   if (!mounted) return;
+    //
+    //   setState(() {
+    //     SendersQRController.text =
+    //         qrCode.toString() != '-1' ? qrCode.toString() : '';
+    //   });
+    //
+    //   print("QRCode_Result:--");
+    //   print(qrCode);
+    // } on PlatformException {
+    //   print('Failed to scan QR Code.');
+    // }
   }
 
   Future<File?> saveSignatureAsFile() async {

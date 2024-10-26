@@ -79,6 +79,7 @@ class _detailsOrderScreenState extends ConsumerState<DetailsOrderScreen> {
               // crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.max,
               children: [
+                Text("Details"),
                 Container(
                   color: Colors.grey[300],
                   child: Column(

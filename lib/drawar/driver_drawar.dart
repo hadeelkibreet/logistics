@@ -13,6 +13,7 @@ import 'package:logistics/drawar/list_tile_drawar.dart';
 import 'package:logistics/driver_status/driverStatusScreen.dart';
 import 'package:logistics/i18n/strings.g.dart';
 import 'package:logistics/orders/active_orders/active_orders.dart';
+import 'package:logistics/orders/enum/order_type_enum.dart';
 import 'package:logistics/orders/providers/orders_provider.dart';
 import 'package:logistics/profile/entity/profile_entity.dart';
 import 'package:logistics/profile/profile_screen.dart';
@@ -51,9 +52,9 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
     return SafeArea(
       child: Drawer(
         child: ListView(
+          physics: NeverScrollableScrollPhysics(),
           children: [
             DrawerHeader(
-              margin: EdgeInsets.all(0.2.sp),
               decoration: BoxDecoration(
                 color: ColorsApp.primaryColor,
               ),
@@ -63,7 +64,7 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
                     backgroundImage: AssetImage(
                       ImageAssets.logo,
                     ),
-                    radius: 50.sp,
+                    radius: 40.sp,
                   ),
                   Padding(
                     padding: EdgeInsets.only(right: 8.0.sp),
@@ -80,18 +81,6 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
               ),
             ),
             ListTileDrawar(
-              icon: Icon(
-                Icons.home,
-              ),
-              text: t.ServiceSchedule,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => DriverStatusScreen()),
-                );
-              },
-            ),
-            ListTileDrawar(
               icon: Icon(Icons.assignment_outlined),
               text: t.orders,
               onPressed: () {
@@ -99,31 +88,21 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
                     MaterialPageRoute(builder: (context) => ActiveOrders()));
               },
             ),
-            // ListTileDrawar(
-            //   icon: Icon(
-            //     Icons.assignment_turned_in_outlined,
-            //   ),
-            //   text: t.CompletedOrder,
-            //   onPressed: () {
-            //     // Navigator.push(context,
-            //     //     MaterialPageRoute(builder: (context) => OrdersDon()));
-            //   },
-            // ),
             ListTileDrawar(
-              icon: Icon(
+              icon: const Icon(
                 Icons.update,
               ),
               text: t.update,
               onPressed: () {
                 rresponse(phoneNumber, ref);
-                WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-                  ref.read(ordersProvider.notifier).getOrders();
-                });
+                ref
+                    .read(ordersProvider.notifier)
+                    .getOrders(type: ref.read(orderFilterProvider));
               },
             ),
-            Divider(color: ColorsApp.primaryColor),
+            const Divider(color: ColorsApp.primaryColor),
             ListTileDrawar(
-              icon: Icon(
+              icon: const Icon(
                 Icons.person,
               ),
               text: t.MyProfile,
@@ -195,15 +174,16 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
                 );
               },
             ),
-            Divider(color: ColorsApp.primaryColor),
-
-            ListTileDrawar(
-              icon: Icon(
-                Icons.share,
-              ),
-              text: t.ShareTheApp,
-              onPressed: () {},
-            ),
+            // Divider(color: ColorsApp.primaryColor),
+            //
+            // ListTileDrawar(
+            //   icon: Icon(
+            //     Icons.share,
+            //   ),
+            //   text: t.ShareTheApp,
+            //   onPressed: () {},
+            // ),
+            // Divider(color: ColorsApp.primaryColor),
             Divider(color: ColorsApp.primaryColor),
             ListTileDrawar(
               icon: Icon(
@@ -283,11 +263,11 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
                 );
               },
             ),
-            Center(
-              child: Text(
-                t.ReleaseThisApplication,
-              ),
-            ),
+            // Center(
+            //   child: Text(
+            //     t.ReleaseThisApplication,
+            //   ),
+            // ),
           ],
         ),
       ),

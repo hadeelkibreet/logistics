@@ -1,14 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logistics/orders/enum/order_type_enum.dart';
 import 'package:logistics/orders/repository/orders_repository.dart';
 import 'package:logistics/orders/repository/remote_orders_repository.dart';
 
 import '../entity/orders_entity.dart';
 
-final OrdersProvider2 = StateProvider(
-  (ref) => ref.read(remoteOrdersRepository).getOrders(),
-);
-
-final orderFilterProvider = StateProvider<String>((ref) => 'all');
+final orderFilterProvider =
+    StateProvider<OrderType>((ref) => OrderType.loading);
 
 final orderSearchProvider = StateProvider<String>((ref) => '');
 
@@ -17,21 +15,19 @@ final ordersProvider =
   ref.read(remoteOrdersRepository);
   return OrderStateNotifier(
       repository: ref.watch(remoteOrdersRepository),
-      filter: ref.watch(orderFilterProvider),
+      filter: ref.read(orderFilterProvider),
       search: ref.watch(orderSearchProvider))
-    ..getOrders()
+    ..getOrders(type: ref.read(orderFilterProvider))
     ..getOrdersBySearch();
 });
 
 class OrderStateNotifier extends StateNotifier<List<OrdersEntity>> {
   OrderStateNotifier(
       {required this.repository, required this.filter, required this.search})
-      : super([]) {
-    getOrders(); // Automatically fetch orders when initialized
-  }
+      : super([]);
 
   final OrdersRepository repository;
-  final String filter;
+  final OrderType filter;
   String search;
 
   List<OrdersEntity> _list = [];
@@ -40,26 +36,16 @@ class OrderStateNotifier extends StateNotifier<List<OrdersEntity>> {
   bool isLoading = false;
   String? error;
 
-  Future<void> getOrders() async {
+  Future<void> getOrders({required OrderType type}) async {
     isLoading = true; // Start loading
     error = null; // Reset error before fetching
     try {
-      _list = await repository.getOrders();
+      _list = await repository.getOrders(type);
       _display = _list;
       // Apply search filter if there's a search term
       if (search.isNotEmpty) {
         getOrdersBySearch();
       }
-      if (filter == "all") {
-        state = _display;
-        return;
-      }
-
-      // Apply the filter if needed
-      if (filter != '') {
-        _display = _list.where((element) => element.status == filter).toList();
-      }
-
       state = _display;
     } catch (e) {
       error = e.toString(); // Set error message on failure
@@ -69,9 +55,11 @@ class OrderStateNotifier extends StateNotifier<List<OrdersEntity>> {
   }
 
   List<String> getFilterOptions() {
-    final uniqueStatuses =
-        _list.map((element) => element.status).toSet().toList();
-    uniqueStatuses.add('all');
+    final uniqueStatuses = OrderType.values
+        .map(
+          (e) => e.name,
+        )
+        .toList();
     return uniqueStatuses;
   }
 
