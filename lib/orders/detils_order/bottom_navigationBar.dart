@@ -87,7 +87,7 @@ Widget MyBottomNavigationBar2(
                 width: 250.w,
                 child: Center(
                   child: Text(
-                    t.cancel,
+                    t.reject,
                     style: TextStyle(color: Colors.white, fontSize: 25.sp),
                   ),
                 ),

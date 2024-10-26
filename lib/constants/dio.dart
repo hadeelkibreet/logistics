@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logistics/constants/endpoints.dart';
 import 'package:logistics/data/prefs/prefs.dart';
 
 class ApiService {
@@ -80,14 +82,12 @@ class ApiService {
     }
   }
 
-  getSingleOrder(String endpoint, ref, int id) async {
-    final preHelper = ref.read(prefHelperProvider);
-
+  dynamic getSingleOrder(String token, int id) async {
     Map<String, dynamic> data = {'id': id};
-    var headers = {'Authorization': 'Bearer ${preHelper.getUserToken}'};
+    var headers = {'Authorization': 'Bearer $token'};
 
     var response = await dio.request(
-      endpoint.toString(),
+      Endpoints.getRequests,
       options: Options(
         method: 'POST',
         headers: headers,
@@ -219,7 +219,7 @@ class ApiService {
     }
   }
 
-  postArrived(String endpoint, ref, String requestId) async {
+  postArrived(ref, String requestId) async {
     final preHelper = ref.read(prefHelperProvider);
 
     var headers = {'Authorization': 'Bearer ${preHelper.getUserToken}'};
@@ -228,7 +228,7 @@ class ApiService {
 
     var dio = Dio();
     var response = await dio.request(
-      endpoint.toString(),
+      Endpoints.PostArrived,
       options: Options(
         method: 'POST',
         headers: headers,

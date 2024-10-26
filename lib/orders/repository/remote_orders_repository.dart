@@ -1,18 +1,27 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logistics/constants/dio.dart';
 import 'package:logistics/constants/endpoints.dart';
+import 'package:logistics/data/prefs/prefs.dart';
 import 'package:logistics/orders/entity/detils_entity.dart';
 import 'package:logistics/orders/entity/orders_entity.dart';
 import 'package:logistics/orders/enum/order_type_enum.dart';
 import 'package:logistics/orders/repository/orders_repository.dart';
 
-final remoteOrdersRepository = Provider((ref) => RemoteOrdersRepository(ref));
+final remoteOrdersRepository = Provider(
+  (ref) => RemoteOrdersRepository(
+    ref,
+    ref.read(
+      prefHelperProvider,
+    ),
+  ),
+);
 
 class RemoteOrdersRepository implements OrdersRepository {
   final ProviderRef<Object?> ref;
+  final PrefsHelper prefsHelper;
 
   // Constructor takes the ProviderRef and stores it as an instance variable
-  RemoteOrdersRepository(this.ref);
+  RemoteOrdersRepository(this.ref, this.prefsHelper);
 
   @override
   Future<List<OrdersEntity>> getOrders(OrderType type) async {
@@ -66,17 +75,17 @@ class RemoteOrdersRepository implements OrdersRepository {
 
   Future<void> postArrived(String PostArrived, ref, String requestId) async {
     try {
-      await ApiService().postArrived(Endpoints.PostArrived, ref, requestId);
+      await ApiService().postArrived(ref, requestId);
     } catch (e) {
       throw Exception('Failed to start mission: $e');
     }
   }
 
   @override
-  Future<DetilsEntity> getSingleOrderDetails(WidgetRef ref, int orderId) async {
+  Future<DetilsEntity> getSingleOrderDetails(int orderId) async {
     try {
-      var responseData = await ApiService()
-          .getSingleOrder(Endpoints.getRequests, ref, orderId);
+      var responseData =
+          await ApiService().getSingleOrder(prefsHelper.getUserToken, orderId);
       List<dynamic> ordersJson = responseData;
       DetilsEntity ordersList = DetilsEntity.fromJson(ordersJson.first);
       return ordersList;

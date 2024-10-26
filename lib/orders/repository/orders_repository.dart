@@ -5,5 +5,5 @@ import 'package:logistics/orders/enum/order_type_enum.dart';
 
 abstract class OrdersRepository {
   Future<List<OrdersEntity>> getOrders(OrderType type);
-  Future<DetilsEntity> getSingleOrderDetails(WidgetRef ref, int orderId);
+  Future<DetilsEntity> getSingleOrderDetails(int orderId);
 }

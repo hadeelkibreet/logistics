@@ -54,6 +54,8 @@ class _SplashPageState extends ConsumerState<SplashPage> {
         backgroundColor: ColorsApp.primaryColor,
         body: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SvgPicture.asset(
                 "assets/images/logo.svg",

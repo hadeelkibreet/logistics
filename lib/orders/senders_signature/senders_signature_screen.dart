@@ -9,6 +9,7 @@ import 'package:logistics/constants/dio.dart';
 import 'package:logistics/constants/endpoints.dart';
 import 'package:logistics/i18n/strings.g.dart';
 import 'package:logistics/orders/active_orders/active_orders.dart';
+import 'package:logistics/orders/providers/orders_provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:signature/signature.dart';
 import 'package:uuid/uuid.dart';
@@ -19,18 +20,23 @@ final sendersSignatureLoaderProvider = StateProvider<bool>(
   (ref) => false,
 );
 
-class SendersSignatureScreen extends ConsumerStatefulWidget {
+class ValidateOrderScreen extends ConsumerStatefulWidget {
   final String requestId;
-  const SendersSignatureScreen({Key? key, required this.requestId})
-      : super(key: key);
+  final String title;
+  final String stepNumber;
+  const ValidateOrderScreen({
+    super.key,
+    required this.stepNumber,
+    required this.title,
+    required this.requestId,
+  });
 
   @override
-  ConsumerState<SendersSignatureScreen> createState() =>
+  ConsumerState<ValidateOrderScreen> createState() =>
       _SendersSignatureScreenState();
 }
 
-class _SendersSignatureScreenState
-    extends ConsumerState<SendersSignatureScreen> {
+class _SendersSignatureScreenState extends ConsumerState<ValidateOrderScreen> {
   late TextEditingController SendersNameController = TextEditingController();
   late TextEditingController SendersNumberController = TextEditingController();
   late TextEditingController SendersQRController =
@@ -71,7 +77,7 @@ class _SendersSignatureScreenState
           },
         ),
         title: Text(
-          t.sendersSignature,
+          widget.title,
           style: TextStyle(color: Colors.black),
         ),
       ),
@@ -168,11 +174,18 @@ class _SendersSignatureScreenState
                         file1!,
                         file2!,
                         widget.requestId,
-                        '1',
+                        widget.stepNumber,
                         SendersNumberController.text);
+
+                    await ref
+                        .read(ordersProvider.notifier)
+                        .getOrders(type: ref.read(orderFilterProvider));
+
                     Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(builder: (context) => ActiveOrders()),
+                      MaterialPageRoute(
+                        builder: (context) => ActiveOrders(),
+                      ),
                       (Route<dynamic> route) => false,
                     );
                     ref.read(sendersSignatureLoaderProvider.notifier).state =

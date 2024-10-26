@@ -57,13 +57,13 @@ class _buildOrderCardState extends ConsumerState<buildOrderCard> {
           ref.read(activeOrderLoaderProvider.notifier).state = true;
           final p = await ref
               .read(remoteOrdersRepository)
-              .getSingleOrderDetails(ref, widget.ID);
+              .getSingleOrderDetails(widget.ID);
 
           print(p.validationDateStep1 == 'null');
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => InWayScreen(
+              builder: (context) => OrderDetailsScreen(
                 DetilsData: p,
               ),
             ),
@@ -171,104 +171,10 @@ class _buildOrderCardState extends ConsumerState<buildOrderCard> {
                 ),
               ),
               SizedBox(height: 8.sp),
-              if (widget.status == "assigned_to_driver")
-                Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          _launchMapsUrl();
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius: BorderRadiusDirectional.only(
-                                bottomStart: Radius.circular(12.sp),
-                              )),
-                          height: 50.h,
-                          child: Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                t.usingTheMap,
-                                style: TextStyle(color: ColorsApp.white),
-                              )),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: widget.status == 'shipment_finished'
-                            ? null
-                            : () async {
-                                ref
-                                    .read(activeOrderLoaderProvider.notifier)
-                                    .state = true;
-
-                                final orderProviderID = ref
-                                    .read(IDProvider.notifier)
-                                    .update((state) => widget.ID.toString());
-                                final p = await ref
-                                    .read(remoteOrdersRepository)
-                                    .getStartMission(widget.ID.toString());
-
-                                print("hhhhhhhhhhhhh: $orderProviderID");
-
-                                print("jjjjjjjjjjjjjjj1111 ${p.id}");
-
-                                ref.read(ordersProvider.notifier).getOrders(
-                                    type: ref.read(orderFilterProvider));
-
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        p.validationDateStep1 == 'null'
-                                            ? DetailsOrderScreen(
-                                                DetilsData: p,
-                                              )
-                                            : InWayScreen(
-                                                DetilsData: p,
-                                              ),
-                                  ),
-                                );
-                                ref
-                                    .read(activeOrderLoaderProvider.notifier)
-                                    .state = false;
-                              },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.green,
-                              borderRadius: BorderRadiusDirectional.only(
-                                bottomEnd: Radius.circular(12.sp),
-                              )),
-                          height: 50.h,
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              t.Start,
-                              style: TextStyle(color: ColorsApp.white),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  Future<void> _launchMapsUrl() async {
-    final url =
-        'https://www.google.com/maps/search/?api=1&query=${widget.lat},${widget.long}';
-
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
   }
 }

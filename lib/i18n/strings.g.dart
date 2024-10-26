@@ -229,7 +229,7 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
   String get DoYouReallyWantToLogOut => 'Do you really want to log out?';
   String get resident => 'resident';
   String get LoadingTheShipment => 'Loading the shipment';
-  String get Start => 'start';
+  String get start => 'Start';
   String get usingTheMap => 'Using the map';
   String get done => 'Done';
   String get delivery => 'delivery';
@@ -285,6 +285,9 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
   String get Save => 'Save';
   String get comment => 'comment';
   String get View => 'View';
+  String get orderDetails => 'Order Details';
+  String get reject => 'Reject';
+  String get arrived => 'Arrived';
 }
 
 // Path: <root>
@@ -400,7 +403,7 @@ class _StringsAr implements Translations {
   @override
   String get LoadingTheShipment => 'تحميل الشحنة';
   @override
-  String get Start => 'ابدأ';
+  String get start => 'ابدأ';
   @override
   String get usingTheMap => 'إستخدم الخريطة';
   @override
@@ -514,6 +517,15 @@ class _StringsAr implements Translations {
 
   @override
   String get deliveryZone => 'منطقة التوصيل';
+
+  @override
+  String get orderDetails => 'تفاصيل الطلب';
+
+  @override
+  String get reject => 'رفض';
+
+  @override
+  String get arrived => 'تم الوصول';
 }
 
 /// Flat map(s) containing all translations.
