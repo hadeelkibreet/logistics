@@ -7,15 +7,29 @@ import 'package:logistics/data/prefs/prefs.dart';
 class ApiService {
   final Dio dio = Dio();
 
-  postData(data, String Endpoints) async {
+  Future<Response> postData(data, String Endpoints) async {
     try {
-      var response = await dio.post(
+      final Response response = await dio.post(
         Endpoints,
         data: data,
       );
       return response;
+    } on DioException catch (e) {
+      Response r = Response(requestOptions: RequestOptions());
+
+      switch (e.response?.statusCode) {
+        case 302:
+          r.statusCode = 302;
+          r.data = e.response?.data;
+          break;
+        case 401:
+          r.statusCode = 401;
+          r.data = e.response?.data;
+          break;
+      }
+      return r;
     } catch (e) {
-      print('Error111: $e');
+      throw Exception(e.toString());
     }
   }
 

@@ -1,20 +1,14 @@
 import 'dart:async';
-import 'dart:developer';
-import 'dart:io';
-
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logistics/auth/login.dart';
 import 'package:logistics/block_him.dart';
 import 'package:logistics/constants/colors.dart';
-import 'package:logistics/constants/images.dart';
 import 'package:logistics/data/prefs/prefs.dart';
 import 'package:logistics/orders/active_orders/active_orders.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'driver_status/driverStatusScreen.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({Key? key}) : super(key: key);
@@ -37,7 +31,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   Future<void> _checkLoginStatus() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
     final preHelper = PrefsHelper(sp);
-    bool? isLogin = preHelper.getIsLoggedIn ?? false;
+    bool isLogin = preHelper.getIsLoggedIn;
 
     print("is login ${preHelper.getIsLoggedIn}");
 
@@ -56,17 +50,13 @@ class _SplashPageState extends ConsumerState<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
     return Scaffold(
         backgroundColor: ColorsApp.primaryColor,
         body: Center(
           child: Column(
             children: [
-              Image.asset(
-                ImageAssets.logo,
-                width: width * 0.9.w,
-                height: height * 0.6.h,
+              SvgPicture.asset(
+                "assets/images/logo.svg",
               ),
               CircularProgressIndicator(
                 color: ColorsApp.white,
