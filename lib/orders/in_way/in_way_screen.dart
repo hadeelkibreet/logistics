@@ -16,13 +16,9 @@ import 'package:logistics/i18n/strings.g.dart';
 import 'package:logistics/orders/detils_order/bottom_navigationBar.dart';
 import 'package:logistics/orders/entity/detils_entity.dart';
 import 'package:logistics/orders/entity/reasons_rejection_entity.dart';
-import 'package:logistics/orders/enum/order_type_enum.dart';
 import 'package:logistics/orders/providers/single_order_provider.dart';
-import 'package:logistics/orders/recipient_signature/RecipientSignatureScreen.dart';
 import 'package:logistics/orders/repository/remote_orders_repository.dart';
 import 'package:logistics/orders/senders_signature/senders_signature_screen.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:signature/signature.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -79,6 +75,8 @@ class _detailsOrderScreenState extends ConsumerState<OrderDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final orderDetails = ref.watch(singleOrderProvider);
+    String destinationName =
+        (ref.watch(singleOrderProvider)?.destinationName.substring(0, 1)) ?? "";
     return Scaffold(
       backgroundColor: ColorsApp.backgroundColor,
       body: Skeletonizer(
@@ -91,49 +89,53 @@ class _detailsOrderScreenState extends ConsumerState<OrderDetailsScreen> {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Container(
-                    color: Colors.grey[300],
+                    color: ColorsApp.backgroundColor,
                     child: Column(
                       children: [
                         Stack(
                           children: [
                             Container(
                               height: 300.h,
-                              child: FlutterMap(
-                                options: MapOptions(
-                                  center:
-                                      LatLng(24.88, 34.986), // إحداثيات الموقع
-                                  zoom: 15.0.sp,
-                                ),
+                              child: Stack(
                                 children: [
-                                  TileLayer(
-                                    urlTemplate:
-                                        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                                    subdomains: ['a', 'b', 'c'],
-                                  ),
-                                  MarkerLayer(
-                                    markers: [
-                                      Marker(
-                                        width: 80.0.w,
-                                        height: 80.0.h,
-                                        point: LatLng(24.778810,
-                                            46.730354), // إحداثيات الموقع
-                                        builder: (ctx) => Icon(
-                                          Icons.location_on,
-                                          color: Colors.red,
-                                          size: 40.sp,
-                                        ),
+                                  FlutterMap(
+                                    options: MapOptions(
+                                      center: LatLng(
+                                          24.88, 34.986), // إحداثيات الموقع
+                                      zoom: 15.0.sp,
+                                    ),
+                                    children: [
+                                      TileLayer(
+                                        urlTemplate:
+                                            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                        subdomains: ['a', 'b', 'c'],
+                                      ),
+                                      MarkerLayer(
+                                        markers: [
+                                          Marker(
+                                            width: 80.0.w,
+                                            height: 80.0.h,
+                                            point: LatLng(24.778810,
+                                                46.730354), // إحداثيات الموقع
+                                            builder: (ctx) => Icon(
+                                              Icons.location_on,
+                                              color: Colors.red,
+                                              size: 40.sp,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
+                                  Positioned.fill(
+                                    child: Material(
+                                      color: Color(0x629D9D9D),
+                                      child: InkWell(
+                                        onTap: _launchMapsUrl,
+                                      ),
+                                    ),
+                                  ),
                                 ],
-                              ),
-                            ),
-                            Positioned.fill(
-                              child: Material(
-                                color: Color(0x629D9D9D),
-                                child: InkWell(
-                                  onTap: _launchMapsUrl,
-                                ),
                               ),
                             ),
                             Center(
@@ -144,19 +146,13 @@ class _detailsOrderScreenState extends ConsumerState<OrderDetailsScreen> {
                                     CircleAvatar(
                                       backgroundColor: Colors.red,
                                       child: Text(
-                                        ref
-                                            .watch(singleOrderProvider)!
-                                            .destinationName
-                                            .substring(0, 1),
+                                        destinationName,
                                         style:
                                             TextStyle(color: ColorsApp.white),
                                       ),
                                     ),
                                     Text(
-                                      ref
-                                          .watch(singleOrderProvider)!
-                                          .destinationName
-                                          .toString(), // 'test',
+                                      destinationName, // 'test',
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
                                       style: TextStyle(color: Colors.white),
@@ -180,27 +176,28 @@ class _detailsOrderScreenState extends ConsumerState<OrderDetailsScreen> {
                                           color: ColorsApp.white,
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 28.sp),
-                                      child: Container(
-                                        color: ColorsApp.backgroundColor,
-                                        width: double.infinity,
-                                        padding: EdgeInsets.all(8.7.sp),
-                                        child: Text(''
-                                            // t.accept,
-                                            // textAlign: TextAlign.start,
-                                            // style: TextStyle(
-                                            //     color: Colors.white,
-                                            //     fontSize: 18.sp),
-                                            ),
+                                    if (false)
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 28.sp),
+                                        child: Container(
+                                          color: ColorsApp.backgroundColor,
+                                          width: double.infinity,
+                                          padding: EdgeInsets.all(8.7.sp),
+                                          child: Text(
+                                            t.accept,
+                                            textAlign: TextAlign.start,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 18.sp),
+                                          ),
+                                        ),
                                       ),
-                                    ),
                                   ],
                                 ),
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.only(top: 250.sp),
+                              padding: EdgeInsets.only(top: 300.sp),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
@@ -759,38 +756,6 @@ class _detailsOrderScreenState extends ConsumerState<OrderDetailsScreen> {
     ref.read(orderDetailsScreenLoaderProvider.notifier).state = false;
   }
 
-  Future<void> _saveSignature() async {
-    if (await Permission.storage.request().isGranted) {
-      final Uint8List? data = await _controllerSignature.toPngBytes();
-      if (data != null) {
-        final directory = await getExternalStorageDirectory();
-        final file = File('${directory!.path}/signature.png');
-        await file.writeAsBytes(data);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Signature saved to ${file.path}')),
-        );
-        print('${file.path}');
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save signature')),
-        );
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Storage permission denied')),
-      );
-    }
-  }
-
-  Future<void> _pickImage(ImageSource source) async {
-    final pickedImage = await ImagePicker().pickImage(source: source);
-    if (pickedImage != null) {
-      setState(() {
-        _image = File(pickedImage.path);
-      });
-    }
-  }
-
   Widget startRejectButtons() {
     return Align(
       alignment: Alignment.bottomCenter,
@@ -927,24 +892,6 @@ class _detailsOrderScreenState extends ConsumerState<OrderDetailsScreen> {
                             .state = false;
                         Navigator.pop(context);
                       }
-
-                      // _saveSignature;
-                      // if (widget.DetilsData.validationDateStep1 == 'null' &&
-                      //     reaspons == '200') {
-                      //   Navigator.push(context,
-                      //       MaterialPageRoute(builder: (context) {
-                      //     return SendersSignatureScreen(
-                      //       requestId: widget.DetilsData.id.toString(),
-                      //     );
-                      //   }));
-                      // } else {
-                      //   Navigator.push(context,
-                      //       MaterialPageRoute(builder: (context) {
-                      //     return RecipientSignatureScreen(
-                      //       requestId: widget.DetilsData.id.toString(),
-                      //     );
-                      //   }));
-                      // }
                     },
                     child: Container(
                       height: 50.h,
@@ -952,7 +899,7 @@ class _detailsOrderScreenState extends ConsumerState<OrderDetailsScreen> {
                       child: Align(
                         alignment: Alignment.center,
                         child: Text(
-                          "Arrived",
+                          "Validate",
                           style: TextStyle(color: ColorsApp.white),
                         ),
                       ),
