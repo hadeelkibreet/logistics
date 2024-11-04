@@ -23,20 +23,16 @@ void main() async {
   ));
   remoteConfig.fetchAndActivate();
 
-  // final fcmService = FCMService();
-  // await fcmService.setupFCM();
-
-//     FirebaseMessaging messaging =
-//     FirebaseMessaging.instance;
-// messaging.requestPermission();
-// messaging.getToken().then((token) {
-//   print('Token: $token');
-// });
-// FirebaseMessaging.onMessage
-//     .listen((RemoteMessage message) {
-//   print(
-//       'Received notification: ${message.notification?.title} - ${message.notification?.body}');
-// });
+  //
+  // FirebaseMessaging messaging = FirebaseMessaging.instance;
+  // messaging.requestPermission();
+  // messaging.getToken().then((token) {
+  //   print('*#*#*#*#*#* Token: $token\n*#*#*#*#*#*#');
+  // });
+  // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+  //   print(
+  //       'Received notification: ${message.notification?.title} - ${message.notification?.body}');
+  // });
 
   LocaleSettings.setLocale(AppLocale.en);
 

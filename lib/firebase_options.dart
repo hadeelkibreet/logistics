@@ -47,29 +47,30 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBVNOJEBJOG8m4ukU6VEhI8G7dSvlWBJkM',
-    appId: '1:1022357752343:web:845f269c166d1f568b2a52',
-    messagingSenderId: '1022357752343',
-    projectId: 'logistics-801b3',
-    authDomain: 'logistics-801b3.firebaseapp.com',
-    storageBucket: 'logistics-801b3.appspot.com',
-    measurementId: 'G-9KQLX68MMV',
+    apiKey: 'AIzaSyDp7LklCq-qsKgeKZCNWSbA3gd-lQukvIY',
+    appId: '1:783267230560:web:3be7ce404c2bed98422405',
+    messagingSenderId: '783267230560',
+    projectId: 'alnco-7370c',
+    authDomain: 'alnco-7370c.firebaseapp.com',
+    storageBucket: 'alnco-7370c.appspot.com',
+    measurementId: 'G-M4VT9JDGCY',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAhEwzFwiTVOLYIC76eUBY-1K7qlua5xTA',
-    appId: '1:1022357752343:android:92c3a0a6e3f4c71c8b2a52',
-    messagingSenderId: '1022357752343',
-    projectId: 'logistics-801b3',
-    storageBucket: 'logistics-801b3.appspot.com',
+    apiKey: 'AIzaSyAmg-ldfUQk3jDfPuYncw2wtjNb9A780vo',
+    appId: '1:783267230560:android:42c03dccc202359d422405',
+    messagingSenderId: '783267230560',
+    projectId: 'alnco-7370c',
+    storageBucket: 'alnco-7370c.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCSnXCzjQd7d5PXPn_8uvr5Lmgmog72oIU',
-    appId: '1:1022357752343:ios:a947d709346eec448b2a52',
-    messagingSenderId: '1022357752343',
-    projectId: 'logistics-801b3',
-    storageBucket: 'logistics-801b3.appspot.com',
+    apiKey: 'AIzaSyBAUvG2x9q67gkH5U0_2Zepa12y1l3RecY',
+    appId: '1:783267230560:ios:35381680473d10ff422405',
+    messagingSenderId: '783267230560',
+    projectId: 'alnco-7370c',
+    storageBucket: 'alnco-7370c.appspot.com',
     iosBundleId: 'com.example.logistics',
   );
+
 }

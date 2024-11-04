@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class FCMService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -9,26 +10,39 @@ class FCMService {
       FlutterLocalNotificationsPlugin();
 
   Future<void> setupFCM() async {
+    //check if ios or android!
     await setupNotificationChannel();
 
-    // Request permissions for iOS
-    NotificationSettings settings = await _firebaseMessaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      print('User granted permission');
-    } else {
-      print('User declined or has not accepted permission');
+    if (Platform.isIOS) {
+      await _firebaseMessaging.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true,
+      );
+    } else if (Platform.isAndroid) {
+      if (await Permission.notification.isDenied) {
+        await Permission.notification.request();
+      }
+      await _firebaseMessaging.getNotificationSettings();
     }
 
     // Initialize local notifications
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
+    DarwinInitializationSettings iosInitializationSettings =
+        DarwinInitializationSettings(
+      onDidReceiveLocalNotification:
+          (int id, String? title, String? body, String? payload) async {},
+    );
     final InitializationSettings initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid);
+        InitializationSettings(
+            android: initializationSettingsAndroid,
+            iOS: iosInitializationSettings);
+
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) async {
@@ -48,6 +62,7 @@ class FCMService {
 
     // Get the token for the device
     String? token = await _firebaseMessaging.getToken();
+
     print("FCM Token: $token");
   }
 

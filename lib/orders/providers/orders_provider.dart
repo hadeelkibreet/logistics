@@ -37,18 +37,53 @@ class OrderStateNotifier extends StateNotifier<List<OrdersEntity>> {
   String? error;
 
   Future<void> getOrders({required OrderType type}) async {
+    // isLoading = true; // Start loading
+    // error = null; // Reset error before fetching
+    // try {
+    //   _list = await repository.getOrders(type);
+    //   _display = _list;
+    //   // Apply search filter if there's a search term
+    //   if (search.isNotEmpty) {
+    //     getOrdersBySearch();
+    //   }
+    //   state = _display;
+    // } catch (e) {
+    //   error = e.toString(); // Set error message on failure
+    // } finally {
+    //   isLoading = false; // Stop loading
+    // }
+  }
+
+  Future<Map<String, List<OrdersEntity>>> getOrdersByDestinationName(
+      {required OrderType type}) async {
     isLoading = true; // Start loading
     error = null; // Reset error before fetching
     try {
       _list = await repository.getOrders(type);
+
       _display = _list;
-      // Apply search filter if there's a search term
-      if (search.isNotEmpty) {
-        getOrdersBySearch();
+      final List<String> destinationNames = _list
+          .map(
+            (e) => e.destinationName,
+          )
+          .toList()
+          .toSet()
+          .toList();
+
+      print(destinationNames);
+      Map<String, List<OrdersEntity>> orders = {};
+
+      for (var order in _list) {
+        if (!orders.containsKey(order.destinationName)) {
+          orders[order.destinationName] = [];
+        }
+        orders[order.destinationName]!.add(order);
       }
-      state = _display;
+
+      return orders;
     } catch (e) {
       error = e.toString(); // Set error message on failure
+      return {};
     } finally {
       isLoading = false; // Stop loading
     }

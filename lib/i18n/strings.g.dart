@@ -225,7 +225,7 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
   String get no => 'no';
   String get yes => 'yes';
   String get AreYouSureToChangeThePassword =>
-      'Are you sure to change the password?';
+      'Are you sure you want to logout?';
   String get DoYouReallyWantToLogOut => 'Do you really want to log out?';
   String get resident => 'resident';
   String get LoadingTheShipment => 'Loading the shipment';
@@ -288,6 +288,7 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
   String get orderDetails => 'Order Details';
   String get reject => 'Reject';
   String get arrived => 'Arrived';
+  String get validate => 'Validate';
 }
 
 // Path: <root>
@@ -526,6 +527,9 @@ class _StringsAr implements Translations {
 
   @override
   String get arrived => 'تم الوصول';
+
+  @override
+  String get validate => 'تأكيد الطلب';
 }
 
 /// Flat map(s) containing all translations.

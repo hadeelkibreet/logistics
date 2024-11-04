@@ -9,6 +9,13 @@ import 'package:logistics/data/prefs/shared_pref_provider.dart';
 import 'i18n/strings.g.dart'
     show AppLocaleUtils, LocaleSettings, TranslationProvider;
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+// Initialize the navigator provider
+final navigatorProvider = Provider<NavigatorState>((ref) {
+  return navigatorKey.currentState!;
+});
+
 class LogisticsApp extends ConsumerStatefulWidget {
   const LogisticsApp({super.key});
 
@@ -21,6 +28,7 @@ class _LogisticsAppState extends ConsumerState<LogisticsApp> {
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       child: MaterialApp(
+        navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         locale: TranslationProvider.of(context).flutterLocale,

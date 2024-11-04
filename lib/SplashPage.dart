@@ -10,6 +10,8 @@ import 'package:logistics/data/prefs/prefs.dart';
 import 'package:logistics/orders/active_orders/active_orders.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'fcm_service.dart';
+
 class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({Key? key}) : super(key: key);
 
@@ -26,6 +28,8 @@ class _SplashPageState extends ConsumerState<SplashPage> {
 
   Future<void> _initialize() async {
     await _checkLoginStatus();
+    final fcmService = FCMService();
+    await fcmService.setupFCM();
   }
 
   Future<void> _checkLoginStatus() async {

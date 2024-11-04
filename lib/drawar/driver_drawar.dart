@@ -240,11 +240,17 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
                                 LocaleSettings.setLocale(AppLocale.en);
                                 // sp.setBool('isLogin', false);
                                 print("is login ${Prehelper.getIsLoggedIn}");
-
+                                // Navigator.pushReplacement(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //       builder: (context) =>
+                                //           const LogInScreen()),
+                                // );
                                 Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => LogInScreen()),
+                                      builder: (context) =>
+                                          const LogInScreen()),
                                   (route) => false,
                                 );
                               },

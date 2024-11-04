@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:logistics/SplashPage.dart';
 import 'package:logistics/auth/entity/login_entity.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/constants/dio.dart';
@@ -41,11 +43,19 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
     if (!buildContext.mounted) {
       return;
     }
+    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+
+    String? fcm_token = "";
+
+    try {
+      fcm_token = await _firebaseMessaging.getToken();
+    } catch (_) {}
 
     var data = FormData.fromMap(
       {
         'phone': _phoneController.text,
         'password': _passwordController.text,
+        'fcm_token': fcm_token ?? ''
       },
     );
     Response response = await ApiService().postData(
@@ -64,11 +74,20 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
           loginResponse,
         );
         ref.read(prefHelperProvider).setLoggedIn();
-        Navigator.pushReplacement(
-          buildContext,
-          MaterialPageRoute(
-            builder: (context) => ActiveOrders(),
-          ),
+        // Navigator.pushReplacement(
+        //   buildContext,
+        //   MaterialPageRoute(
+        //     builder: (context) => ActiveOrders(),
+        //   ),
+        // );
+        // Navigator.replace(context,
+        //     oldRoute: MaterialPageRoute(builder: (context) => SplashPage()),
+        //     newRoute: MaterialPageRoute(builder: (context) => ActiveOrders()));
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => ActiveOrders()),
+          (Route<dynamic> route) =>
+              false, // This will remove all previous routes
         );
         break;
       case 302:
@@ -237,6 +256,28 @@ class _LogInScreenState extends ConsumerState<LogInScreen> {
                       ),
                       child: Text(
                         t.LogIn,
+                        style: TextStyle(
+                          color: ColorsApp.white,
+                          fontSize: 16.sp,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: width / 2,
+                    padding: EdgeInsets.only(top: AppDimensions.p16),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _phoneController.text = '0555109992';
+                        _passwordController.text = '12312300';
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.all<Color>(
+                          ColorsApp.secondaryColor,
+                        ),
+                      ),
+                      child: Text(
+                        "Testing",
                         style: TextStyle(
                           color: ColorsApp.white,
                           fontSize: 16.sp,

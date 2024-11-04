@@ -5,13 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logistics/constants/colors.dart';
 import 'package:logistics/i18n/strings.g.dart';
+import 'package:logistics/logistic_app.dart';
 import 'package:logistics/orders/active_orders/active_orders.dart';
-import 'package:logistics/orders/detils_order/detilsOrderScreen.dart';
-import 'package:logistics/orders/enum/order_type_enum.dart';
 import 'package:logistics/orders/in_way/in_way_screen.dart';
-import 'package:logistics/orders/providers/orders_provider.dart';
 import 'package:logistics/orders/repository/remote_orders_repository.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class buildOrderCard extends ConsumerStatefulWidget {
   final String name;
@@ -54,21 +51,24 @@ class _buildOrderCardState extends ConsumerState<buildOrderCard> {
       padding: EdgeInsets.symmetric(horizontal: 12.0.sp),
       child: GestureDetector(
         onTap: () async {
-          ref.read(activeOrderLoaderProvider.notifier).state = true;
-          final p = await ref
-              .read(remoteOrdersRepository)
-              .getSingleOrderDetails(widget.ID);
+          try {
+            ref.read(activeOrderLoaderProvider.notifier).state = true;
+            final p = await ref
+                .read(remoteOrdersRepository)
+                .getSingleOrderDetails(widget.ID);
 
-          print(p.validationDateStep1 == 'null');
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => OrderDetailsScreen(
-                DetilsData: p,
-              ),
-            ),
-          );
-          ref.read(activeOrderLoaderProvider.notifier).state = false;
+            ref.read(navigatorProvider).push(
+                  MaterialPageRoute(
+                    builder: (context) => OrderDetailsScreen(
+                      DetilsData: p,
+                    ),
+                  ),
+                );
+            ref.read(activeOrderLoaderProvider.notifier).state = false;
+          } catch (e) {
+            e.toString();
+            ref.read(activeOrderLoaderProvider.notifier).state = false;
+          }
         },
         child: Card(
           color: ColorsApp.white,

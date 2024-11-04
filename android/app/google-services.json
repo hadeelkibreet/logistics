@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "1022357752343",
-    "project_id": "logistics-801b3",
-    "storage_bucket": "logistics-801b3.appspot.com"
+    "project_number": "783267230560",
+    "project_id": "alnco-7370c",
+    "storage_bucket": "alnco-7370c.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1022357752343:android:92c3a0a6e3f4c71c8b2a52",
+        "mobilesdk_app_id": "1:783267230560:android:42c03dccc202359d422405",
         "android_client_info": {
           "package_name": "com.example.logistics"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAhEwzFwiTVOLYIC76eUBY-1K7qlua5xTA"
+          "current_key": "AIzaSyAmg-ldfUQk3jDfPuYncw2wtjNb9A780vo"
         }
       ],
       "services": {

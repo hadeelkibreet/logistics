@@ -6,11 +6,16 @@ import 'package:logistics/constants/colors.dart';
 import 'package:logistics/constants/images.dart';
 import 'package:logistics/drawar/driver_drawar.dart';
 import 'package:logistics/i18n/strings.g.dart';
+import 'package:logistics/logistic_app.dart';
+import 'package:logistics/orders/entity/orders_entity.dart';
 import 'package:logistics/orders/enum/order_type_enum.dart';
+import 'package:logistics/orders/in_way/in_way_screen.dart';
 import 'package:logistics/orders/providers/orders_provider.dart';
+import 'package:logistics/orders/repository/remote_orders_repository.dart';
 import 'package:logistics/orders/widget/card_orders.dart';
+import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
-final activeOrderLoaderProvider = StateProvider<bool>(
+final activeOrderLoaderProvider = StateProvider.autoDispose<bool>(
   (ref) => false,
 );
 
@@ -209,7 +214,11 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
             ),
           if (ref.watch(activeOrderLoaderProvider))
             Center(
-              child: CircularProgressIndicator(),
+              child: GestureDetector(
+                onTap: () =>
+                    ref.read(activeOrderLoaderProvider.notifier).state = false,
+                child: const CircularProgressIndicator(),
+              ),
             ),
         ],
       ),
@@ -233,9 +242,8 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
             Icons.autorenew_rounded,
           ),
           onPressed: () {
-            ref
-                .read(ordersProvider.notifier)
-                .getOrders(type: ref.read(orderFilterProvider));
+            ref.read(ordersProvider.notifier).getOrdersByDestinationName(
+                type: ref.read(orderFilterProvider));
           },
         ),
         IconButton(
@@ -353,27 +361,51 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
   }
 
   void scanQRCode() async {
-    // try {
-    //   final qrCode = await FlutterBarcodeScanner.scanBarcode(
-    //       '#ff6666', 'Cancel', true, ScanMode.QR);
-    //
-    //   if (!mounted) return;
-    //
-    //   setState(() {
-    //     getResult = qrCode;
-    //     print(qrCode);
-    //
-    //     if (getResult.toString() != '-1') {
-    //       //  isSearch = !isSearch;
-    //       ref.read(orderSearchProvider.notifier).state =
-    //           getResult.isNotEmpty ? getResult : '';
-    //     }
-    //   });
-    //
-    //   print("QRCode_Result:--");
-    //   print(qrCode);
-    // } on PlatformException {
-    //   getResult = 'Failed to scan QR Code.';
-    // }
+    String result = "";
+    var res = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const SimpleBarcodeScannerPage(),
+        ));
+    ref.read(activeOrderLoaderProvider.notifier).state = true;
+
+    if (res is String) {
+      if (res != "-1") {
+        OrdersEntity? ordersEntity = ref.read(ordersProvider).firstWhereOrNull(
+              (element) => element.barcode == res,
+            );
+        print(ordersEntity != null
+            ? "ordersEntity => ${ordersEntity.barcode}"
+            : "ordersEntity => No Order Entity");
+
+        if (ordersEntity != null) {
+          final p = await ref
+              .read(remoteOrdersRepository)
+              .getSingleOrderDetails(ordersEntity.id);
+          ref.read(activeOrderLoaderProvider.notifier).state = false;
+          ref.read(navigatorProvider).push(
+                MaterialPageRoute(
+                  builder: (context) => OrderDetailsScreen(
+                    DetilsData: p,
+                  ),
+                ),
+              );
+        }
+        ref.read(activeOrderLoaderProvider.notifier).state = false;
+      } else {
+        print("ordersEntity => canceled");
+        ref.read(activeOrderLoaderProvider.notifier).state = false;
+      }
+    }
+  }
+}
+
+extension IterableExt<T> on Iterable<T> {
+  /// The first element satisfying the condition, or null if there are none.
+  T? firstWhereOrNull(bool Function(T element) test) {
+    for (var element in this) {
+      if (test(element)) return element;
+    }
+    return null;
   }
 }

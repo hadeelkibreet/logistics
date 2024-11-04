@@ -13,6 +13,7 @@ import 'package:logistics/constants/dio.dart';
 import 'package:logistics/constants/endpoints.dart';
 import 'package:logistics/constants/images.dart';
 import 'package:logistics/i18n/strings.g.dart';
+import 'package:logistics/logistic_app.dart';
 import 'package:logistics/orders/detils_order/bottom_navigationBar.dart';
 import 'package:logistics/orders/entity/detils_entity.dart';
 import 'package:logistics/orders/entity/reasons_rejection_entity.dart';
@@ -56,11 +57,16 @@ class _detailsOrderScreenState extends ConsumerState<OrderDetailsScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
-        ref.read(orderDetailsScreenLoaderProvider.notifier).state = true;
-        await ref
-            .read(singleOrderProvider.notifier)
-            .getOrder(widget.DetilsData.id);
-        ref.read(orderDetailsScreenLoaderProvider.notifier).state = false;
+        try {
+          ref.read(orderDetailsScreenLoaderProvider.notifier).state = true;
+          await ref
+              .read(singleOrderProvider.notifier)
+              .getOrder(widget.DetilsData.id);
+          ref.read(orderDetailsScreenLoaderProvider.notifier).state = false;
+        } catch (e) {
+          ref.read(orderDetailsScreenLoaderProvider.notifier).state = false;
+          ref.read(navigatorProvider).pop();
+        }
       },
     );
   }
@@ -784,9 +790,6 @@ class _detailsOrderScreenState extends ConsumerState<OrderDetailsScreen> {
                         await refresh();
 
                         ref
-                            .read(ordersProvider.notifier)
-                            .getOrders(type: ref.read(orderFilterProvider));
-                        ref
                             .read(orderDetailsScreenLoaderProvider.notifier)
                             .state = false;
                       } catch (e) {
@@ -874,19 +877,18 @@ class _detailsOrderScreenState extends ConsumerState<OrderDetailsScreen> {
                         ref
                             .read(orderDetailsScreenLoaderProvider.notifier)
                             .state = true;
-                        await ApiService().postArrived(
-                          ref,
-                          widget.DetilsData.id.toString(),
-                        );
+
+                        await ref
+                            .read(remoteOrdersRepository)
+                            .postArrived(widget.DetilsData.id);
 
                         await refresh();
-                        ref
-                            .read(ordersProvider.notifier)
-                            .getOrders(type: ref.read(orderFilterProvider));
+
                         ref
                             .read(orderDetailsScreenLoaderProvider.notifier)
                             .state = false;
                       } catch (e) {
+                        e;
                         ref
                             .read(orderDetailsScreenLoaderProvider.notifier)
                             .state = false;
@@ -899,7 +901,7 @@ class _detailsOrderScreenState extends ConsumerState<OrderDetailsScreen> {
                       child: Align(
                         alignment: Alignment.center,
                         child: Text(
-                          "Validate",
+                          t.arrived,
                           style: TextStyle(color: ColorsApp.white),
                         ),
                       ),
@@ -993,20 +995,6 @@ class _detailsOrderScreenState extends ConsumerState<OrderDetailsScreen> {
                             },
                           ),
                         );
-                        // }
-                        // else {
-                        //   Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //       builder: (context) {
-                        //         return RecipientSignatureScreen(
-                        //           requestId: widget.DetilsData.id.toString(),
-                        //         );
-                        //       },
-                        //     ),
-                        //   );
-                        // }
-
                         ref
                             .read(orderDetailsScreenLoaderProvider.notifier)
                             .state = false;
@@ -1023,7 +1011,7 @@ class _detailsOrderScreenState extends ConsumerState<OrderDetailsScreen> {
                       child: Align(
                         alignment: Alignment.center,
                         child: Text(
-                          "Validate",
+                          t.validate,
                           style: TextStyle(color: ColorsApp.white),
                         ),
                       ),

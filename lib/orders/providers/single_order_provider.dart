@@ -27,8 +27,8 @@ class SingleOrderStateNotifier extends StateNotifier<DetilsEntity?> {
   Future<void> getOrder(int id) async {
     try {
       final Response response = await apiClient.post(
-        Endpoints.startMission,
-        data: {'request_id': id},
+        Endpoints.getRequests,
+        queryParameters: {'id': id},
       );
       List<dynamic> orderList = response.data;
       DetilsEntity detailsEntity = DetilsEntity.fromJson(orderList.first);

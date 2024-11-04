@@ -58,6 +58,8 @@ dependencies:
   flutter_local_notifications: ^17.2.3
   flutter_svg: ^2.0.10+1
   skeletonizer: ^1.4.2
+  simple_barcode_scanner: ^0.1.1
+  
   
   #pdf: ^3.6.0
   #flutter_downloader: ^1.11.7
