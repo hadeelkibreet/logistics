@@ -1,7 +1,8 @@
 enum OrderType {
   all,
   loading,
-  delivery;
+  delivery,
+  schedule;
 
   static OrderType fromString(String value) {
     late OrderType orderType;
@@ -14,6 +15,9 @@ enum OrderType {
         break;
       case 'delivery':
         orderType = OrderType.delivery;
+        break;
+      case 'schedule':
+        orderType = OrderType.schedule;
         break;
       default:
         orderType = OrderType.all;

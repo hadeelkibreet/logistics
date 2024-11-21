@@ -1,6 +1,7 @@
+import 'package:equatable/equatable.dart';
 import 'package:logistics/orders/enum/order_status_enum.dart';
 
-class OrdersEntity {
+class OrdersEntity extends Equatable {
   final int id;
   final String barcode;
   final String? ref;
@@ -179,6 +180,40 @@ class OrdersEntity {
   String toString() {
     return 'OrdersEntity{id: $id, barcode: $barcode, ref: $ref, sourceName: $sourceName, sourceAddress: $sourceAddress, sourceNumberPhone: $sourceNumberPhone, sourceLatitude: $sourceLatitude, sourceLongitude: $sourceLongitude, destinationName: $destinationName, destinationAddress: $destinationAddress, destinationNumberPhone: $destinationNumberPhone, containerType: $containerType, quantity: $quantity, weight: $weight, cod: $cod, deliveryZone: $deliveryZone, status: $status, priority: $priority, deliveryTime: $deliveryTime, assignmentDate: $assignmentDate, notice: $notice, commentStep1: $commentStep1, validation1Image: $validation1Image, validation1Signature: $validation1Signature, validationDateStep1: $validationDateStep1, commentStep2: $commentStep2, validation2Image: $validation2Image, validation2Signature: $validation2Signature, validationDateStep2: $validationDateStep2, startTime: $startTime, started: $started, type: $type, driverId: $driverId}';
   }
+
+  @override
+  List<Object?> get props => [
+        sourceName,
+        sourceAddress,
+        sourceNumberPhone,
+        sourceLatitude,
+        sourceLongitude,
+        destinationName,
+        destinationAddress,
+        destinationNumberPhone,
+        containerType,
+        quantity,
+        weight,
+        cod,
+        deliveryZone,
+        status,
+        priority,
+        deliveryTime,
+        assignmentDate,
+        notice,
+        commentStep1,
+        validation1Image,
+        validation1Signature,
+        validationDateStep1,
+        commentStep2,
+        validation2Image,
+        validation2Signature,
+        validationDateStep2,
+        startTime,
+        started,
+        type,
+        driverId,
+      ];
 }
 
 // import 'package:logistics/orders/enum/order_status_enum.dart';

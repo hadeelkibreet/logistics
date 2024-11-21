@@ -11,7 +11,7 @@ final orderFilterProvider =
 
 final orderSearchProvider = StateProvider<String>((ref) => '');
 
-final ordersProvider =
+final positionedOrdersProvider =
     StateNotifierProvider<OrderStateNotifier, List<PositionedOrderEntity>>(
         (ref) {
   ref.read(remoteOrdersRepository);
@@ -19,8 +19,7 @@ final ordersProvider =
       repository: ref.watch(remoteOrdersRepository),
       filter: ref.read(orderFilterProvider),
       search: ref.watch(orderSearchProvider))
-    ..getOrders(type: ref.read(orderFilterProvider))
-    ..getOrdersBySearch();
+    ..getOrders(type: ref.read(orderFilterProvider));
 });
 
 class OrderStateNotifier extends StateNotifier<List<PositionedOrderEntity>> {
@@ -38,18 +37,12 @@ class OrderStateNotifier extends StateNotifier<List<PositionedOrderEntity>> {
   bool isLoading = false;
   String? error;
 
-  List<OrdersEntity> get orderList => _list;
-
   Future<void> getOrders({required OrderType type}) async {
     isLoading = true; // Start loading
     error = null; // Reset error before fetching
     try {
       _list = await repository.getOrders(type);
       _display = getOrdersByDestinationName(_list);
-      // Apply search filter if there's a search term
-      if (search.isNotEmpty) {
-        getOrdersBySearch();
-      }
       state = _display;
     } catch (e) {
       error = e.toString(); // Set error message on failure
@@ -60,19 +53,13 @@ class OrderStateNotifier extends StateNotifier<List<PositionedOrderEntity>> {
 
   List<PositionedOrderEntity> getOrdersByDestinationName(
       List<OrdersEntity> list) {
-    if (list.isEmpty) return [];
-    final List<PositionedOrderEntity> destinationNames = [];
-    if (search.isEmpty) {
-      destinationNames.add(
-        PositionedOrderEntity(
-            orders: list, destinationName: 'all', position: 0),
-      );
-    }
     List<OrdersEntity> sortedList = list;
     sortedList.sort(
       (a, b) => a.destinationName.compareTo(b.destinationName),
     );
-
+    final List<PositionedOrderEntity> destinationNames = [
+      PositionedOrderEntity(orders: list, destinationName: 'all', position: 0),
+    ];
     int counter = 1;
 
     for (int index = 0; index < sortedList.length; index++) {
@@ -109,31 +96,18 @@ class OrderStateNotifier extends StateNotifier<List<PositionedOrderEntity>> {
     return uniqueStatuses;
   }
 
-  void getOrdersBySearch() {
-    if (search.isEmpty) {
-      _display = getOrdersByDestinationName(_list);
-    } else {
-      _display = getOrdersByDestinationName(
-        _list.where((element) => element.barcode.startsWith(search)).toList(),
-      );
-    }
-    state = _display;
-  }
+  // void getOrdersBySearch() {
+  //   if (search.isEmpty) {
+  //     _display = _list;
+  //   } else {
+  //     _display =
+  //         _list.where((element) => element.barcode.startsWith(search)).toList();
+  //   }
+  //   state = _display;
+  // }
 
-  void updateSearch(String newSearch) {
-    search = newSearch;
-    getOrdersBySearch();
-  }
+  // void updateSearch(String newSearch) {
+  //   search = newSearch;
+  //   getOrdersBySearch();
+  // }
 }
-
-final IDProvider = StateProvider<String>((ref) => '');
-//
-// final orderDetilsProvider = FutureProvider<DetilsEntity>((ref) async {
-//   final repository = await ref.read(remoteOrdersRepository);
-//
-//   return await repository.getStartMission(ref.read(IDProvider.notifier).state);
-// });
-
-final selectDestination = StateProvider<int>(
-  (ref) => 0,
-);

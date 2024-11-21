@@ -10,10 +10,8 @@ import 'package:logistics/constants/endpoints.dart';
 import 'package:logistics/constants/images.dart';
 import 'package:logistics/data/prefs/prefs.dart';
 import 'package:logistics/drawar/list_tile_drawar.dart';
-import 'package:logistics/driver_status/driverStatusScreen.dart';
 import 'package:logistics/i18n/strings.g.dart';
 import 'package:logistics/orders/active_orders/active_orders.dart';
-import 'package:logistics/orders/enum/order_type_enum.dart';
 import 'package:logistics/orders/providers/orders_provider.dart';
 import 'package:logistics/profile/entity/profile_entity.dart';
 import 'package:logistics/profile/profile_screen.dart';
@@ -84,6 +82,7 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
               icon: Icon(Icons.assignment_outlined),
               text: t.orders,
               onPressed: () {
+                ref.read(selectDestination.notifier).state = 0;
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => ActiveOrders()));
               },
@@ -95,9 +94,9 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
               text: t.update,
               onPressed: () {
                 rresponse(phoneNumber, ref);
-                ref
-                    .read(ordersProvider.notifier)
-                    .getOrders(type: ref.read(orderFilterProvider));
+                // ref
+                //     .read(ordersProvider.notifier)
+                //     .getOrders(type: ref.read(orderFilterProvider));
               },
             ),
             const Divider(color: ColorsApp.primaryColor),
@@ -113,67 +112,68 @@ class _DriverDrawarState extends ConsumerState<DriverDrawar> {
                 );
               },
             ),
-            ListTileDrawar(
-              icon: Icon(
-                Icons.language,
+            if (false)
+              ListTileDrawar(
+                icon: Icon(
+                  Icons.language,
+                ),
+                text: t.languages,
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Column(
+                          children: [
+                            Text(
+                              'اختر اللغة/Selected Language',
+                              style: TextStyle(fontSize: 18.sp),
+                            ),
+                            RadioListTile(
+                              title: Text(
+                                'الانجليزية/English',
+                                style: TextStyle(fontSize: 12.sp),
+                              ),
+                              value: 'English',
+                              secondary: Image.asset(
+                                ImageAssets.usa,
+                                width: 35.w,
+                                height: 35.h,
+                              ),
+                              groupValue: selectedLanguage,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedLanguage = value!;
+                                  LocaleSettings.setLocale(AppLocale.en);
+                                });
+                              },
+                            ),
+                            RadioListTile(
+                              title: Text(
+                                'العربية/Arabic',
+                                style: TextStyle(fontSize: 12.sp),
+                              ),
+                              value: 'Arabic',
+                              secondary: Image.asset(
+                                ImageAssets.ksa,
+                                width: 35.w,
+                                height: 35.h,
+                              ),
+                              groupValue: selectedLanguage,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedLanguage = value!;
+                                  LocaleSettings.setLocale(AppLocale.ar);
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
-              text: t.languages,
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Column(
-                        children: [
-                          Text(
-                            'اختر اللغة/Selected Language',
-                            style: TextStyle(fontSize: 18.sp),
-                          ),
-                          RadioListTile(
-                            title: Text(
-                              'الانجليزية/English',
-                              style: TextStyle(fontSize: 12.sp),
-                            ),
-                            value: 'English',
-                            secondary: Image.asset(
-                              ImageAssets.usa,
-                              width: 35.w,
-                              height: 35.h,
-                            ),
-                            groupValue: selectedLanguage,
-                            onChanged: (value) {
-                              setState(() {
-                                selectedLanguage = value!;
-                                LocaleSettings.setLocale(AppLocale.en);
-                              });
-                            },
-                          ),
-                          RadioListTile(
-                            title: Text(
-                              'العربية/Arabic',
-                              style: TextStyle(fontSize: 12.sp),
-                            ),
-                            value: 'Arabic',
-                            secondary: Image.asset(
-                              ImageAssets.ksa,
-                              width: 35.w,
-                              height: 35.h,
-                            ),
-                            groupValue: selectedLanguage,
-                            onChanged: (value) {
-                              setState(() {
-                                selectedLanguage = value!;
-                                LocaleSettings.setLocale(AppLocale.ar);
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
             // Divider(color: ColorsApp.primaryColor),
             //
             // ListTileDrawar(

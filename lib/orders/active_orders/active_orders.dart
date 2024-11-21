@@ -6,14 +6,9 @@ import 'package:logistics/constants/colors.dart';
 import 'package:logistics/constants/images.dart';
 import 'package:logistics/drawar/driver_drawar.dart';
 import 'package:logistics/i18n/strings.g.dart';
-import 'package:logistics/logistic_app.dart';
-import 'package:logistics/orders/entity/orders_entity.dart';
 import 'package:logistics/orders/enum/order_type_enum.dart';
-import 'package:logistics/orders/in_way/in_way_screen.dart';
 import 'package:logistics/orders/providers/orders_provider.dart';
-import 'package:logistics/orders/repository/remote_orders_repository.dart';
 import 'package:logistics/orders/widget/card_orders.dart';
-import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
 final activeOrderLoaderProvider = StateProvider.autoDispose<bool>(
   (ref) => false,
@@ -115,18 +110,6 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
                   : SizedBox(
                       height: 0,
                     ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(
-                    t.order,
-                  ),
-                  Text(
-                    ' ${orderListProvider.length} ',
-                  ),
-                  Icon(Icons.arrow_drop_down_outlined),
-                ],
-              ),
               if (isLoading) // Show a loading indicator when loading
                 Center(
                   child: Padding(
@@ -183,28 +166,19 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
                   ],
                 )
               else
-                Expanded(
-                  child: ListView.builder(
-                    controller: controller,
-                    itemCount: orderListProvider.length,
-                    itemBuilder: (context, index) {
-                      return buildOrderCard(
-                        refNumber: orderListProvider[index].ref.toString(),
-                        name: orderListProvider[index]
-                            .destinationAddress
-                            .toString(),
-                        numberOfLength: index + 1,
-                        orderNumber:
-                            orderListProvider[index].barcode.toString(),
-                        lat: orderListProvider[index].sourceLatitude.toString(),
-                        long:
-                            orderListProvider[index].sourceLongitude.toString(),
-                        status: orderListProvider[index].status.toString(),
-                        ID: orderListProvider[index].id, // Updated line
-                      );
-                    },
-                  ),
-                ),
+                method2()
+
+              // Expanded(
+              //   child: ListView.builder(
+              //     controller: controller,
+              //     itemCount: orderListProvider.length,
+              //     itemBuilder: (context, index) {
+              //       return buildOrderCard(
+              //         ordersEntity: orderListProvider[index],
+              //       );
+              //     },
+              //   ),
+              // ),
             ],
           ),
           if (ref.watch(activeOrderLoaderProvider))
@@ -242,16 +216,17 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
             Icons.autorenew_rounded,
           ),
           onPressed: () {
-            ref.read(ordersProvider.notifier).getOrdersByDestinationName(
-                type: ref.read(orderFilterProvider));
+            ref
+                .read(ordersProvider.notifier)
+                .getOrders(type: ref.read(orderFilterProvider));
           },
         ),
-        IconButton(
-          icon: Icon(Icons.qr_code_scanner),
-          onPressed: () {
-            scanQRCode();
-          },
-        ),
+        // IconButton(
+        //   icon: Icon(Icons.qr_code_scanner),
+        //   onPressed: () {
+        //     scanQRCode();
+        //   },
+        // ),
         IconButton(
           icon: Icon(Icons.more_vert),
           onPressed: () async {
@@ -361,42 +336,104 @@ class _ActiveOrdersState extends ConsumerState<ActiveOrders> {
   }
 
   void scanQRCode() async {
-    String result = "";
-    var res = await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const SimpleBarcodeScannerPage(),
-        ));
-    ref.read(activeOrderLoaderProvider.notifier).state = true;
+    // String result = "";
+    // var res = await Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //       builder: (context) => const SimpleBarcodeScannerPage(),
+    //     ));
+    // ref.read(activeOrderLoaderProvider.notifier).state = true;
+    //
+    // if (res is String) {
+    //   if (res != "-1") {
+    //     OrdersEntity? ordersEntity =
+    //         ref.read(ordersProvider.notifier).orderList.firstWhereOrNull(
+    //               (element) => element.barcode == res,
+    //             );
+    //     print(ordersEntity != null
+    //         ? "ordersEntity => ${ordersEntity.barcode}"
+    //         : "ordersEntity => No Order Entity");
+    //
+    //     if (ordersEntity != null) {
+    //       final p = await ref
+    //           .read(remoteOrdersRepository)
+    //           .getSingleOrderDetails(ordersEntity.id);
+    //       ref.read(activeOrderLoaderProvider.notifier).state = false;
+    //       ref.read(navigatorProvider).push(
+    //             MaterialPageRoute(
+    //               builder: (context) => OrderDetailsScreen(
+    //                 DetilsData: p,
+    //               ),
+    //             ),
+    //           );
+    //     }
+    //     ref.read(activeOrderLoaderProvider.notifier).state = false;
+    //   } else {
+    //     print("ordersEntity => canceled");
+    //     ref.read(activeOrderLoaderProvider.notifier).state = false;
+    //   }
+    // }
+  }
 
-    if (res is String) {
-      if (res != "-1") {
-        OrdersEntity? ordersEntity = ref.read(ordersProvider).firstWhereOrNull(
-              (element) => element.barcode == res,
-            );
-        print(ordersEntity != null
-            ? "ordersEntity => ${ordersEntity.barcode}"
-            : "ordersEntity => No Order Entity");
-
-        if (ordersEntity != null) {
-          final p = await ref
-              .read(remoteOrdersRepository)
-              .getSingleOrderDetails(ordersEntity.id);
-          ref.read(activeOrderLoaderProvider.notifier).state = false;
-          ref.read(navigatorProvider).push(
-                MaterialPageRoute(
-                  builder: (context) => OrderDetailsScreen(
-                    DetilsData: p,
+  Expanded method2() {
+    return Expanded(
+      // child: method1(orderListProvider),
+      child: ListView.builder(
+        itemCount: ref.watch(ordersProvider).length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    if (ref.watch(selectDestination) == index) {
+                      ref.read(selectDestination.notifier).state = -1;
+                    } else {
+                      ref.read(selectDestination.notifier).state = index;
+                    }
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        ref.watch(selectDestination) == index
+                            ? Icons.arrow_drop_down_circle
+                            : Icons.arrow_drop_up_outlined,
+                      ),
+                      Text(
+                        ref.watch(ordersProvider)[index].destinationName,
+                        textAlign: TextAlign.start,
+                        style: const TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        "(${ref.watch(ordersProvider)[index].orders.length.toString()})",
+                        textAlign: TextAlign.start,
+                        style: const TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              );
-        }
-        ref.read(activeOrderLoaderProvider.notifier).state = false;
-      } else {
-        print("ordersEntity => canceled");
-        ref.read(activeOrderLoaderProvider.notifier).state = false;
-      }
-    }
+                if (ref.watch(selectDestination) == index)
+                  ...ref.watch(ordersProvider)[index].orders.map(
+                    (element) {
+                      return buildOrderCard(
+                        ordersEntity: element,
+                      );
+                    },
+                  ).toList()
+              ],
+            ),
+          );
+        },
+      ),
+    );
   }
 }
 

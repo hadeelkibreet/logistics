@@ -7,30 +7,16 @@ import 'package:logistics/constants/colors.dart';
 import 'package:logistics/i18n/strings.g.dart';
 import 'package:logistics/logistic_app.dart';
 import 'package:logistics/orders/active_orders/active_orders.dart';
+import 'package:logistics/orders/entity/orders_entity.dart';
 import 'package:logistics/orders/in_way/in_way_screen.dart';
 import 'package:logistics/orders/repository/remote_orders_repository.dart';
 
 class buildOrderCard extends ConsumerStatefulWidget {
-  final String name;
-  final int numberOfLength;
-  final String orderNumber;
-  final String refNumber;
-  final String lat;
-  final String long;
-  //final OrderStatus statusCard;
-  final String status;
-  final int ID;
-  buildOrderCard(
-      {Key? key,
-      required this.name,
-      required this.numberOfLength,
-      required this.orderNumber,
-      required this.refNumber,
-      required this.lat,
-      required this.long,
-      required this.status,
-      required this.ID})
-      : super(key: key);
+  OrdersEntity ordersEntity;
+  buildOrderCard({
+    Key? key,
+    required this.ordersEntity,
+  }) : super(key: key);
 
   @override
   _buildOrderCardState createState() => _buildOrderCardState();
@@ -55,7 +41,7 @@ class _buildOrderCardState extends ConsumerState<buildOrderCard> {
             ref.read(activeOrderLoaderProvider.notifier).state = true;
             final p = await ref
                 .read(remoteOrdersRepository)
-                .getSingleOrderDetails(widget.ID);
+                .getSingleOrderDetails(widget.ordersEntity.id);
 
             ref.read(navigatorProvider).push(
                   MaterialPageRoute(
@@ -80,13 +66,14 @@ class _buildOrderCardState extends ConsumerState<buildOrderCard> {
                     EdgeInsets.symmetric(horizontal: 10.sp, vertical: 4.sp),
                 child: Row(
                   children: [
-                    CircleAvatar(
-                      backgroundColor: Colors.grey[300],
-                      child: Text(
-                        widget.numberOfLength.toString(),
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ),
+                    // CircleAvatar(
+                    //   backgroundColor: Colors.grey[300],
+                    //   child: Text(
+                    //     widget.ordersEntity.,
+                    //     style: TextStyle(color: Colors.black),
+                    //   ),
+                    // ),
+
                     SizedBox(width: 8.w),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,31 +81,50 @@ class _buildOrderCardState extends ConsumerState<buildOrderCard> {
                         Row(
                           children: [
                             Text(
-                              widget.refNumber,
+                              widget.ordersEntity.ref.toString(),
                             ),
                             Text(
                               ' | ',
                               style: TextStyle(color: Colors.grey[300]),
                             ),
                             Text(
-                              widget.status,
+                              widget.ordersEntity.status,
                               // style: TextStyle(color: widget.statusCard.color),
                             ),
                           ],
                         ),
                         Container(
+                          width: 500,
                           constraints: BoxConstraints(maxWidth: 260.w),
-                          child: Text(widget.name,
-                              style: TextStyle(fontSize: 14.sp),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.ordersEntity.destinationAddress,
+                                style: TextStyle(fontSize: 14.sp),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                ", ",
+                                style: TextStyle(fontSize: 14.sp),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                widget.ordersEntity.destinationName,
+                                style: TextStyle(fontSize: 14.sp),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 8.h),
               Divider(
                 thickness: 1,
                 color: Colors.grey,
@@ -132,7 +138,7 @@ class _buildOrderCardState extends ConsumerState<buildOrderCard> {
                       children: [
                         Padding(
                           padding: EdgeInsets.all(4.0.sp),
-                          child: Icon(
+                          child: const Icon(
                             Icons.assignment_outlined,
                             color: Colors.grey,
                           ),
@@ -140,7 +146,7 @@ class _buildOrderCardState extends ConsumerState<buildOrderCard> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            const Text(
                               'Order # : ',
                               style: TextStyle(
                                 fontSize: 12,
@@ -151,7 +157,7 @@ class _buildOrderCardState extends ConsumerState<buildOrderCard> {
                             Container(
                               constraints: BoxConstraints(maxWidth: 210.w),
                               child: Text(
-                                widget.orderNumber,
+                                widget.ordersEntity.barcode,
                                 style: TextStyle(fontSize: 14.sp),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -161,7 +167,7 @@ class _buildOrderCardState extends ConsumerState<buildOrderCard> {
                         ),
                       ],
                     ),
-                    widget.status == 1
+                    widget.ordersEntity.status == "1"
                         ? Text(
                             t.done,
                             style: TextStyle(color: Colors.amber),
